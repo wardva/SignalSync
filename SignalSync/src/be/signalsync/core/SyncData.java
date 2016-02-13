@@ -1,5 +1,11 @@
 package be.signalsync.core;
 
+/**
+ * Contains the synchronization data of the different streams.
+ * 
+ * @author Ward Van Assche
+ *
+ */
 public class SyncData {
 	private String data;
 

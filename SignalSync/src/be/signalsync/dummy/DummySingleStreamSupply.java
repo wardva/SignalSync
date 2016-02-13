@@ -16,22 +16,19 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.io.jvm.AudioPlayer;
 
-public class DummyStreamSupply implements StreamSupply {
+public class DummySingleStreamSupply implements StreamSupply {
 	private List<AudioDispatcher> streams;
 	private ExecutorService streamExecutor;
 
-	public DummyStreamSupply() {
+	public DummySingleStreamSupply() {
 		try {
 			streams = new ArrayList<>();
-			final File dir = new File("./testdata");
-			final File files[] = dir.listFiles();
-			for (final File f : files) {
-				final AudioDispatcher d = AudioDispatcherFactory.fromFile(f, 
-						Config.getInt("BUFFER_SIZE"), 
-						0);
-				d.addAudioProcessor(new AudioPlayer(d.getFormat()));
-				streams.add(d);
-			}
+			final File f = new File("./testdata/Sonic Youth - Star Power.wav");
+			final AudioDispatcher d = AudioDispatcherFactory.fromFile(f, 
+					Config.getInt("BUFFER_SIZE"), 
+					0);
+			d.addAudioProcessor(new AudioPlayer(d.getFormat()));
+			streams.add(d);
 			streamExecutor = Executors.newFixedThreadPool(streams.size());
 		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
@@ -49,7 +46,7 @@ public class DummyStreamSupply implements StreamSupply {
 	}
 
 	@Override
-	public void run() { 
+	public void run() {
 		for (final AudioDispatcher d : streams) {
 			streamExecutor.execute(d);
 		}

@@ -5,33 +5,45 @@ import java.util.List;
 
 import be.tarsos.dsp.AudioDispatcher;
 
+/**
+ * This class is a Slicer which is used to take slices of different streams
+ * wrapped in a StreamSuppy.
+ * 
+ * @author Ward Van Assche
+ *
+ */
 public class SupplySlicer extends Slicer<List<AudioDispatcher>> {
-	
-	private StreamSupply supply;
-	private List<StreamSlicer> slicers;
-	
-	public SupplySlicer(StreamSupply supply) {
+
+	private final StreamSupply supply;
+	private final List<StreamSlicer> slicers;
+
+	/**
+	 * Creates a new SupplySlicer from a StreamSupply.
+	 * 
+	 * @param supply
+	 */
+	public SupplySlicer(final StreamSupply supply) {
 		super();
 		this.supply = supply;
-		this.slicers = new ArrayList<>(supply.size());
-		for(AudioDispatcher d : this.supply.getStreams()) {
-			StreamSlicer s = new StreamSlicer(d);
+		slicers = new ArrayList<>(supply.size());
+		for (final AudioDispatcher d : this.supply.getStreams()) {
+			final StreamSlicer s = new StreamSlicer(d);
 			slicers.add(s);
 		}
 	}
-	
+
+	/**
+	 * To create the different slices this method makes use of the StraemSlicer
+	 * class.
+	 * 
+	 * @return List<AudioDispatcher> A list of slices (AudioDispatchers).
+	 */
 	@Override
 	public List<AudioDispatcher> slice() {
-		List<AudioDispatcher> slices = new ArrayList<>();
-		for(StreamSlicer s : slicers) {
+		final List<AudioDispatcher> slices = new ArrayList<>();
+		for (final StreamSlicer s : slicers) {
 			slices.add(s.slice());
 		}
 		return slices;
-	}
-	
-	@Override
-	public void run() {
-		List<AudioDispatcher> slices = slice();
-		emitSliceEvent(slices);
 	}
 }
