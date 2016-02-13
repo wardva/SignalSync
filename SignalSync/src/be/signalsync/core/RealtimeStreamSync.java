@@ -3,15 +3,15 @@ package be.signalsync.core;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import be.panako.strategy.nfft.NFFTFingerprint;
 import be.signalsync.util.Config;
+import be.tarsos.dsp.AudioDispatcher;
 
-public class RealtimeStreamSync {
+public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> {
 
 	/**
 	 * This object contains the different streams.
@@ -24,10 +24,8 @@ public class RealtimeStreamSync {
 	 */
 	private final Set<SyncEventListener> listeners;
 
-	/**
-	 * Thread pool responsible for executing the stream processing runnable.
-	 */
-	private final ExecutorService streamsExecutor = Executors.newSingleThreadExecutor();
+	private final ExecutorService streamExecutor = Executors.newSingleThreadExecutor();
+	private final ScheduledExecutorService slicerExecutor = Executors.newScheduledThreadPool(1);
 
 	/**
 	 * Create a new ReatimeStreamSync object.
@@ -57,6 +55,12 @@ public class RealtimeStreamSync {
 	public void removeEventListener(final SyncEventListener listener) {
 		listeners.remove(listener);
 	}
+	
+	public void emitSyncEvent(SyncData data) {
+		for(SyncEventListener l : listeners) {
+			l.onSyncEvent(data);
+		}
+	}
 
 	/**
 	 * Start the synchronization process. This method will try to synchronize
@@ -65,36 +69,17 @@ public class RealtimeStreamSync {
 	 * After this time, the listeners will be notified.
 	 */
 	public void synchronize() {
+		streamExecutor.execute(supply);
+		SupplySlicer slicer = new SupplySlicer(supply);
+		slicer.addEventListener(this);
+		slicerExecutor.scheduleWithFixedDelay(slicer, 
+				Config.getInt("FIRST_DELAY"), 
+				Config.getInt("REFRESH_INTERVAL"), 
+				TimeUnit.MILLISECONDS);
+	}
 
-		
-		/*
-		 * Iterate over the different streams and attach a
-		 * NFFTEventPointProcessor to calculate the fingerprints.
-		 */
-		for (final Stream s : supply.getStreams()) {
-			final RealtimeFingerprinter fingerprinter = new RealtimeFingerprinter(Config.getInt("BUFFER_SIZE"),
-					Config.getInt("BUFFER_OVERLAP"), Config.getInt("SAMPLE_RATE"));
-			s.addFingerprinter(fingerprinter);
-		}
-
-		/*
-		 * Run the fingerprinters of all the available streams.
-		 */
-		streamsExecutor.execute(supply);
-
-		/*
-		 * This timer will call the run method each 'REFRESH_INTERVAL' seconds.
-		 * This method will process the new fingerprints by delegating the
-		 * synchronization process and calling the interested listeners.
-		 */
-		final Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				
-				List<List<NFFTFingerprint>> fingerprints = supply.getNewFingerprints();
-				
-			}
-		}, Config.getInt("FIRST_DELAY"), Config.getInt("REFRESH_INTERVAL"));
+	@Override
+	public void onSliceEvent(List<AudioDispatcher> slices) {
+		//emitSyncEvent(new SyncData(slices.toString()));
 	}
 }

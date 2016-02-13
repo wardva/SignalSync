@@ -56,7 +56,7 @@ public class DummyStreamSupply implements StreamSupply {
 	}
 
 	@Override
-	public List<AudioDispatcher> getSlices() {
-		return null;
+	public int size() {
+		return streams.size();
 	}
 }
