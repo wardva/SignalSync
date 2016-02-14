@@ -10,17 +10,17 @@ import java.util.concurrent.Executors;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import be.signalsync.core.StreamSupply;
+import be.signalsync.core.StreamSet;
 import be.signalsync.util.Config;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.io.jvm.AudioPlayer;
 
-public class DummyStreamSupply implements StreamSupply {
+public class DummyStreamSet implements StreamSet {
 	private List<AudioDispatcher> streams;
 	private ExecutorService streamExecutor;
 
-	public DummyStreamSupply() {
+	public DummyStreamSet() {
 		try {
 			streams = new ArrayList<>();
 			final File dir = new File("./testdata");

@@ -69,7 +69,7 @@ public abstract class Slicer<T> implements Runnable {
 	 * 
 	 * @return The slice result. This result is an instance of AudioDispatcher
 	 *         when one stream is sliced (AudioDispatcher), and an instance of
-	 *         List<AudioDispatcher when multiple streams (StreamSupply) is
+	 *         List<AudioDispatcher when multiple streams (StreamSet) is
 	 *         sliced.
 	 */
 	public abstract T slice();

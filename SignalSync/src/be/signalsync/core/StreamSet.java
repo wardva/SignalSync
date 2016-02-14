@@ -11,10 +11,8 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public interface StreamSupply extends Runnable {
+public interface StreamSet extends Runnable {
 	AudioDispatcher getReference();
-
 	List<AudioDispatcher> getStreams();
-
 	int size();
 }

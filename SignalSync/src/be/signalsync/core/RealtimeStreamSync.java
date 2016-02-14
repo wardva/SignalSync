@@ -7,12 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.sound.sampled.LineUnavailableException;
-
+import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.io.jvm.AudioPlayer;
 
 /**
  * This class is used for starting and managing the realtime stream
@@ -28,7 +25,7 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 	 * will be executed on a different thread. When this object is executed the
 	 * available streams are executed as well.
 	 */
-	private final StreamSupply supply;
+	private final StreamSet streamSet;
 
 	/**
 	 * This set contains the objects interested in possible changes of the
@@ -37,24 +34,24 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 	private final Set<SyncEventListener> listeners;
 
 	/**
-	 * The threadpool used for executing the stream supply.
+	 * The threadpool used for executing the stream streamSet.
 	 */
 	private final ExecutorService streamExecutor = Executors.newSingleThreadExecutor();
 
 	/**
-	 * The threadpool used for running the supplySlicer each time interval.
+	 * The threadpool used for running the streamSetSlicer each time interval.
 	 */
 	private final ScheduledExecutorService slicerExecutor = Executors.newScheduledThreadPool(1);
 
 	/**
 	 * Create a new ReatimeStreamSync object.
 	 *
-	 * @param supply
+	 * @param streamSet
 	 *            This object contains the different streams which must be
 	 *            synchronized.
 	 */
-	public RealtimeStreamSync(final StreamSupply supply) {
-		this.supply = supply;
+	public RealtimeStreamSync(final StreamSet streamSet) {
+		this.streamSet = streamSet;
 		listeners = new HashSet<>();
 	}
 
@@ -81,20 +78,14 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 	}
 
 	/**
-	 * This method will be executed when the supply streams have been sliced.
+	 * This method will be executed when the streamSet streams have been sliced.
 	 * It's called each refresh interval from the scheduled threadpool.
 	 */
 	@Override
 	public void onSliceEvent(final List<AudioDispatcher> slices) {
-		try {
-			supply.getStreams().forEach(x -> x.stop());
-			Thread.sleep(2000);
-			final AudioDispatcher d = slices.get(0);
-			d.addAudioProcessor(new AudioPlayer(d.getFormat()));
-			d.run();
-		} catch (InterruptedException | LineUnavailableException e) {
-			e.printStackTrace();
-		}
+		SyncStrategy syncer = SyncStrategy.getInstance();
+		SyncData data = new SyncData(syncer.findLatencies(slices));
+		emitSyncEvent(data);
 	}
 
 	/**
@@ -109,13 +100,13 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 
 	/**
 	 * Start the synchronization process. This method will try to synchronize
-	 * the different streams available in the StreamSupply object. The
+	 * the different streams available in the StreamSet object. The
 	 * synchronization process will take place each REFRESH_INTERVAL seconds.
 	 * After this time, the listeners will be notified.
 	 */
 	public void synchronize() {
-		streamExecutor.execute(supply);
-		final SupplySlicer slicer = new SupplySlicer(supply);
+		streamExecutor.execute(streamSet);
+		final StreamSetSlicer slicer = new StreamSetSlicer(streamSet);
 		slicer.addEventListener(this);
 		slicerExecutor.scheduleWithFixedDelay(slicer, Config.getInt("FIRST_DELAY"), Config.getInt("REFRESH_INTERVAL"),
 				TimeUnit.MILLISECONDS);

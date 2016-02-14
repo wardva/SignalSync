@@ -1,11 +1,11 @@
 package be.signalsync.app;
 
 import be.signalsync.core.RealtimeStreamSync;
-import be.signalsync.core.StreamSupply;
+import be.signalsync.core.StreamSet;
 import be.signalsync.core.SyncData;
 import be.signalsync.core.SyncEventListener;
-//import be.signalsync.dummy.DummySingleStreamSupply;
-import be.signalsync.dummy.DummyStreamSupply;
+//import be.signalsync.dummy.DummySingleStreamSet;
+import be.signalsync.dummy.DummyStreamSet;
 
 /**
  * Main class for testing the current SignalSync implementation.
@@ -14,12 +14,12 @@ import be.signalsync.dummy.DummyStreamSupply;
  */
 public class RealtimeStreamSyncTest {
 	public static void main(final String[] args) {
-		final StreamSupply supply = new DummyStreamSupply();
-		final RealtimeStreamSync syncer = new RealtimeStreamSync(supply);
+		final StreamSet streamSet = new DummyStreamSet();
+		final RealtimeStreamSync syncer = new RealtimeStreamSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {
 			@Override
 			public void onSyncEvent(final SyncData data) {
-				System.out.println("Sync event fired:\n" + data.getData());
+				System.out.println("Sync event fired:\n" + data.getLatencies());
 			}
 		});
 		syncer.synchronize();

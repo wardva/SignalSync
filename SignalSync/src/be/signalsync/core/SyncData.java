@@ -1,4 +1,5 @@
 package be.signalsync.core;
+import java.util.List;
 
 /**
  * Contains the synchronization data of the different streams.
@@ -7,18 +8,17 @@ package be.signalsync.core;
  *
  */
 public class SyncData {
-	private String data;
+	private List<Integer> latencies;
 
-	public SyncData(final String data) {
-		setData(data);
+	public SyncData(List<Integer> latencies) {
+		this.latencies = latencies;
 	}
 
-	public String getData() {
-		return data;
+	public List<Integer> getLatencies() {
+		return latencies;
 	}
 
-	public void setData(final String data) {
-		this.data = data;
+	public void setLatencies(List<Integer> latencies) {
+		this.latencies = latencies;
 	}
-
 }

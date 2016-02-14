@@ -12,17 +12,17 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public class SupplySlicer extends Slicer<List<AudioDispatcher>> {
+public class StreamSetSlicer extends Slicer<List<AudioDispatcher>> {
 
-	private final StreamSupply supply;
+	private final StreamSet supply;
 	private final List<StreamSlicer> slicers;
 
 	/**
-	 * Creates a new SupplySlicer from a StreamSupply.
+	 * Creates a new StreamSetSlicer from a StreamSet.
 	 * 
 	 * @param supply
 	 */
-	public SupplySlicer(final StreamSupply supply) {
+	public StreamSetSlicer(final StreamSet supply) {
 		super();
 		this.supply = supply;
 		slicers = new ArrayList<>(supply.size());
