@@ -1,21 +1,22 @@
 package be.signalsync.syncstrategy;
 
-import java.util.List;
-
+import be.signalsync.core.StreamSet;
+import be.signalsync.core.SyncData;
 import be.signalsync.util.Config;
-import be.tarsos.dsp.AudioDispatcher;
 
 public abstract class SyncStrategy {
-	public abstract List<Integer> findLatencies(List<AudioDispatcher> slices);
+	public abstract SyncData findLatencies(StreamSet sliceSet);
 	
 	private static SyncStrategy algorithm;	
 	public static SyncStrategy getInstance(){
 		if(algorithm == null){
 			switch(Config.get("LATENCY_ALGORITHM")) {
-				case "fingerprint" : 
+				case "fingerprint" :
 					algorithm = new FingerprintSyncStrategy();
+					break;
 				case "crossvariance" :
 					algorithm = new CrossVarianceSyncStrategy();
+					break;
 				default : 
 					throw new IllegalArgumentException("Invalid latency algorithm in config file.");
 			}

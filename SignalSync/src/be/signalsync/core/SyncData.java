@@ -1,4 +1,6 @@
 package be.signalsync.core;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,17 +10,26 @@ import java.util.List;
  *
  */
 public class SyncData {
-	private List<Integer> latencies;
+	private List<float[]> data;
 
-	public SyncData(List<Integer> latencies) {
-		this.latencies = latencies;
+	public SyncData() {
+		this.data = new ArrayList<>();
 	}
 
-	public List<Integer> getLatencies() {
-		return latencies;
+	public List<float[]> getData() {
+		return data;
 	}
 
-	public void setLatencies(List<Integer> latencies) {
-		this.latencies = latencies;
+	public void addResult(float[] result) {
+		data.add(result);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Latencies in comparision with reference stream:\n");
+		for(float[] f : data) {
+			sb.append(String.format("Start latency: %.4f\tEnd latency: %.4f\n", f[0], f[1]));
+		}
+		return sb.toString();
 	}
 }

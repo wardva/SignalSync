@@ -1,15 +1,14 @@
 package be.signalsync.syncstrategy;
 
-import java.util.List;
-
-import be.tarsos.dsp.AudioDispatcher;
+import be.signalsync.core.StreamSet;
+import be.signalsync.core.SyncData;
 
 public class CrossVarianceSyncStrategy extends SyncStrategy {
 	
 	protected CrossVarianceSyncStrategy() {}
 	
 	@Override
-	public List<Integer> findLatencies(List<AudioDispatcher> slices) {
+	public SyncData findLatencies(StreamSet sliceSet) {
 		return null;
 	}
 }

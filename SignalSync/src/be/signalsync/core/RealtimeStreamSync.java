@@ -1,15 +1,16 @@
 package be.signalsync.core;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
-import be.tarsos.dsp.AudioDispatcher;
 
 /**
  * This class is used for starting and managing the realtime stream
@@ -18,7 +19,8 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> {
+public class RealtimeStreamSync implements SliceListener<StreamSet> {
+	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
 
 	/**
 	 * This object contains the different streams. This object is a runnable and
@@ -51,6 +53,7 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 	 *            synchronized.
 	 */
 	public RealtimeStreamSync(final StreamSet streamSet) {
+		Log.log(Level.INFO, "RealtimeStreamSync object created");
 		this.streamSet = streamSet;
 		listeners = new HashSet<>();
 	}
@@ -81,10 +84,12 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 	 * This method will be executed when the streamSet streams have been sliced.
 	 * It's called each refresh interval from the scheduled threadpool.
 	 */
+	int nr = 0;
 	@Override
-	public void onSliceEvent(final List<AudioDispatcher> slices) {
+	public void onSliceEvent(final StreamSet sliceSet) {	
 		SyncStrategy syncer = SyncStrategy.getInstance();
-		SyncData data = new SyncData(syncer.findLatencies(slices));
+		SyncData data = syncer.findLatencies(sliceSet);
+		Log.log(Level.INFO, "Slice event received in RealtimeStreamSync class.");
 		emitSyncEvent(data);
 	}
 
@@ -105,6 +110,7 @@ public class RealtimeStreamSync implements SliceListener<List<AudioDispatcher>> 
 	 * After this time, the listeners will be notified.
 	 */
 	public void synchronize() {
+		Log.log(Level.INFO, "Starting the synchronization.");
 		streamExecutor.execute(streamSet);
 		final StreamSetSlicer slicer = new StreamSetSlicer(streamSet);
 		slicer.addEventListener(this);

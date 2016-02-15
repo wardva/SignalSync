@@ -12,9 +12,9 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public class StreamSetSlicer extends Slicer<List<AudioDispatcher>> {
+public class StreamSetSlicer extends Slicer<StreamSet> {
 
-	private final StreamSet supply;
+	private final StreamSet streamSet;
 	private final List<StreamSlicer> slicers;
 
 	/**
@@ -22,11 +22,13 @@ public class StreamSetSlicer extends Slicer<List<AudioDispatcher>> {
 	 * 
 	 * @param supply
 	 */
-	public StreamSetSlicer(final StreamSet supply) {
+	public StreamSetSlicer(final StreamSet streamSet) {
 		super();
-		this.supply = supply;
-		slicers = new ArrayList<>(supply.size());
-		for (final AudioDispatcher d : this.supply.getStreams()) {
+		this.streamSet = streamSet;
+		slicers = new ArrayList<>();
+		//Reference stream slicer at index 0 of slicers.
+		slicers.add(new StreamSlicer(streamSet.getReference()));
+		for (final AudioDispatcher d : this.streamSet.getOthers()) {
 			final StreamSlicer s = new StreamSlicer(d);
 			slicers.add(s);
 		}
@@ -39,11 +41,12 @@ public class StreamSetSlicer extends Slicer<List<AudioDispatcher>> {
 	 * @return List<AudioDispatcher> A list of slices (AudioDispatchers).
 	 */
 	@Override
-	public List<AudioDispatcher> slice() {
+	public StreamSet slice() {
 		final List<AudioDispatcher> slices = new ArrayList<>();
 		for (final StreamSlicer s : slicers) {
 			slices.add(s.slice());
 		}
-		return slices;
+		StreamSet sliceSet = new StreamSet(slices.remove(0), slices);
+		return sliceSet;
 	}
 }

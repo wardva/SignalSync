@@ -2,6 +2,10 @@ package be.signalsync.core;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import be.signalsync.util.Config;
 
 /**
  * The supertype of the different types of Slicers. This class handles the event
@@ -18,6 +22,7 @@ import java.util.Set;
  *            The return type of the slice method.
  */
 public abstract class Slicer<T> implements Runnable {
+	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
 	private final Set<SliceListener<T>> listeners;
 
 	public Slicer() {
@@ -60,6 +65,7 @@ public abstract class Slicer<T> implements Runnable {
 	 */
 	@Override
 	public void run() {
+		Log.log(Level.INFO, "Taking a slice from a stream or streamset using the run method.");
 		final T result = slice();
 		emitSliceEvent(result);
 	}
