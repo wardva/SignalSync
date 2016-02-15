@@ -15,7 +15,7 @@ import be.signalsync.util.Config;
 /**
  * This class is used for starting and managing the realtime stream
  * synchronization algorithm.
- * 
+ *
  * @author Ward Van Assche
  *
  */
@@ -45,6 +45,14 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 	 */
 	private final ScheduledExecutorService slicerExecutor = Executors.newScheduledThreadPool(1);
 
+	private final SyncStrategy syncer;
+
+	/**
+	 * This method will be executed when the streamSet streams have been sliced.
+	 * It's called each refresh interval from the scheduled threadpool.
+	 */
+	int nr = 0;
+
 	/**
 	 * Create a new ReatimeStreamSync object.
 	 *
@@ -56,12 +64,13 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 		Log.log(Level.INFO, "RealtimeStreamSync object created");
 		this.streamSet = streamSet;
 		listeners = new HashSet<>();
+		syncer = SyncStrategy.getInstance();
 	}
 
 	/**
 	 * Add an interested listener. The listeners will be notified when new
 	 * synchronization data is available.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addEventListener(final SyncEventListener listener) {
@@ -70,7 +79,7 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 
 	/**
 	 * Emit a synchronization event.
-	 * 
+	 *
 	 * @param data
 	 *            The data to send to the interested listeners.
 	 */
@@ -80,22 +89,16 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 		}
 	}
 
-	/**
-	 * This method will be executed when the streamSet streams have been sliced.
-	 * It's called each refresh interval from the scheduled threadpool.
-	 */
-	int nr = 0;
 	@Override
-	public void onSliceEvent(final StreamSet sliceSet) {	
-		SyncStrategy syncer = SyncStrategy.getInstance();
-		SyncData data = syncer.findLatencies(sliceSet);
+	public void onSliceEvent(final StreamSet sliceSet) {
+		final SyncData data = syncer.findLatencies(sliceSet);
 		Log.log(Level.INFO, "Slice event received in RealtimeStreamSync class.");
 		emitSyncEvent(data);
 	}
 
 	/**
 	 * Remove a listener from the interested set.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */

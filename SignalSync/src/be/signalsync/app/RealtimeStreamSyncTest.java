@@ -8,6 +8,7 @@ import be.signalsync.dummy.DummyStreamSet;
 
 /**
  * Main class for testing the current SignalSync implementation.
+ * 
  * @author Ward
  */
 public class RealtimeStreamSyncTest {

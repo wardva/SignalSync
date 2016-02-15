@@ -10,7 +10,7 @@ import java.util.Properties;
  * Simple configuration class. The keys and values are read from a file. The
  * name of the file has to be specified in the FILE_NAME attribute. Values can
  * be requested with the get and getInt methods.
- * 
+ *
  * @author Ward Van Assche
  */
 public class Config {

@@ -14,7 +14,7 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
 /**
  * This class is a Slicer which is used to slice a single stream.
- * 
+ *
  * @author Ward Van Assche
  *
  */
@@ -38,7 +38,7 @@ public class StreamSlicer extends Slicer<AudioDispatcher> {
 
 	/**
 	 * Creates a new StreamSlicer from an AudioDispatcher.
-	 * 
+	 *
 	 * @param dispatcher
 	 */
 	public StreamSlicer(final AudioDispatcher dispatcher) {

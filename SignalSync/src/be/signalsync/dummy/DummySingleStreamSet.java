@@ -17,22 +17,20 @@ import be.tarsos.dsp.io.jvm.AudioPlayer;
 public class DummySingleStreamSet extends StreamSet {
 	private static List<AudioDispatcher> streams;
 	private static AudioDispatcher reference;
+
 	static {
 		try {
 			streams = new ArrayList<>();
 			final File f = new File("./testdata/Sonic Youth - Star Power.wav");
-			final AudioDispatcher d = AudioDispatcherFactory.fromFile(f, 
-					Config.getInt("BUFFER_SIZE"), 
-					0);
+			final AudioDispatcher d = AudioDispatcherFactory.fromFile(f, Config.getInt("BUFFER_SIZE"), 0);
 			d.addAudioProcessor(new AudioPlayer(d.getFormat()));
 			streams.add(d);
 			reference = streams.remove(0);
-		}
-		catch(LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public DummySingleStreamSet() {
 		super(reference, streams);
 	}

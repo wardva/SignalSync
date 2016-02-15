@@ -32,7 +32,7 @@ public abstract class Slicer<T> implements Runnable {
 	/**
 	 * Add an interested listener. All the listeners will be notified when a new
 	 * slice(s) is available.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addEventListener(final SliceListener<T> listener) {
@@ -41,7 +41,7 @@ public abstract class Slicer<T> implements Runnable {
 
 	/**
 	 * Send a new slice result to the interested listeners
-	 * 
+	 *
 	 * @param result
 	 *            The slice result.
 	 */
@@ -53,7 +53,7 @@ public abstract class Slicer<T> implements Runnable {
 
 	/**
 	 * Remove a listener from the interested set.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removeEventListener(final SliceListener<T> listener) {
@@ -72,11 +72,10 @@ public abstract class Slicer<T> implements Runnable {
 
 	/**
 	 * This method has to contain the actual slice implementation.
-	 * 
+	 *
 	 * @return The slice result. This result is an instance of AudioDispatcher
 	 *         when one stream is sliced (AudioDispatcher), and an instance of
-	 *         List<AudioDispatcher when multiple streams (StreamSet) is
-	 *         sliced.
+	 *         List<AudioDispatcher when multiple streams (StreamSet) is sliced.
 	 */
 	public abstract T slice();
 }

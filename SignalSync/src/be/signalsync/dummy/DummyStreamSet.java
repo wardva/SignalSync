@@ -17,6 +17,7 @@ import be.tarsos.dsp.io.jvm.AudioPlayer;
 public class DummyStreamSet extends StreamSet {
 	private static List<AudioDispatcher> streams;
 	private static AudioDispatcher reference;
+
 	static {
 		try {
 			streams = new ArrayList<>();
@@ -24,19 +25,16 @@ public class DummyStreamSet extends StreamSet {
 			final File files[] = dir.listFiles();
 			for (final File f : files) {
 				System.out.println(f.getAbsolutePath());
-				final AudioDispatcher d = AudioDispatcherFactory.fromFile(f, 
-						Config.getInt("BUFFER_SIZE"), 
-						0);
+				final AudioDispatcher d = AudioDispatcherFactory.fromFile(f, Config.getInt("BUFFER_SIZE"), 0);
 				d.addAudioProcessor(new AudioPlayer(d.getFormat()));
 				streams.add(d);
 			}
 			reference = streams.remove(0);
-		}
-		catch(LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public DummyStreamSet() {
 		super(reference, streams);
 	}
