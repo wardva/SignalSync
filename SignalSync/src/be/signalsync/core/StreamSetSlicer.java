@@ -2,7 +2,6 @@ package be.signalsync.core;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import be.tarsos.dsp.AudioDispatcher;
 
 /**
@@ -12,41 +11,54 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public class StreamSetSlicer extends Slicer<StreamSet> {
+public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<AudioDispatcher>  {
 
 	private final StreamSet streamSet;
-	private final List<StreamSlicer> slicers;
+	private int size;
+	private AudioDispatcher refSlice;
+	private List<AudioDispatcher> slices;
+	private StreamSlicer refSlicer;
 
 	/**
 	 * Creates a new StreamSetSlicer from a StreamSet.
 	 *
 	 * @param supply
 	 */
-	public StreamSetSlicer(final StreamSet streamSet) {
+	public StreamSetSlicer(final StreamSet streamSet, long interval) {
 		super();
 		this.streamSet = streamSet;
-		slicers = new ArrayList<>();
-		// Reference stream slicer at index 0 of slicers.
-		slicers.add(new StreamSlicer(streamSet.getReference()));
+		this.size = streamSet.getOthers().size();
+		this.refSlicer = new StreamSlicer(interval, this);
+		this.slices = new ArrayList<>();
+		this.streamSet.getReference().addAudioProcessor(refSlicer);
 		for (final AudioDispatcher d : this.streamSet.getOthers()) {
-			final StreamSlicer s = new StreamSlicer(d);
-			slicers.add(s);
+			d.addAudioProcessor(new StreamSlicer(interval, this));
 		}
 	}
 
-	/**
-	 * To create the different slices this method makes use of the StraemSlicer
-	 * class.
-	 *
-	 * @return List<AudioDispatcher> A list of slices (AudioDispatchers).
-	 */
 	@Override
-	public StreamSet slice() {
-		final List<AudioDispatcher> slices = new ArrayList<>();
-		for (final StreamSlicer s : slicers) {
-			slices.add(s.slice());
+	public void onSliceEvent(AudioDispatcher slice, Slicer<AudioDispatcher> s) {
+		if(s == refSlicer) {
+			refSlice = slice;
 		}
-		final StreamSet sliceSet = new StreamSet(slices.remove(0), slices);
-		return sliceSet;
+		else {
+			slices.add(slice);
+		}
+		
+		if(slices.size() == size && refSlice != null) {
+			emitSliceEvent(new StreamSet(refSlice, slices));
+			reset();
+		}
+	}
+	
+	private void reset() {
+		slices.clear();
+		refSlice = null;
+	}
+
+	@Override
+	public void done(Slicer<AudioDispatcher> s) {
+		size--;
+		emitDoneEvent();
 	}
 }

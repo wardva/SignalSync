@@ -2,10 +2,6 @@ package be.signalsync.core;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import be.signalsync.util.Config;
 
 /**
  * The supertype of the different types of Slicers. This class handles the event
@@ -21,8 +17,7 @@ import be.signalsync.util.Config;
  * @param <T>
  *            The return type of the slice method.
  */
-public abstract class Slicer<T> implements Runnable {
-	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
+public abstract class Slicer<T> {
 	private final Set<SliceListener<T>> listeners;
 
 	public Slicer() {
@@ -47,7 +42,13 @@ public abstract class Slicer<T> implements Runnable {
 	 */
 	public void emitSliceEvent(final T result) {
 		for (final SliceListener<T> l : listeners) {
-			l.onSliceEvent(result);
+			l.onSliceEvent(result, this);
+		}
+	}
+	
+	public void emitDoneEvent() {
+		for (final SliceListener<T> l : listeners) {
+			l.done();
 		}
 	}
 
@@ -59,23 +60,4 @@ public abstract class Slicer<T> implements Runnable {
 	public void removeEventListener(final SliceListener<T> listener) {
 		listeners.remove(listener);
 	}
-
-	/**
-	 * Execute the slice result and notify the interested listeners.
-	 */
-	@Override
-	public void run() {
-		Log.log(Level.INFO, "Taking a slice from a stream or streamset using the run method.");
-		final T result = slice();
-		emitSliceEvent(result);
-	}
-
-	/**
-	 * This method has to contain the actual slice implementation.
-	 *
-	 * @return The slice result. This result is an instance of AudioDispatcher
-	 *         when one stream is sliced (AudioDispatcher), and an instance of
-	 *         List<AudioDispatcher when multiple streams (StreamSet) is sliced.
-	 */
-	public abstract T slice();
 }

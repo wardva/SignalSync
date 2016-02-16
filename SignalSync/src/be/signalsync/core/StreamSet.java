@@ -30,7 +30,7 @@ public class StreamSet implements Runnable {
 	 *            reference stream.
 	 */
 	public StreamSet(final AudioDispatcher reference, final List<AudioDispatcher> streams) {
-		others = new ArrayList<>(streams);
+		this.others = new ArrayList<>(streams);
 		this.reference = reference;
 		streamExecutor = Executors.newFixedThreadPool(streams.size() + 1);
 	}

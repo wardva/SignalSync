@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import be.panako.strategy.nfft.NFFTEventPointProcessor;
 import be.panako.strategy.nfft.NFFTFingerprint;
@@ -25,13 +23,12 @@ import be.tarsos.dsp.AudioDispatcher;
  *
  */
 public class FingerprintSyncStrategy extends SyncStrategy {
-	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
-
 	private static final float MIN_FREQUENCY = 100;
 	private static final float MAX_FREQUENCY = 4000;
 
 	protected FingerprintSyncStrategy() {
-		be.panako.util.Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, Config.get("NFFT_EVENT_POINT_MIN_DISTANCE"));
+		be.panako.util.Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, 
+				Config.get("NFFT_EVENT_POINT_MIN_DISTANCE"));
 		be.panako.util.Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT,
 				Config.get("NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT"));
 	}
@@ -73,7 +70,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 				numberRemoved++;
 			}
 		}
-		Log.log(Level.INFO, String.format("Filtered %d of prevSize %d", numberRemoved, prevSize));
+		//Log.log(Level.INFO, String.format("Filtered %d of prevSize %d", numberRemoved, prevSize));
 	}
 
 	/**

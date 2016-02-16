@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,11 +38,6 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 	 */
 	private final ExecutorService streamExecutor = Executors.newSingleThreadExecutor();
 
-	/**
-	 * The threadpool used for running the streamSetSlicer each time interval.
-	 */
-	private final ScheduledExecutorService slicerExecutor = Executors.newScheduledThreadPool(1);
-
 	private final SyncStrategy syncer;
 
 	/**
@@ -61,7 +54,6 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 	 *            synchronized.
 	 */
 	public RealtimeStreamSync(final StreamSet streamSet) {
-		Log.log(Level.INFO, "RealtimeStreamSync object created");
 		this.streamSet = streamSet;
 		listeners = new HashSet<>();
 		syncer = SyncStrategy.getInstance();
@@ -84,15 +76,16 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 	 *            The data to send to the interested listeners.
 	 */
 	public void emitSyncEvent(final SyncData data) {
+		Log.log(Level.INFO, "Sync data generated.");
 		for (final SyncEventListener l : listeners) {
 			l.onSyncEvent(data);
 		}
 	}
 
 	@Override
-	public void onSliceEvent(final StreamSet sliceSet) {
+	public void onSliceEvent(final StreamSet sliceSet, Slicer<StreamSet> s) {
+		Log.log(Level.INFO, "Slices of streams received.");
 		final SyncData data = syncer.findLatencies(sliceSet);
-		Log.log(Level.INFO, "Slice event received in RealtimeStreamSync class.");
 		emitSyncEvent(data);
 	}
 
@@ -114,10 +107,14 @@ public class RealtimeStreamSync implements SliceListener<StreamSet> {
 	 */
 	public void synchronize() {
 		Log.log(Level.INFO, "Starting the synchronization.");
-		streamExecutor.execute(streamSet);
-		final StreamSetSlicer slicer = new StreamSetSlicer(streamSet);
+		StreamSetSlicer slicer = new StreamSetSlicer(streamSet, Config.getInt("REFRESH_INTERVAL"));
 		slicer.addEventListener(this);
-		slicerExecutor.scheduleWithFixedDelay(slicer, Config.getInt("FIRST_DELAY"), Config.getInt("REFRESH_INTERVAL"),
-				TimeUnit.MILLISECONDS);
+		streamExecutor.execute(streamSet);
+	}
+
+	@Override
+	public void done(Slicer<StreamSet> s) {
+		System.out.println("DONE");
+		System.out.println("-----------------------------------------------------------------");
 	}
 }

@@ -39,7 +39,13 @@ public class SyncData {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("Latencies in comparision with reference stream:\n");
 		for (final float[] f : data) {
-			sb.append(String.format("Start latency: %.4f\tEnd latency: %.4f\n", f[0], f[1]));
+			if(f.length > 0) {
+				sb.append(String.format("Start latency: %.4f\tEnd latency: %.4f\n", f[0], f[1]));
+			}
+			else {
+				sb.append("No match found\n");
+			}
+			
 		}
 		return sb.toString();
 	}

@@ -2,8 +2,6 @@ package be.signalsync.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
-
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.signalsync.util.Config;
@@ -18,82 +16,63 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
  * @author Ward Van Assche
  *
  */
-public class StreamSlicer extends Slicer<AudioDispatcher> {
-	/**
-	 * The AudioDispatcher which contains the stream.
-	 */
-	private AudioDispatcher dispatcher;
-
+public class StreamSlicer extends Slicer<AudioDispatcher> implements AudioProcessor {
 	/**
 	 * A list of float buffers, used to buffer the newly received data from the
 	 * stream. The list is cleared each slice operation.
 	 */
 	private List<float[]> floatBuffers;
-
+	
 	/**
-	 * Lock used for avoiding interference between AudioProcessor's process
-	 * method and the slice method.
+	 * The timestamp in seconds when the previous slice occured.
 	 */
-	private final ReentrantLock processingLock = new ReentrantLock();
-
+	private double previousSliceTimestamp;
+	
 	/**
-	 * Creates a new StreamSlicer from an AudioDispatcher.
-	 *
-	 * @param dispatcher
+	 * The interval between each slice.
 	 */
-	public StreamSlicer(final AudioDispatcher dispatcher) {
+	private double interval;
+
+	public StreamSlicer(double interval, SliceListener<AudioDispatcher> listener) {
 		super();
-		this.dispatcher = dispatcher;
-		floatBuffers = new ArrayList<>();
-
-		/*
-		 * Add an AudioProcessor to the dispatcher. The processor will buffer to
-		 * data into the floatBuffers field.
-		 */
-		this.dispatcher.addAudioProcessor(new AudioProcessor() {
-			@Override
-			public boolean process(final AudioEvent audioEvent) {
-				final float[] current = audioEvent.getFloatBuffer();
-				final float[] bufCopy = new float[current.length];
-				System.arraycopy(current, 0, bufCopy, 0, current.length);
-				processingLock.lock();
-				floatBuffers.add(bufCopy);
-				processingLock.unlock();
-				return true;
-			}
-
-			@Override
-			public void processingFinished() {
-			}
-		});
+		this.floatBuffers = new ArrayList<>();
+		this.previousSliceTimestamp = 0;
+		this.interval = interval;
+		this.addEventListener(listener);
 	}
 
-	/**
-	 * This method copies the data in the floatBuffers field to a new buffer and
-	 * clears the floatBuffers field. A new AudioDispatcher is created with the
-	 * new buffer and is returned.
-	 *
-	 * @return AudioDispatcher The dispatcher created from the current float
-	 *         buffer.
-	 */
-	@Override
-	public AudioDispatcher slice() {
-		processingLock.lock();
-		final float totalBuf[] = new float[floatBuffers.size() * floatBuffers.get(0).length];
-		int i = 0;
-		for (final float[] buf : floatBuffers) {
-			System.arraycopy(buf, 0, totalBuf, i, buf.length);
-			i += buf.length;
-		}
-		floatBuffers.clear();
-		processingLock.unlock();
-		AudioDispatcher dispatcher = null;
+	private void slice() {
 		try {
-			dispatcher = AudioDispatcherFactory.fromFloatArray(totalBuf, Config.getInt("SAMPLE_RATE"),
-					Config.getInt("BUFFER_SIZE"), Config.getInt("BUFFER_OVERLAP"));
-		} catch (final UnsupportedAudioFileException e) {
+			final float totalBuf[] = new float[floatBuffers.size() * floatBuffers.get(0).length];
+			int i = 0;
+			for (final float[] buf : floatBuffers) {
+				System.arraycopy(buf, 0, totalBuf, i, buf.length);
+				i += buf.length;
+			}
+			floatBuffers.clear();
+			AudioDispatcher dispatcher = null;
+			dispatcher = AudioDispatcherFactory.fromFloatArray(totalBuf, Config.getInt("SAMPLE_RATE"), Config.getInt("BUFFER_SIZE"), Config.getInt("BUFFER_OVERLAP"));
+			emitSliceEvent(dispatcher);
+		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		}
-		return dispatcher;
+	}
+
+	@Override
+	public boolean process(AudioEvent audioEvent) {
+		final float[] current = audioEvent.getFloatBuffer();
+		final float[] bufCopy = new float[current.length];
+		System.arraycopy(current, 0, bufCopy, 0, current.length);
+		floatBuffers.add(bufCopy);
+		if((audioEvent.getTimeStamp() - previousSliceTimestamp) > interval) {
+			previousSliceTimestamp = audioEvent.getTimeStamp();
+			slice();
+		}
+		return true;
+	}
+
+	@Override
+	public void processingFinished() {
+		emitDoneEvent();
 	}
 }
