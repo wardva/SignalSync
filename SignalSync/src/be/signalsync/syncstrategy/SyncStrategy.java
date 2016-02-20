@@ -1,7 +1,8 @@
 package be.signalsync.syncstrategy;
 
-import be.signalsync.core.StreamSet;
-import be.signalsync.core.SyncData;
+import java.util.List;
+
+import be.signalsync.streamsets.StreamSet;
 import be.signalsync.util.Config;
 
 public abstract class SyncStrategy {
@@ -13,8 +14,8 @@ public abstract class SyncStrategy {
 			case "fingerprint":
 				algorithm = new FingerprintSyncStrategy();
 				break;
-			case "crossvariance":
-				algorithm = new CrossVarianceSyncStrategy();
+			case "crosscovariance":
+				algorithm = new CrossCovarianceSyncStrategy();
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid latency algorithm in config file.");
@@ -23,5 +24,5 @@ public abstract class SyncStrategy {
 		return algorithm;
 	}
 
-	public abstract SyncData findLatencies(StreamSet sliceSet);
+	public abstract List<Float> findLatencies(StreamSet sliceSet);
 }

@@ -1,7 +1,21 @@
 package be.signalsync.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import be.signalsync.streamsets.FloatStreamSet;
+import be.signalsync.streamsets.StreamSet;
+import be.signalsync.util.Config;
 import be.tarsos.dsp.AudioDispatcher;
 
 /**
@@ -11,54 +25,79 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<AudioDispatcher>  {
-
+public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<float[]> {
+	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
 	private final StreamSet streamSet;
 	private int size;
-	private AudioDispatcher refSlice;
-	private List<AudioDispatcher> slices;
-	private StreamSlicer refSlicer;
+	private final Map<Slicer<float[]>, BlockingQueue<float[]>> slicesMap;
+	private final ExecutorService collectExecutor;
 
 	/**
 	 * Creates a new StreamSetSlicer from a StreamSet.
 	 *
 	 * @param supply
 	 */
-	public StreamSetSlicer(final StreamSet streamSet, long interval) {
+	public StreamSetSlicer(final StreamSet streamSet, final long interval) {
 		super();
 		this.streamSet = streamSet;
-		this.size = streamSet.getOthers().size();
-		this.refSlicer = new StreamSlicer(interval, this);
-		this.slices = new ArrayList<>();
-		this.streamSet.getReference().addAudioProcessor(refSlicer);
-		for (final AudioDispatcher d : this.streamSet.getOthers()) {
-			d.addAudioProcessor(new StreamSlicer(interval, this));
+		size = streamSet.getStreams().size();
+		slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
+		collectExecutor = Executors.newSingleThreadExecutor();
+		for (final AudioDispatcher d : this.streamSet.getStreams()) {
+			final StreamSlicer slicer = new StreamSlicer(interval, this);
+			d.addAudioProcessor(slicer);
+			slicesMap.put(slicer, new ArrayBlockingQueue<>(5));
 		}
+		collectSliceSets();
+	}
+
+	private void collectSliceSets() {
+		collectExecutor.execute(new Runnable() {
+			private final List<float[]> slices = new ArrayList<>();
+
+			@Override
+			public void run() {
+				try {
+					while (size > 0) {
+						for (final BlockingQueue<float[]> q : slicesMap.values()) {
+							final float[] d = q.take();
+							slices.add(d);
+						}
+						emitSliceEvent(new FloatStreamSet(slices));
+						slices.clear();
+					}
+				} 
+				catch (final InterruptedException e) {
+					Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
+				}
+			}
+		});
 	}
 
 	@Override
-	public void onSliceEvent(AudioDispatcher slice, Slicer<AudioDispatcher> s) {
-		if(s == refSlicer) {
-			refSlice = slice;
-		}
-		else {
-			slices.add(slice);
-		}
-		
-		if(slices.size() == size && refSlice != null) {
-			emitSliceEvent(new StreamSet(refSlice, slices));
-			reset();
-		}
-	}
-	
-	private void reset() {
-		slices.clear();
-		refSlice = null;
-	}
-
-	@Override
-	public void done(Slicer<AudioDispatcher> s) {
+	public void done(final Slicer<float[]> slicer) {
+		slicesMap.remove(slicer);
 		size--;
-		emitDoneEvent();
+		if (size == 0) {
+			try {
+				collectExecutor.shutdown();
+				final boolean shuttedDown = collectExecutor.awaitTermination(5, TimeUnit.SECONDS);
+				if (!shuttedDown) {
+					Log.log(Level.SEVERE, "Collector thread wasn't stopped properly. There is a problem somewhere.");
+				}
+				emitDoneEvent();
+			} catch (final InterruptedException e) {
+				Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
+			}
+		}
+	}
+
+	@Override
+	public void onSliceEvent(final float[] slice, final Slicer<float[]> slicer) {
+		try {
+			slicesMap.get(slicer).put(slice);
+		} catch (final InterruptedException e) {
+			Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
+		}
 	}
 }

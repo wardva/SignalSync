@@ -8,117 +8,69 @@ import java.util.Map;
 import be.panako.strategy.nfft.NFFTEventPointProcessor;
 import be.panako.strategy.nfft.NFFTFingerprint;
 import be.panako.util.Key;
-import be.signalsync.core.StreamSet;
-import be.signalsync.core.SyncData;
+import be.signalsync.streamsets.StreamSet;
 import be.signalsync.util.Config;
 import be.tarsos.dsp.AudioDispatcher;
 
-/**
- * This class is responsible for generating synchronization data from a
- * StreamSet using the Panako accoustic fingerprinting algorithm. The algorithm
- * is copy-pasted in this class because the existing methods from the Panako
- * library were not 100% compatible with this use case.
- *
- * @author Ward Van Assche
- *
- */
 public class FingerprintSyncStrategy extends SyncStrategy {
+
 	private static final float MIN_FREQUENCY = 100;
 	private static final float MAX_FREQUENCY = 4000;
+	private static final int SAMPLE_RATE = Config.getInt("SAMPLE_RATE");
+	private static final int SIZE = Config.getInt("BUFFER_SIZE");
+	private static final int STEP_SIZE = Config.getInt("STEP_SIZE");
+	private static final int OVERLAP = SIZE - STEP_SIZE;
 
 	protected FingerprintSyncStrategy() {
-		be.panako.util.Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, 
-				Config.get("NFFT_EVENT_POINT_MIN_DISTANCE"));
+		be.panako.util.Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, Config.get("NFFT_EVENT_POINT_MIN_DISTANCE"));
 		be.panako.util.Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT,
 				Config.get("NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT"));
 	}
 
-	/**
-	 * Extract the fingerprints from the given audio file.
-	 */
 	private List<NFFTFingerprint> extractFingerprints(final AudioDispatcher d) {
-		final int samplerate = Config.getInt("SAMPLE_RATE");
-		final int size = Config.getInt("BUFFER_SIZE");
-		final int overlap = size - Config.getInt("BUFFER_OVERLAP");
-		final NFFTEventPointProcessor minMaxProcessor = new NFFTEventPointProcessor(size, overlap, samplerate);
+		final NFFTEventPointProcessor minMaxProcessor = new NFFTEventPointProcessor(SIZE, OVERLAP, SAMPLE_RATE);
 		d.addAudioProcessor(minMaxProcessor);
 		d.run();
-		return new ArrayList<NFFTFingerprint>(minMaxProcessor.getFingerprints());
+		d.removeAudioProcessor(minMaxProcessor);
+		final List<NFFTFingerprint> fingerprints = new ArrayList<>(minMaxProcessor.getFingerprints());
+		filterPrints(fingerprints);
+		return fingerprints;
 	}
 
-	/**
-	 * Filter the fingerprints.
-	 * 
-	 * @param prints
-	 *            The fingerprints to filter.
-	 */
-	private void filterPrints(final List<NFFTFingerprint> prints) {
-		final float samplerate = Config.getInt("SAMPLE_RATE");
-		final float size = Config.getInt("BUFFER_SIZE");
-		final int minf = (int) Math.ceil(MIN_FREQUENCY / (samplerate / size));
-		final int maxf = (int) Math.floor(MAX_FREQUENCY / (samplerate / size));
-		int numberRemoved = 0;
-		final int prevSize = prints.size();
-		for (int i = 0; i < prints.size(); i++) {
-			final NFFTFingerprint print = prints.get(i);
+	private List<NFFTFingerprint> filterPrints(final List<NFFTFingerprint> fingerprints) {
+		final int minf = (int) Math.ceil(MIN_FREQUENCY / (SAMPLE_RATE / SIZE));
+		final int maxf = (int) Math.floor(MAX_FREQUENCY / (SAMPLE_RATE / SIZE));
+		for (int i = 0; i < fingerprints.size(); i++) {
+			final NFFTFingerprint print = fingerprints.get(i);
 			final boolean smallerThanMin = print.f1 <= minf || print.f2 <= minf;
 			final boolean biggerThanMax = print.f1 >= maxf || print.f2 >= maxf;
-
 			if (smallerThanMin || biggerThanMax) {
-				prints.remove(i);
+				fingerprints.remove(i);
 				i--;
-				numberRemoved++;
 			}
 		}
-		//Log.log(Level.INFO, String.format("Filtered %d of prevSize %d", numberRemoved, prevSize));
+		return fingerprints;
 	}
 
-	/**
-	 * This method calculates the latencies between the different audio slices
-	 * using the existing NFFT fingerprint method.
-	 */
 	@Override
-	public SyncData findLatencies(final StreamSet sliceSet) {
-		final List<NFFTFingerprint> referenceFingerprints = extractFingerprints(sliceSet.getReference());
-		filterPrints(referenceFingerprints);
-		final List<List<NFFTFingerprint>> otherFingerprints = new ArrayList<>();
-		for (final AudioDispatcher dispatcher : sliceSet.getOthers()) {
-			final List<NFFTFingerprint> fingerprints = extractFingerprints(dispatcher);
-			filterPrints(fingerprints);
-			otherFingerprints.add(fingerprints);
-		}
+	public List<Float> findLatencies(final StreamSet sliceSet) {
+		final float fftHopSizesS = STEP_SIZE / (float) SAMPLE_RATE;
 
-		return findMatches(referenceFingerprints, otherFingerprints);
+		final List<Float> latencies = new ArrayList<>();
+		for (final int[] timing : synchronize(sliceSet)) {
+			if(timing.length > 0) {
+				//Calculating the time difference from the time index
+				latencies.add((timing[0] * fftHopSizesS - timing[1] * fftHopSizesS )  );
+			}
+			else {
+				latencies.add(-100000f);
+			}
+			
+		}
+		return latencies;
 	}
 
-	/**
-	 * This method starts the synchronization using the already generated
-	 * fingerprints of the different streams.
-	 *
-	 * @param reference
-	 *            A list of fingerprints of the reference stream.
-	 * @param other
-	 *            A list containing for each other stream a list of
-	 *            fingerprints.
-	 * @return The synchronization result wrapped in a SyncData object.
-	 */
-	private SyncData findMatches(final List<NFFTFingerprint> reference, final List<List<NFFTFingerprint>> other) {
-		// create a map with the fingerprint hash as key, and fingerprint object
-		// as value.
-		// Warning: only a single object is kept for each hash.
-		final HashMap<Integer, NFFTFingerprint> referenceHash = fingerprintsToHash(reference);
-		final SyncData result = new SyncData();
-		int otherIndex = 0;
-		for (final List<NFFTFingerprint> otherPrint : other) {
-			final HashMap<Integer, NFFTFingerprint> otherHash = fingerprintsToHash(otherPrint);
-			result.addResult(fingerprintOffset(referenceHash, otherHash, otherIndex));
-			otherIndex++;
-		}
-		return result;
-	}
-
-	private float[] fingerprintOffset(final HashMap<Integer, NFFTFingerprint> referenceHash,
-			final HashMap<Integer, NFFTFingerprint> otherHash, final int otherIndex) {
+	private int[] fingerprintOffset(final HashMap<Integer, NFFTFingerprint> referenceHash, final HashMap<Integer, NFFTFingerprint> otherHash, final int otherIndex) {
 		// key is the offset, value a list of fingerprint objects. Offset = time
 		// between the two events
 		final HashMap<Integer, List<NFFTFingerprint>> mostPopularOffsets = new HashMap<Integer, List<NFFTFingerprint>>();
@@ -153,10 +105,8 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 			}
 		}
 
-		final float fftHopSizesS = Config.getInt("STEP_SIZE") / (float) Config.getInt("SAMPLE_RATE");
-
 		if (maxAlignedOffsets < minimumAlignedMatchesThreshold) {
-			return new float[] {};
+			return new int[] {};
 		}
 
 		int minReferenceFingerprintTimeIndex = Integer.MAX_VALUE;
@@ -173,13 +123,8 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 			maxOtherFingerprintTimeIndex = Math.max(otherFingerprint.t1, maxOtherFingerprintTimeIndex);
 		}
 
-		final double startInReference = minReferenceFingerprintTimeIndex * fftHopSizesS;
-		final double startInMatchingStream = minOtherFingerprintTimeIndex * fftHopSizesS;
-		final double stopInReference = maxReferenceFingerprintTimeIndex * fftHopSizesS;
-		final double stopInMatchinStream = maxOtherFingerprintTimeIndex * fftHopSizesS;
-
-		return new float[] { (float) (startInReference - startInMatchingStream),
-				(float) (stopInReference - stopInMatchinStream) };
+		return new int[] { minReferenceFingerprintTimeIndex, minOtherFingerprintTimeIndex, 
+				maxReferenceFingerprintTimeIndex, maxOtherFingerprintTimeIndex };
 	}
 
 	private HashMap<Integer, NFFTFingerprint> fingerprintsToHash(final List<NFFTFingerprint> fingerprints) {
@@ -188,5 +133,22 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 			hash.put(fingerprint.hash(), fingerprint);
 		}
 		return hash;
+	}
+
+	private HashMap<Integer, NFFTFingerprint> getFingerprintData(final AudioDispatcher d) {
+		return fingerprintsToHash(filterPrints(extractFingerprints(d)));
+	}
+
+	public List<int[]> synchronize(final StreamSet sliceSet) {
+		final List<AudioDispatcher> streams = new ArrayList<>(sliceSet.getStreams());
+		final HashMap<Integer, NFFTFingerprint> ref = getFingerprintData(streams.remove(0));
+		int i = 0;
+		final List<int[]> result = new ArrayList<>();
+		for (final AudioDispatcher dispatcher : streams) {
+			final HashMap<Integer, NFFTFingerprint> other = getFingerprintData(dispatcher);
+			final int timingData[] = fingerprintOffset(ref, other, i++);
+			result.add(timingData);
+		}
+		return result;
 	}
 }

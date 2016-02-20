@@ -34,6 +34,12 @@ public abstract class Slicer<T> {
 		listeners.add(listener);
 	}
 
+	public void emitDoneEvent() {
+		for (final SliceListener<T> l : listeners) {
+			l.done(this);
+		}
+	}
+
 	/**
 	 * Send a new slice result to the interested listeners
 	 *
@@ -43,12 +49,6 @@ public abstract class Slicer<T> {
 	public void emitSliceEvent(final T result) {
 		for (final SliceListener<T> l : listeners) {
 			l.onSliceEvent(result, this);
-		}
-	}
-	
-	public void emitDoneEvent() {
-		for (final SliceListener<T> l : listeners) {
-			l.done();
 		}
 	}
 

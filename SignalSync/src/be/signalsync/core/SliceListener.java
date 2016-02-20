@@ -13,6 +13,7 @@ package be.signalsync.core;
  *            be StreamSet.
  */
 public interface SliceListener<T> {
-	void onSliceEvent(T slices, Slicer<T> s);
 	void done(Slicer<T> s);
+
+	void onSliceEvent(T slices, Slicer<T> s);
 }

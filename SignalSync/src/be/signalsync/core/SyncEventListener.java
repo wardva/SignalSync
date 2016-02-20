@@ -1,5 +1,7 @@
 package be.signalsync.core;
 
+import java.util.List;
+
 /**
  * This interface has to be implemented by a class which is interested in
  * synchronization events emitted by the RealtimeStreamSync class.
@@ -8,5 +10,5 @@ package be.signalsync.core;
  *
  */
 public interface SyncEventListener {
-	void onSyncEvent(SyncData data);
+	void onSyncEvent(List<Float> data);
 }
