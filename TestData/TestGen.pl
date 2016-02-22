@@ -17,6 +17,7 @@ while(readdir($musicDir)) {
 	`sox "$outputName.wav" "$outputName\_20.wav" trim 0.020 =$length`;
 	`sox "$outputName.wav" "$outputName\_80.wav" trim 0.080 =$length`;
 	`sox "$outputName.wav" "$outputName\_300.wav" trim 0.300 =$length`;
+	`sox "$outputName.wav" "$outputName\_90.wav" trim 0.090 =$length`;
 	`sox "$outputName.wav" "$outputName\_2000.wav" trim 2.000 =$length`;
 }
 

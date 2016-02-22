@@ -50,13 +50,19 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	 * @param streamSet
 	 *            This object contains the different streams which must be
 	 *            synchronized.
+	 * @param slicer
+	 * 			  The slicer object which should be used to slice the
 	 */
-	public RealtimeStreamSync(final StreamSet streamSet) {
+	public RealtimeStreamSync(final StreamSet streamSet, StreamSetSlicer slicer) {
 		this.streamSet = streamSet;
-		listeners = new HashSet<>();
-		slicer = new StreamSetSlicer(streamSet, Config.getInt("REFRESH_INTERVAL"));
-		slicer.addEventListener(this);
-		syncer = SyncStrategy.getInstance();
+		this.listeners = new HashSet<>();
+		this.slicer = slicer;
+		this.slicer.addEventListener(this);
+		this.syncer = SyncStrategy.getInstance();
+	}
+	
+	public RealtimeStreamSync(final StreamSet streamSet) {
+		this(streamSet, new StreamSetSlicer(streamSet, Config.getInt("REFRESH_INTERVAL")));
 	}
 
 	/**
@@ -105,6 +111,8 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	public void removeEventListener(final SyncEventListener listener) {
 		listeners.remove(listener);
 	}
+	
+	
 
 	@Override
 	public void run() {

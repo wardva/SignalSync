@@ -29,11 +29,16 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		Iterator<AudioDispatcher> othersIterator = others.iterator();
 		while(timingDataIterator.hasNext() && othersIterator.hasNext()) {
 			int[] timing = timingDataIterator.next();
-			AudioDispatcher other = othersIterator.next();
-			double refined = refineMatchWithCrossCovariance(timing[0], timing[1], reference, other);
-			results.add((float) refined);
-			sliceSet.reset();
-			reference = new ArrayList<>(sliceSet.getStreams()).remove(0);
+			if(timing.length < 2) {
+				results.add(Float.NaN);
+			}
+			else {
+				AudioDispatcher other = othersIterator.next();
+				double refined = refineMatchWithCrossCovariance(timing[0], timing[1], reference, other);
+				results.add((float) refined);
+				sliceSet.reset();
+				reference = new ArrayList<>(sliceSet.getStreams()).remove(0);
+			}
 		}
 		return results;
 	}
@@ -70,56 +75,63 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		//double offsetFramesInSeconds = (referenceTime - otherTime) * fftHopSizesS;
 		double offsetStartEvent = referenceAudioStart - otherAudioStart;
 
-		//lag in seconds
-		double offsetLagInSeconds = (size - lag)/(float) samplerate;
+		// lag in seconds
+		double offsetLagInSeconds1 = (size - lag) / (float) samplerate;
+		double offsetLagInSeconds2 = lag / (float) samplerate;
+
+		// Happens when the fingerprint algorithm underestimated the real latency
+		double offsetTotalInSeconds1 = offsetStartEvent + offsetLagInSeconds1; 
 		
-		
-		double offsetTotalInSeconds = offsetStartEvent + offsetLagInSeconds;
+		// Happens when the fingerprint algorithm overestimated the real latency
+		double offsetTotalInSeconds2 = offsetStartEvent - offsetLagInSeconds2; 
 		
 		double offsetFromMatching = (referenceTime - otherTime) * fftHopSizesS;
+
+		// Calculating the difference between the fingerprint match and the
+		// covariance results.
+		double dif1 = Math.abs(offsetTotalInSeconds1 - offsetFromMatching);
+		double dif2 = Math.abs(offsetTotalInSeconds2 - offsetFromMatching);
+
+		// Check which results is the closest to the fingerprint match
+		double offsetTotalInSeconds = dif1 < dif2 ? offsetTotalInSeconds1 : offsetTotalInSeconds2;
 		
+		return offsetTotalInSeconds;
+		
+		/*
 		//lag is wrong if lag introduces a larger offset than algorithm:
-		if(Math.abs(offsetFromMatching-offsetTotalInSeconds)>= 2*fftHopSizesS) {
+ 		if(Math.abs(offsetFromMatching-offsetTotalInSeconds)>= 2*fftHopSizesS) {
 			System.err.println("Covariance lag incorrect!");
 			return offsetFromMatching;
-		}
+		} 
 		else {
 			System.err.println("Covariancelag is CORRECT!");
 			return offsetTotalInSeconds;
 		}
-		
+		*/
 	}
 	
-	private int bestCrossCovarianceLag(float[] reference, float[] target){
-		double[] covariances = crossCovariance(reference, target);
-		double maxCovariance = -10000000;
+	private int bestCrossCovarianceLag(float[] reference, float[] target) {
+		double maxCovariance = Double.NEGATIVE_INFINITY;
 		int maxCovarianceIndex = -1;
-		for(int i = 0 ; i < covariances.length;i++){
-			if(maxCovariance < covariances[i]){
-				maxCovarianceIndex = i;
-				maxCovariance = covariances[i];
+		for(int lag = 0; lag<reference.length; ++lag) {
+			double covariance = covariance(reference, target, lag);
+			if(covariance > maxCovariance) {
+				maxCovarianceIndex = lag;
+				maxCovariance = covariance;
 			}
 		}
 		return maxCovarianceIndex;
 	}
 	
-	private double[] crossCovariance(float[] reference, float[] target){
-		double[] covariances = new double[reference.length];
-		for(int i = 0 ; i < reference.length;i++){
-			covariances[i] = covariance(reference, target, i);
-		}
-		return covariances;
-	}
-	
-	private double covariance(float[] reference, float[] target,int lag){
+	private double covariance(float[] reference, float[] target,int lag) {
 		double covariance = 0.0;
-		for(int i = 0 ; i < reference.length;i++){
+		for(int i = 0 ; i < reference.length; i++){
 			int targetIndex = (i+lag)%reference.length;
 			covariance += reference[i]*target[targetIndex];
 		}
 		return covariance;
 	}
-	
+
 	private class AudioSkipper implements AudioProcessor {
 		private float[] audioFrame;
 		private double audioToSkip;

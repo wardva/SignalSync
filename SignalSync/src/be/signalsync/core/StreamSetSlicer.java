@@ -40,9 +40,9 @@ public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<
 	public StreamSetSlicer(final StreamSet streamSet, final long interval) {
 		super();
 		this.streamSet = streamSet;
-		size = streamSet.getStreams().size();
-		slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
-		collectExecutor = Executors.newSingleThreadExecutor();
+		this.size = streamSet.getStreams().size();
+		this.slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
+		this.collectExecutor = Executors.newSingleThreadExecutor();
 		for (final AudioDispatcher d : this.streamSet.getStreams()) {
 			final StreamSlicer slicer = new StreamSlicer(interval, this);
 			d.addAudioProcessor(slicer);
@@ -54,7 +54,6 @@ public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<
 	private void collectSliceSets() {
 		collectExecutor.execute(new Runnable() {
 			private final List<float[]> slices = new ArrayList<>();
-
 			@Override
 			public void run() {
 				try {
