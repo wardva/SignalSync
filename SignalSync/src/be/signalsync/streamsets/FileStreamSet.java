@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
 public class FileStreamSet extends StreamSet {
@@ -29,7 +30,7 @@ public class FileStreamSet extends StreamSet {
 		try {
 			streams.clear();
 			for(File f : files) {
-				streams.add(AudioDispatcherFactory.fromFile(f, Config.getInt("BUFFER_SIZE"), 0));
+				streams.add(AudioDispatcherFactory.fromFile(f, Config.getInt(Key.BUFFER_SIZE), 0));
 			}
 		} 
 		catch (UnsupportedAudioFileException | IOException e) {

@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 
 /**
  * This class is used for starting and managing the realtime stream
@@ -19,7 +20,7 @@ import be.signalsync.util.Config;
  *
  */
 public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
-	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
+	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 
 	/**
 	 * This object contains the different streams. This object is a runnable and
@@ -62,7 +63,7 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	}
 	
 	public RealtimeStreamSync(final StreamSet streamSet) {
-		this(streamSet, new StreamSetSlicer(streamSet, Config.getInt("REFRESH_INTERVAL")));
+		this(streamSet, new StreamSetSlicer(streamSet, Config.getInt(Key.REFRESH_INTERVAL)));
 	}
 
 	/**

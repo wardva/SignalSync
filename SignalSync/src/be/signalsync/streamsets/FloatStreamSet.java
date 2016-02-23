@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
 public class FloatStreamSet extends StreamSet {
@@ -21,10 +22,15 @@ public class FloatStreamSet extends StreamSet {
 	
 	@Override
 	public void reset() {
+		int sampleRate = Config.getInt(Key.SAMPLE_RATE);
+		int bufferSize = Config.getInt(Key.BUFFER_SIZE);
+		int stepSize = Config.getInt(Key.STEP_SIZE);
+		int overlap = bufferSize - stepSize;
+		
 		try {
 			streams.clear();
 			for(float[] streamData : data) {
-				streams.add(AudioDispatcherFactory.fromFloatArray(streamData, Config.getInt("SAMPLE_RATE"), Config.getInt("BUFFER_SIZE"), Config.getInt("BUFFER_OVERLAP")));
+				streams.add(AudioDispatcherFactory.fromFloatArray(streamData, sampleRate, bufferSize, overlap));
 			}
 		} 
 		catch (UnsupportedAudioFileException e) {

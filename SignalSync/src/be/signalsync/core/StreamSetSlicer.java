@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import be.signalsync.streamsets.FloatStreamSet;
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 
 /**
@@ -26,7 +27,7 @@ import be.tarsos.dsp.AudioDispatcher;
  *
  */
 public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<float[]> {
-	private static Logger Log = Logger.getLogger(Config.get("APPLICATION_NAME"));
+	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 	private final StreamSet streamSet;
 	private int size;
 	private final Map<Slicer<float[]>, BlockingQueue<float[]>> slicesMap;

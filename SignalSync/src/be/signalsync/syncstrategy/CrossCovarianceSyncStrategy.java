@@ -6,6 +6,7 @@ import java.util.List;
 
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -13,7 +14,7 @@ import be.tarsos.dsp.AudioProcessor;
 public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private FingerprintSyncStrategy fingerprinter;
 	
-	public CrossCovarianceSyncStrategy() {
+	protected CrossCovarianceSyncStrategy() {
 		fingerprinter = new FingerprintSyncStrategy();
 	}
 	
@@ -44,11 +45,12 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	}
 		
 	private double refineMatchWithCrossCovariance(int referenceTime, int otherTime, AudioDispatcher reference, AudioDispatcher other){
-		int samplerate = Config.getInt("SAMPLE_RATE");
-		int size = Config.getInt("BUFFER_SIZE");
+		int sampleRate = Config.getInt(Key.SAMPLE_RATE);
+		int bufferSize = Config.getInt(Key.BUFFER_SIZE);
+		int stepSize = Config.getInt(Key.STEP_SIZE);
 		
-		float sizeS = size / (float) samplerate;
-		float fftHopSizesS = Config.getInt("STEP_SIZE") / (float) samplerate;
+		float sizeS = bufferSize / (float) sampleRate;
+		float fftHopSizesS = stepSize / (float) sampleRate;
 		
 		final double referenceAudioToSkip = sizeS + (referenceTime) * fftHopSizesS;
 		final double otherAudioToSkip = sizeS + (otherTime) * fftHopSizesS;
@@ -76,8 +78,8 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		double offsetStartEvent = referenceAudioStart - otherAudioStart;
 
 		// lag in seconds
-		double offsetLagInSeconds1 = (size - lag) / (float) samplerate;
-		double offsetLagInSeconds2 = lag / (float) samplerate;
+		double offsetLagInSeconds1 = (bufferSize - lag) / (float) sampleRate;
+		double offsetLagInSeconds2 = lag / (float) sampleRate;
 
 		// Happens when the fingerprint algorithm underestimated the real latency
 		double offsetTotalInSeconds1 = offsetStartEvent + offsetLagInSeconds1; 
@@ -139,7 +141,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		
 		public AudioSkipper(double audioToSkip) {
 			this.audioToSkip = audioToSkip;
-			this.audioFrame = new float[Config.getInt("BUFFER_SIZE")];
+			this.audioFrame = new float[Config.getInt(Key.BUFFER_SIZE)];
 			this.audioStart = 0;
 		}
 		

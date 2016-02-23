@@ -7,24 +7,24 @@ import java.util.Map;
 
 import be.panako.strategy.nfft.NFFTEventPointProcessor;
 import be.panako.strategy.nfft.NFFTFingerprint;
-import be.panako.util.Key;
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 
 public class FingerprintSyncStrategy extends SyncStrategy {
 
 	private static final float MIN_FREQUENCY = 100;
 	private static final float MAX_FREQUENCY = 4000;
-	private static final int SAMPLE_RATE = Config.getInt("SAMPLE_RATE");
-	private static final int SIZE = Config.getInt("BUFFER_SIZE");
-	private static final int STEP_SIZE = Config.getInt("STEP_SIZE");
+	private static final int SAMPLE_RATE = Config.getInt(Key.SAMPLE_RATE);
+	private static final int SIZE = Config.getInt(Key.BUFFER_SIZE);
+	private static final int STEP_SIZE = Config.getInt(Key.STEP_SIZE);
 	private static final int OVERLAP = SIZE - STEP_SIZE;
+	
 
 	protected FingerprintSyncStrategy() {
-		be.panako.util.Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, Config.get("NFFT_EVENT_POINT_MIN_DISTANCE"));
-		be.panako.util.Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT,
-				Config.get("NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT"));
+		be.panako.util.Config.set(be.panako.util.Key.NFFT_EVENT_POINT_MIN_DISTANCE, Config.get(Key.NFFT_EVENT_POINT_MIN_DISTANCE));
+		be.panako.util.Config.set(be.panako.util.Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, Config.get(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT));
 	}
 
 	private List<NFFTFingerprint> extractFingerprints(final AudioDispatcher d) {
@@ -74,7 +74,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		// key is the offset, value a list of fingerprint objects. Offset = time
 		// between the two events
 		final HashMap<Integer, List<NFFTFingerprint>> mostPopularOffsets = new HashMap<Integer, List<NFFTFingerprint>>();
-		final int minimumAlignedMatchesThreshold = Config.getInt("MIN_ALIGNED_MATCHES");
+		final int minimumAlignedMatchesThreshold = Config.getInt(Key.SYNC_MIN_ALIGNED_MATCHES);
 		int maxAlignedOffsets = 0;
 		List<NFFTFingerprint> bestMatchingPairs = null;
 
