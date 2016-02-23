@@ -1,7 +1,6 @@
 package be.signalsync.app;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-
 import be.signalsync.core.SliceListener;
 import be.signalsync.core.Slicer;
 import be.signalsync.core.StreamSlicer;
@@ -13,11 +12,34 @@ import be.tarsos.dsp.io.jvm.WaveformWriter;
 
 public class SlicerApp {
 	public static void main(final String[] args) {
+		SlicerApp app = new SlicerApp();
+		
+		//String parameters: first=latency, second=frequency
+		final String directory = "./testdata/";
+		final String filenameTemplate = "Sonic Youth - Star Power_%d_%dhz";
+		
+		//trimmed latencies from the test files
+		final int[] latencies = {0, 20, 80, 90, 300, 2000}; 
+		
+		//Added latencies to the test files
+		final int[] frequencies = {0, 50, 100};
+		
+		for(int latency : latencies) {
+			for(int frequency : frequencies) {
+				String filename = String.format(filenameTemplate + ".wav", latency, frequency);
+				app.generateSlices(directory, filename);
+			}
+		}
+
+		
+	}
+	
+	private void generateSlices(String directory, String filename) {
 		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
 		final int bufferSize = Config.getInt(Key.BUFFER_SIZE);
 		final int stepSize = Config.getInt(Key.STEP_SIZE);
 		final int overlap = bufferSize - stepSize;
-
+		
 		final StreamSlicer s = new StreamSlicer(10, new SliceListener<float[]>() {
 			private int i = 0;
 
@@ -29,20 +51,19 @@ public class SlicerApp {
 			@Override
 			public void onSliceEvent(final float[] slices, final Slicer<float[]> s) {
 				try {
-					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(slices, sampleRate, bufferSize,
-							overlap);
-					final String filename = "./Slices/Sonic Youth - Star Power (2000ms delay) - slice - " + i++;
-					writer.addAudioProcessor(new WaveformWriter(writer.getFormat(), filename));
+					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(slices, sampleRate, bufferSize, overlap);
+					final String newname = "./Slices/" + filename + " - slice - " + i++ + ".wav";
+					writer.addAudioProcessor(new WaveformWriter(writer.getFormat(), newname));
 					writer.run();
-					System.out.printf("Wrote slice %s to disk.\n", filename);
+					System.out.printf("Wrote slice %s to disk.\n", newname);
 				} catch (final UnsupportedAudioFileException e) {
 					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		});
 
-		final AudioDispatcher d = AudioDispatcherFactory.fromPipe("./testdata/Sonic Youth - Star Power_2000.wav",
-				sampleRate, bufferSize, 0);
+		final AudioDispatcher d = AudioDispatcherFactory.fromPipe(directory + filename, sampleRate, bufferSize, 0);
 		d.addAudioProcessor(s);
 		d.run();
 	}

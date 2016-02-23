@@ -14,11 +14,15 @@ while(readdir($musicDir)) {
 	#Getting information
 	(grep { /Length/ } split "\n", `sox "$outputName.wav" -n stat 2>&1`)[0] =~ /(\d+\.?\d*)/;
 	my $length = $1;
+	print $outputName."\n";
+	#Cutting a little bit information
 	`sox "$outputName.wav" "$outputName\_20.wav" trim 0.020 =$length`;
 	`sox "$outputName.wav" "$outputName\_80.wav" trim 0.080 =$length`;
 	`sox "$outputName.wav" "$outputName\_300.wav" trim 0.300 =$length`;
 	`sox "$outputName.wav" "$outputName\_90.wav" trim 0.090 =$length`;
 	`sox "$outputName.wav" "$outputName\_2000.wav" trim 2.000 =$length`;
+	
+
 }
 
 closedir($musicDir);

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -40,9 +41,9 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 	public StreamSetSlicer(final StreamSet streamSet, final long interval) {
 		super();
 		this.streamSet = streamSet;
-		size = streamSet.getStreams().size();
-		slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
-		collectExecutor = Executors.newSingleThreadExecutor();
+		this.size = streamSet.getStreams().size();
+		this.slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
+		this.collectExecutor = Executors.newSingleThreadExecutor();
 		for (final AudioDispatcher d : this.streamSet.getStreams()) {
 			final StreamSlicer slicer = new StreamSlicer(interval, this);
 			d.addAudioProcessor(slicer);
@@ -59,8 +60,8 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 			public void run() {
 				try {
 					while (size > 0) {
-						for (final BlockingQueue<float[]> q : slicesMap.values()) {
-							final float[] d = q.take();
+						for (final Entry<Slicer<float[]>, BlockingQueue<float[]>> q : slicesMap.entrySet()) {
+							final float[] d = q.getValue().take();
 							slices.add(d);
 						}
 						emitSliceEvent(new ArrayList<float[]>(slices));
@@ -75,8 +76,10 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 
 	@Override
 	public void done(final Slicer<float[]> slicer) {
-		slicesMap.remove(slicer);
-		size--;
+		synchronized(slicer) {
+			slicesMap.remove(slicer);
+			size--;
+		}
 		if (size == 0) {
 			try {
 				collectExecutor.shutdown();
@@ -95,7 +98,8 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 	public void onSliceEvent(final float[] slice, final Slicer<float[]> slicer) {
 		try {
 			slicesMap.get(slicer).put(slice);
-		} catch (final InterruptedException e) {
+		}
+		catch (InterruptedException e) {
 			Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
 		}
 	}

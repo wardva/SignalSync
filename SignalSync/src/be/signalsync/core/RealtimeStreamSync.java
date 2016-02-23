@@ -45,10 +45,6 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 
 	private final SyncStrategy syncer;
 
-	public RealtimeStreamSync(final StreamSet streamSet) {
-		this(streamSet, new StreamSetSlicer(streamSet, Config.getInt(Key.REFRESH_INTERVAL)));
-	}
-
 	/**
 	 * Create a new ReatimeStreamSync object.
 	 *
@@ -58,12 +54,13 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	 * @param slicer
 	 *            The slicer object which should be used to slice the
 	 */
-	public RealtimeStreamSync(final StreamSet streamSet, final StreamSetSlicer slicer) {
+	public RealtimeStreamSync(final StreamSet streamSet) {
 		this.streamSet = streamSet;
-		listeners = new HashSet<>();
-		this.slicer = slicer;
+		this.listeners = new HashSet<>();
+		this.syncer = SyncStrategy.getInstance();
+		
+		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.REFRESH_INTERVAL));
 		this.slicer.addEventListener(this);
-		syncer = SyncStrategy.getInstance();
 	}
 
 	/**
