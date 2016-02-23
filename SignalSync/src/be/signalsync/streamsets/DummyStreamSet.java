@@ -4,7 +4,7 @@ import java.io.File;
 
 public class DummyStreamSet extends FileStreamSet {
 	private static String[] files;
-	
+
 	static {
 		final File dir = new File("./testdata");
 		final File dirFiles[] = dir.listFiles();

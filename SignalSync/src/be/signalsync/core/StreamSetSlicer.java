@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import be.signalsync.streamsets.FloatStreamSet;
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
@@ -26,7 +25,7 @@ import be.tarsos.dsp.AudioDispatcher;
  * @author Ward Van Assche
  *
  */
-public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<float[]> {
+public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListener<float[]> {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 	private final StreamSet streamSet;
 	private int size;
@@ -41,9 +40,9 @@ public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<
 	public StreamSetSlicer(final StreamSet streamSet, final long interval) {
 		super();
 		this.streamSet = streamSet;
-		this.size = streamSet.getStreams().size();
-		this.slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
-		this.collectExecutor = Executors.newSingleThreadExecutor();
+		size = streamSet.getStreams().size();
+		slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
+		collectExecutor = Executors.newSingleThreadExecutor();
 		for (final AudioDispatcher d : this.streamSet.getStreams()) {
 			final StreamSlicer slicer = new StreamSlicer(interval, this);
 			d.addAudioProcessor(slicer);
@@ -55,6 +54,7 @@ public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<
 	private void collectSliceSets() {
 		collectExecutor.execute(new Runnable() {
 			private final List<float[]> slices = new ArrayList<>();
+
 			@Override
 			public void run() {
 				try {
@@ -63,11 +63,10 @@ public class StreamSetSlicer extends Slicer<StreamSet> implements SliceListener<
 							final float[] d = q.take();
 							slices.add(d);
 						}
-						emitSliceEvent(new FloatStreamSet(slices));
+						emitSliceEvent(new ArrayList<float[]>(slices));
 						slices.clear();
 					}
-				} 
-				catch (final InterruptedException e) {
+				} catch (final InterruptedException e) {
 					Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
 				}
 			}

@@ -1,4 +1,4 @@
- package be.signalsync.streamsets;
+package be.signalsync.streamsets;
 
 public class DummySingleStreamSet extends FileStreamSet {
 	private static String[] files = new String[] { "./testdata/Sonic Youth - Star Power.wav" };

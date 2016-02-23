@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
@@ -19,7 +20,7 @@ import be.signalsync.util.Key;
  * @author Ward Van Assche
  *
  */
-public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
+public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnable {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 
 	/**
@@ -44,6 +45,9 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 
 	private final SyncStrategy syncer;
 
+	public RealtimeStreamSync(final StreamSet streamSet) {
+		this(streamSet, new StreamSetSlicer(streamSet, Config.getInt(Key.REFRESH_INTERVAL)));
+	}
 
 	/**
 	 * Create a new ReatimeStreamSync object.
@@ -52,18 +56,14 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	 *            This object contains the different streams which must be
 	 *            synchronized.
 	 * @param slicer
-	 * 			  The slicer object which should be used to slice the
+	 *            The slicer object which should be used to slice the
 	 */
-	public RealtimeStreamSync(final StreamSet streamSet, StreamSetSlicer slicer) {
+	public RealtimeStreamSync(final StreamSet streamSet, final StreamSetSlicer slicer) {
 		this.streamSet = streamSet;
-		this.listeners = new HashSet<>();
+		listeners = new HashSet<>();
 		this.slicer = slicer;
 		this.slicer.addEventListener(this);
-		this.syncer = SyncStrategy.getInstance();
-	}
-	
-	public RealtimeStreamSync(final StreamSet streamSet) {
-		this(streamSet, new StreamSetSlicer(streamSet, Config.getInt(Key.REFRESH_INTERVAL)));
+		syncer = SyncStrategy.getInstance();
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	}
 
 	@Override
-	public void done(final Slicer<StreamSet> s) {
+	public void done(final Slicer<List<float[]>> s) {
 		Log.log(Level.INFO, "Done in realtime stream sync, application should exit.");
 	}
 
@@ -98,7 +98,7 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	 * It's called each refresh interval from the scheduled threadpool.
 	 */
 	@Override
-	public void onSliceEvent(final StreamSet sliceSet, final Slicer<StreamSet> s) {
+	public void onSliceEvent(final List<float[]> sliceSet, final Slicer<List<float[]>> s) {
 		final List<Float> data = syncer.findLatencies(sliceSet);
 		emitSyncEvent(data);
 	}
@@ -112,8 +112,6 @@ public class RealtimeStreamSync implements SliceListener<StreamSet>, Runnable {
 	public void removeEventListener(final SyncEventListener listener) {
 		listeners.remove(listener);
 	}
-	
-	
 
 	@Override
 	public void run() {
