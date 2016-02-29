@@ -1,11 +1,14 @@
 package be.signalsync.syncstrategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
@@ -17,9 +20,9 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 	private final FingerprintSyncStrategy fingerprinter;
 	private static final int SAMPLE_RATE = Config.getInt(Key.SAMPLE_RATE);
-	private static final int SIZE = Config.getInt(Key.BUFFER_SIZE);
+	private static final int BUFFER_SIZE = Config.getInt(Key.BUFFER_SIZE);
 	private static final int STEP_SIZE = Config.getInt(Key.STEP_SIZE);
-	private static final int OVERLAP = SIZE - STEP_SIZE;
+	private static final int OVERLAP = BUFFER_SIZE - STEP_SIZE;
 
 	protected CrossCovarianceSyncStrategy() {
 		fingerprinter = new FingerprintSyncStrategy();
@@ -65,7 +68,22 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 				} 
 				else {
 					final float[] other = othersIterator.next();
-					final double refined = refineMatchWithCrossCovariance(timing[0], timing[1], reference, other);
+					final int numberOfTests = 10;
+					final int step = BUFFER_SIZE / numberOfTests;
+					final int fingerPrintLatency = timing[1] - timing[0];
+					final float fftHopSizesS = STEP_SIZE / (float) SAMPLE_RATE;
+					double offsetFromMatching = -fingerPrintLatency * fftHopSizesS;
+
+					Map<Double, Integer> refinedResult = new HashMap<Double, Integer>();
+					for(int position = 0; position<BUFFER_SIZE - fingerPrintLatency; position+=step) {
+						double refined = refineMatchWithCrossCovariance(position, position+fingerPrintLatency, reference, other);
+						int value = refinedResult.get(refined);
+						refinedResult.put(refined, value+1);
+						
+						//TODO: systeem bedenken om waardeloze resultaten (zelfde als fingerprint resultaat) er uit te filteren
+						//TODO: verschillende malen testen, beste resultaat er uit halen
+						System.out.println(refined);
+					}
 					results.add((float) refined);
 				}
 			}
@@ -76,16 +94,12 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		return results;
 	}
 
-	private double refineMatchWithCrossCovariance(final int referenceTime, final int otherTime, final float[] reference, final float[] other) throws UnsupportedAudioFileException {
-		AudioDispatcher refDispatcher = AudioDispatcherFactory.fromFloatArray(reference, SAMPLE_RATE, SIZE, OVERLAP);
-		AudioDispatcher otherDispatcher = AudioDispatcherFactory.fromFloatArray(other, SAMPLE_RATE, SIZE, OVERLAP);
-		
-		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
-		final int bufferSize = Config.getInt(Key.BUFFER_SIZE);
-		final int stepSize = Config.getInt(Key.STEP_SIZE);
+	private Double refineMatchWithCrossCovariance(final int referenceTime, final int otherTime, final float[] reference, final float[] other) throws UnsupportedAudioFileException {
+		AudioDispatcher refDispatcher = AudioDispatcherFactory.fromFloatArray(reference, SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
+		AudioDispatcher otherDispatcher = AudioDispatcherFactory.fromFloatArray(other, SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
 
-		final float sizeS = bufferSize / (float) sampleRate;
-		final float fftHopSizesS = stepSize / (float) sampleRate;
+		final float sizeS = BUFFER_SIZE / (float) SAMPLE_RATE;
+		final float fftHopSizesS = STEP_SIZE / (float) SAMPLE_RATE;
 
 		final double referenceAudioToSkip = sizeS + referenceTime * fftHopSizesS;
 		final double otherAudioToSkip = sizeS + otherTime * fftHopSizesS;
@@ -106,13 +120,20 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		// lags with respect to the reference audio frame.
 		final int lag = bestCrossCovarianceLag(referenceAudioFrame, otherAudioFrame);
 
+		final double offsetFromMatching = (referenceTime - otherTime) * fftHopSizesS;
+		
+		if(lag == 0) {
+			System.err.println("Lag is 0!");
+			return null;
+		}
+		
 		// double offsetFramesInSeconds = (referenceTime - otherTime) *
 		// fftHopSizesS;
 		final double offsetStartEvent = referenceAudioStart - otherAudioStart;
 
 		// lag in seconds
-		final double offsetLagInSeconds1 = (bufferSize - lag) / (float) sampleRate;
-		final double offsetLagInSeconds2 = lag / (float) sampleRate;
+		final double offsetLagInSeconds1 = (BUFFER_SIZE - lag) / (float) SAMPLE_RATE;
+		final double offsetLagInSeconds2 = lag / (float) SAMPLE_RATE;
 
 		// Happens when the fingerprint algorithm underestimated the real
 		// latency
@@ -120,8 +141,6 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 
 		// Happens when the fingerprint algorithm overestimated the real latency
 		final double offsetTotalInSeconds2 = offsetStartEvent - offsetLagInSeconds2;
-
-		final double offsetFromMatching = (referenceTime - otherTime) * fftHopSizesS;
 
 		// Calculating the difference between the fingerprint match and the
 		// covariance results.
@@ -131,18 +150,16 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		// Check which results is the closest to the fingerprint match
 		final double offsetTotalInSeconds = dif1 < dif2 ? offsetTotalInSeconds1 : offsetTotalInSeconds2;
 
-		return offsetTotalInSeconds;
-
-		 //lag is wrong if lag introduces a larger offset than algorithm:
-/*		if(Math.abs(offsetFromMatching-offsetTotalInSeconds) >= 2*fftHopSizesS) { 
+		if(Math.abs(offsetFromMatching-offsetTotalInSeconds) >= fftHopSizesS) { 
 			System.err.println("Covariance lag incorrect!");
-			return offsetFromMatching; 
+			return null; 
 		} 
 		else { 
 			System.err.println("Covariancelag is CORRECT!");
 			return offsetTotalInSeconds; 
-		}*/
+		}
 	}
+	
 	
 	private class AudioSkipper implements AudioProcessor {
 		private final float[] audioFrame;

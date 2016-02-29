@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -60,9 +59,14 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 			public void run() {
 				try {
 					while (size > 0) {
-						for (final Entry<Slicer<float[]>, BlockingQueue<float[]>> q : slicesMap.entrySet()) {
-							final float[] d = q.getValue().take();
-							slices.add(d);
+						for (final BlockingQueue<float[]> q : slicesMap.values()) {
+							synchronized(q) {
+								final float[] d = q.take();
+								if(q.isEmpty()){
+									q.notify();
+								}
+								slices.add(d);
+							}
 						}
 						emitSliceEvent(new ArrayList<float[]>(slices));
 						slices.clear();
@@ -76,21 +80,26 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 
 	@Override
 	public void done(final Slicer<float[]> slicer) {
-		synchronized(slicer) {
+		try {
+			BlockingQueue<float[]> q = slicesMap.get(slicer);
+			synchronized(q) {
+				while(!q.isEmpty()) {
+					q.wait();
+				}
+			}
 			slicesMap.remove(slicer);
 			size--;
-		}
-		if (size == 0) {
-			try {
+			if (size == 0) {
 				collectExecutor.shutdown();
 				final boolean shuttedDown = collectExecutor.awaitTermination(5, TimeUnit.SECONDS);
 				if (!shuttedDown) {
 					Log.log(Level.SEVERE, "Collector thread wasn't stopped properly. There is a problem somewhere.");
 				}
 				emitDoneEvent();
-			} catch (final InterruptedException e) {
-				Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
 			}
+		} 
+		catch (InterruptedException e) {
+			Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
 		}
 	}
 
