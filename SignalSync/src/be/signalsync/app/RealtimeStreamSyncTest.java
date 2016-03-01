@@ -9,7 +9,7 @@ import be.signalsync.streamsets.StreamSet;
 
 /**
  * Main class for testing the current SignalSync implementation.
- *
+ * 
  * @author Ward
  */
 public class RealtimeStreamSyncTest {

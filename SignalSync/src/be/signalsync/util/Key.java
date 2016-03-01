@@ -49,7 +49,18 @@ public enum Key {
 	 * The synchronization algorithm only considers the match as valid if this
 	 * number of aligning matches are found.
 	 */
-	SYNC_MIN_ALIGNED_MATCHES(7);
+	SYNC_MIN_ALIGNED_MATCHES(7),
+	
+	/**
+	 * The number of tests that should be performed each crosscovariance run.
+	 */
+	CROSS_COVARIANCE_NUMBER_OF_TESTS(10),
+	
+	/**
+	 * The number of tests that should give the same results before the result value
+	 * is retained.
+	 */
+	CROSS_COVARIANCE_THRESHOLD(1);
 
 	String defaultValue;
 
