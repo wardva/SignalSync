@@ -16,9 +16,7 @@ import be.signalsync.util.Key;
 /**
  * This class is used for starting and managing the realtime stream
  * synchronization algorithm.
- *
  * @author Ward Van Assche
- *
  */
 public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnable {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
@@ -47,12 +45,8 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 
 	/**
 	 * Create a new ReatimeStreamSync object.
-	 *
-	 * @param streamSet
-	 *            This object contains the different streams which must be
-	 *            synchronized.
-	 * @param slicer
-	 *            The slicer object which should be used to slice the
+	 * @param streamSet This object contains the different streams which must be synchronized.
+	 * @param slicer The slicer object which should be used to slice the
 	 */
 	public RealtimeStreamSync(final StreamSet streamSet) {
 		this.streamSet = streamSet;
@@ -66,13 +60,15 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	/**
 	 * Add an interested listener. The listeners will be notified when new
 	 * synchronization data is available.
-	 *
-	 * @param listener
+	 * @param listener The listener to add.
 	 */
 	public void addEventListener(final SyncEventListener listener) {
 		listeners.add(listener);
 	}
 
+	/**
+	 * This method will be called when the slicing is done.
+	 */
 	@Override
 	public void done(final Slicer<List<float[]>> s) {
 		Log.log(Level.INFO, "Done in realtime stream sync, application should exit.");
@@ -80,9 +76,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 
 	/**
 	 * Emit a synchronization event.
-	 *
-	 * @param data
-	 *            The data to send to the interested listeners.
+	 * @param data The data to send to the interested listeners.
 	 */
 	public void emitSyncEvent(final List<Float> data) {
 		for (final SyncEventListener l : listeners) {
@@ -102,9 +96,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 
 	/**
 	 * Remove a listener from the interested set.
-	 *
-	 * @param listener
-	 *            The listener to remove.
+	 * @param listener The listener to remove.
 	 */
 	public void removeEventListener(final SyncEventListener listener) {
 		listeners.remove(listener);

@@ -1,0 +1,4 @@
+Referentie					0		0s
+Opname 1 (goeie microfoon via geluidskaart) 	19125		2.391s
+Opname 2 (goeie microfoon zonder geluidskaart) 	14774		1.847s
+Opname 3 (slechte microfoon) 			32414		4.052s

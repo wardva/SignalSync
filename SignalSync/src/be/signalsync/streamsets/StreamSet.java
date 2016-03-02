@@ -21,10 +21,6 @@ public abstract class StreamSet implements Runnable {
 		streams = new ArrayList<>();
 	}
 
-	public AudioDispatcher first() {
-		return streams.get(0);
-	}
-
 	protected ExecutorService getStreamExecutor() {
 		return streamExecutor;
 	}

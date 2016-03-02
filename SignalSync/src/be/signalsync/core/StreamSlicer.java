@@ -10,7 +10,6 @@ import be.tarsos.dsp.AudioProcessor;
  * This class is a Slicer which is used to slice a single stream.
  *
  * @author Ward Van Assche
- *
  */
 public class StreamSlicer extends Slicer<float[]> implements AudioProcessor {
 	/**

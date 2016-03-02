@@ -2,6 +2,11 @@ package be.signalsync.streamsets;
 
 import java.io.File;
 
+/**
+ * A streamset containing streams from the files in the ./testdata directory.
+ * @author Ward Van Assche
+ *
+ */
 public class DummyStreamSet extends FileStreamSet {
 	private static String[] files;
 

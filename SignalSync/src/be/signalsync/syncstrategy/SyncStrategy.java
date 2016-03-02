@@ -20,9 +20,6 @@ public abstract class SyncStrategy {
 		case "crosscovariance":
 			algorithm = new CrossCovarianceSyncStrategy();
 			break;
-		case "filteredcrosscovariance":
-			algorithm = new FilteredCrossCovariance();
-			break;
 		default:
 			throw new IllegalArgumentException("Invalid latency algorithm in config file.");
 		}

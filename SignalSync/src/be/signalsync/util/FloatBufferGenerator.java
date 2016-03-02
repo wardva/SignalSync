@@ -2,10 +2,15 @@ package be.signalsync.util;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 
+/**
+ * This audioprocessor can be used to get a buffer of float values from an audio stream.
+ * The stream has to be finished before the float buffer can be retrieved.
+ * @author Ward Van Assche
+ *
+ */
 public class FloatBufferGenerator implements AudioProcessor {
 	private List<float[]> buffers;
 	private float[] totalBuf;

@@ -10,6 +10,11 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.io.jvm.WaveformWriter;
 
+/**
+ * Class used for generating slices of testdata and saving them to disk.
+ * @author Ward Van Assche
+ *
+ */
 public class SlicerApp {
 	public static void main(final String[] args) {
 		SlicerApp app = new SlicerApp();
@@ -30,8 +35,6 @@ public class SlicerApp {
 				app.generateSlices(directory, filename);
 			}
 		}
-
-		
 	}
 	
 	private void generateSlices(String directory, String filename) {

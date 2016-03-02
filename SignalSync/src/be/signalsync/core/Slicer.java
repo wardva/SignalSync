@@ -5,17 +5,10 @@ import java.util.Set;
 
 /**
  * The supertype of the different types of Slicers. This class handles the event
- * emitting and listening, and provides an abstract slice method. A slicer can
- * be used by using the slice method directly, or by using a thread or
- * threadpool. It can be useful to use a threadpool (ScheduledExecutorService)
- * when the slice method has to be called each time interval. If you use the
- * concurrent variant, you only can retrieve the slice result by registring an
- * instance of SliceListener using the addEventListener method.
- *
+ * emitting and listening.
+ * 
  * @author Ward Van Assche
- *
- * @param <T>
- *            The return type of the slice method.
+ * @param <T> The return type of the slice method.
  */
 public abstract class Slicer<T> {
 	private final Set<SliceListener<T>> listeners;
@@ -34,6 +27,9 @@ public abstract class Slicer<T> {
 		listeners.add(listener);
 	}
 
+	/**
+	 * Execute the done method of the interested listeners.
+	 */
 	public void emitDoneEvent() {
 		for (final SliceListener<T> l : listeners) {
 			l.done(this);
@@ -42,9 +38,7 @@ public abstract class Slicer<T> {
 
 	/**
 	 * Send a new slice result to the interested listeners
-	 *
-	 * @param result
-	 *            The slice result.
+	 * @param result The slice result.
 	 */
 	public void emitSliceEvent(final T result) {
 		for (final SliceListener<T> l : listeners) {
@@ -54,7 +48,6 @@ public abstract class Slicer<T> {
 
 	/**
 	 * Remove a listener from the interested set.
-	 *
 	 * @param listener
 	 */
 	public void removeEventListener(final SliceListener<T> listener) {
