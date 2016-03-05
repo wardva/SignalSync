@@ -15,25 +15,15 @@ import be.tarsos.dsp.io.jvm.WaveformWriter;
  * @author Ward Van Assche
  *
  */
-public class SlicerApp {
+public class RecordedSlicerApp {
 	public static void main(final String[] args) {
-		SlicerApp app = new SlicerApp();
+		RecordedSlicerApp app = new RecordedSlicerApp();
 		
-		//String parameters: first=latency, second=frequency
-		final String directory = "/SignalSync/testdata/";
-		final String filenameTemplate = "Sonic Youth - Star Power_%d_%dhz";
+		final String directory = "./testdata/Recorded/";
+		final String[] filenames = { "opname-reference", "opname-1", "opname-2", "opname-3" };
 		
-		//trimmed latencies from the test files
-		final int[] latencies = {0, 20, 80, 90, 300, 2000}; 
-		
-		//Added latencies to the test files
-		final int[] frequencies = {0, 50, 100};
-		
-		for(int latency : latencies) {
-			for(int frequency : frequencies) {
-				String filename = String.format(filenameTemplate + ".wav", latency, frequency);
-				app.generateSlices(directory, filename);
-			}
+		for(String filename : filenames) {
+			app.generateSlices(directory, filename + ".wav");
 		}
 	}
 	
@@ -55,7 +45,7 @@ public class SlicerApp {
 			public void onSliceEvent(final float[] slices, final Slicer<float[]> s) {
 				try {
 					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(slices, sampleRate, bufferSize, overlap);
-					final String newname = "./Slices/" + filename + " - slice - " + i++ + ".wav";
+					final String newname = "./Slices/Recorded/" + filename + " - slice - " + i++ + ".wav";
 					writer.addAudioProcessor(new WaveformWriter(writer.getFormat(), newname));
 					writer.run();
 					System.out.printf("Wrote slice %s to disk.\n", newname);

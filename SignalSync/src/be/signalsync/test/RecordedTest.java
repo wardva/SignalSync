@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,40 +20,50 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
 @RunWith(Parameterized.class)
-public class SynchronizationTest {
+public class RecordedTest {
 
-	private final static String REFERENCE_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_0_0hz.wav - slice - %d.wav";
-	private final static String OTHER_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_%d_%dhz.wav - slice - %d.wav";
-	private final static int NUMBER_OF_SLICES = 27;
+	private final static String REFERENCE_TEMPLATE = "./Slices/Recorded/opname-reference.wav - slice - %d.wav";
+	private final static String OTHER_TEMPLATE = "./Slices/Recorded/opname-%d.wav - slice - %d.wav";
+	private final static double[] LATENCIES = { -2.391D, -1.847D, -4.052D };
+	private final static String[] RECORDING_TYPE = {"goeie microfoon via geluidskaart", 
+			"goeie microfoon zonder geluidskaart", "slechte microfoon"};
 	
-	private final static int[] LATENCIES = {0, 20, 80, 90, 300, 2000 };
-	private final static int[] FREQUENCIES = {0, 50, 100 };
-	private final static double MILLIS_TO_SECONDS = 0.001;
-	private final List<float[]> streams;
-	private final double latency;
-	private final int frequency;
+	private final static int NUMBER_OF_SLICES = 27;
+	private final static int NUMBER_OF_RECORDINGS = 3;
+	
+	private List<float[]> streams;
+	private double latency;
+	private String type;
+	
+	@Before
+	public void setParameters() {
+		Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, "30");
+		Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, "30");
+		Config.set(Key.CROSS_COVARIANCE_NUMBER_OF_TESTS, "10");
+		Config.set(Key.CROSS_COVARIANCE_THRESHOLD, "1");
+	}
 
 	@Parameters
 	public static Collection<Object[]> data() {
 		final List<Object[]> params = new ArrayList<>();
-		for (final int latency : LATENCIES) {
-			for(final int frequency : FREQUENCIES) {
-				for (int i = 0; i < NUMBER_OF_SLICES; i++) {
-					final String reference = String.format(REFERENCE_TEMPLATE, i);
-					final String other = String.format(OTHER_TEMPLATE, latency, frequency, i);
-					params.add(new Object[] { reference, other, latency, frequency });
-				}
+		for(int nr = 1; nr<=NUMBER_OF_RECORDINGS; nr++) {
+			for(int j = 0; j<NUMBER_OF_SLICES; j++) {
+				final String reference = String.format(REFERENCE_TEMPLATE, j);
+				final String other = String.format(OTHER_TEMPLATE, nr, j);
+				final double latency = LATENCIES[nr-1];
+				final String type = RECORDING_TYPE[nr-1];
+				params.add(new Object[] { reference, other, latency, type });
 			}
 		}
 		return params;
 	}
 
 
-	public SynchronizationTest(final String reference, final String other, final int expectedLatency, final int currentFrequency) {
+	public RecordedTest(String reference, String other, double expectedLatency, String type) {
 		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
 		final int bufferSize = Config.getInt(Key.BUFFER_SIZE);
-		this.latency = expectedLatency * MILLIS_TO_SECONDS;
-		this.frequency = currentFrequency;
+		this.latency = expectedLatency;
+		this.type = type;
 		this.streams = new ArrayList<>();
 		
 		AudioDispatcher refDispatcher = AudioDispatcherFactory.fromPipe(reference, sampleRate, bufferSize, 0);
@@ -74,8 +85,8 @@ public class SynchronizationTest {
 		final SyncStrategy strategy = FingerprintSyncStrategy.getInstance();
 		final List<Float> latencies = strategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
-		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
-				latency, latencies.get(0), 0.00001);
+		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, type: %s", latency, type), 
+				latency, latencies.get(0), 0.002);
 	}
 
 	@Test
@@ -84,7 +95,7 @@ public class SynchronizationTest {
 		final SyncStrategy strategy = FingerprintSyncStrategy.getInstance();
 		final List<Float> latencies = strategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
-		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, frequency: %d", latency, frequency), 
+		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, type: %s", latency, type), 
 				latency, latencies.get(0), 0.032);
 	}
 }

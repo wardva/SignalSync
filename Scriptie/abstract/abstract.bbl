@@ -1,0 +1,29 @@
+\begin{thebibliography}{1}
+
+\bibitem{six2014tarsosdsp}
+Joren Six, Olmo Cornelis, and Marc Leman,
+\newblock ``{TarsosDSP, a Real-Time Audio Processing Framework in Java},''
+\newblock in {\em {Proceedings of the 53rd AES Conference (AES 53rd)}}. 2014,
+  The Audio Engineering Society.
+
+\bibitem{six2014panako}
+Joren Six and Marc Leman,
+\newblock ``{Panako - A Scalable Acoustic Fingerprinting System Handling
+  Time-Scale and Pitch Modification},''
+\newblock in {\em {Proceedings of the 15th ISMIR Conference (ISMIR 2014)}},
+  2014.
+
+\bibitem{six2015multimodal}
+Joren Six and Marc Leman,
+\newblock ``{Synchronizing Multimodal Recordings Using Audio-To-Audio
+  Alignment},''
+\newblock {\em {Journal of Multimodal User Interfaces}}, vol. 9, no. 3, pp.
+  223--229, 2015.
+
+\bibitem{Wang2003a}
+A.~L. Wang,
+\newblock ``{An industrial-strength audio search algorithm},''
+\newblock in {\em ISMIR 2003, 4th Symposium Conference on Music Information
+  Retrieval}, 2003, pp. 7--13.
+
+\end{thebibliography}

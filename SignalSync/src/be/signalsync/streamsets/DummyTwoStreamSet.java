@@ -7,8 +7,8 @@ package be.signalsync.streamsets;
  *
  */
 public class DummyTwoStreamSet extends FileStreamSet {
-	private static String[] streams = new String[] { "./testdata/opname-reference.wav",
-			"./testdata/opname-1.wav", "./testdata/opname-2.wav", "./testdata/opname-3.wav" };
+	private static String[] streams = new String[] { "./testdata/Recorded/opname-reference.wav",
+			"./testdata/Recorded/opname-1.wav", "./testdata/Recorded/opname-2.wav", "./testdata/Recorded/opname-3.wav" };
 
 	public DummyTwoStreamSet() {
 		super(streams);

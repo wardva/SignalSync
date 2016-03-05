@@ -1,0 +1,56 @@
+\chapter{Inleiding}
+
+\section{Probleemschets}
+
+Het probleem dat in deze masterproef zal worden onderzocht doet zich heel specifiek voor bij verschillende experimenten die aan het IPEM worden uitgevoerd. Het IPEM is de onderzoeksinstelling van het departement musicologie aan Universiteit Gent. De focus ligt vooral op onderzoek naar de interactie van muziek op fysieke aspecten van de mens zoals dansen, sporten en fysieke revalidatie.\cite{ipem2016}
+
+Om de relatie tussen muziek en beweging te kunnen onderzoeken worden er allerhande sensoren gebruikt die bepaalde gebeurtenissen omzetten in analyseerbare data. Een mogelijk experiment (puur imaginair) kan bijvoorbeeld gebruik maken van een videocamera om een persoon te filmen en verschillende accelerometers om de bewegingen van de persoon te detecteren. Er wordt ook muziek afgespeeld zodat men met behulp van de videobeelden en de data van de accelerometers kan analyseren hoe de persoon reageert op de afgespeelde muziek.
+
+Om het zojuist beschreven experiment verder te onderzoeken moeten er minstens drie datastromen worden geanalyseerd: de videobeelden, de data van de accelerometer(s), en de afgespeelde audio. Een probleem dat zich hierbij voordoet is de synchronisatie van deze verschillende datastromen. Om een goede analyse mogelijk te maken is het zeer gewenst dat men exact weet (tot op de milliseconde nauwkeurig) wanneer een bepaalde gebeurtenis in een datastroom zich heeft voorgedaan, zodat men deze gebeurtenis kan vergelijken met de gebeurtenissen in de andere datastromen.
+
+Bij het IPEM maakt men gebruik van een systeem dat gebruikt maakt van audio opnames om de datastromen te kunnen synchroniserenn. Het principe werkt als volgt: men zorgt ervoor dat elke datastroom vergezeld wordt met een perfect gesynchroniseerde audiostroom, afkomstig van een opname van het omgevingsgeluid. In het voorgaande experiment is dit eenvoudig te verwezenlijken. Bij de videobeelden kan automatisch een audiospoor mee worden opgenomen. De accelerometer kan geplaatst worden op een microcontroller (bijvoorbeeld een Arduino), hierop kan een klein microfoontje geplaatst worden. Aangezien beide componenten zo dicht op de hardware geplaatst zijn is de latency tussen beide datastromen te verwaarlozen. 
+%TODO bewijzen dat dit te verwaarlozen is.
+De afgespeelde audio kan gebruikt worden als referentie, aangezien dit uiteraard al een perfecte weergave is van het omgevingsgeluid. Na het uitvoeren van het experiment beschikt men dus over drie datastromen, waarbij elke datastroom vergezeld is van een quasi perfect synchrone opname van het omgevingsgeluid (dat in de ruimte waar het experiment is uitgevoerd voor elke opname gelijk is). Het probleem van de synchronizatie van de verschillende datastromen kan bijgevolg gereduceerd worden tot het synchroniseren van de verschillende audiostromen.
+
+Door de typisch eigenschappen van geluid is het helemaal niet zo moeilijk om verschillende audiostromen te synchroniseren. Bij het IPEM heeft men een bepaald systeem ontwikkeld dat dergelijke synchronisatie mogelijk maakt met behulp van \textit{accoustic fingerprinting}. Accoustic fingerprinting is vooral bekend van de enorm populaire smartphone app voor muziek identificatie: \textit{Shazam}. Hierbij wordt dit principe gebruikt om een kort stukje opgenomen audio te vergelijken met een gigantische database van akoestische fingerprints.\footnote{In deze scriptie wordt er verondersteld dat het principe achter accoustic fingerprinting gekend is bij de lezer. Een grondige theoretische bespreking van dit algoritme is te vinden in de paper van \citeauthor{Wang2003a}, één van de oprichters van Shazam ltd. De implementatie die bij het IPEM gebruikt wordt voor de synchronisatie van de audiostromen wordt verderop in deze scriptie besproken.} Na het uitvoeren van het fingerprinting algoritme is het mogelijk om een bijkomend algoritme uit te voeren namelijk: synchronisatie met \textit{kruiscovariantie}. Dit algoritme zorgt er voor dat de synchronisatie een veel nauwkeuriger resultaat oplevert.
+
+Ondanks het feit dat er al een systeem bestaat om datastromen te synchroniseren zijn er in de praktijk toch nog heel wat beperkingen. De grootste beperking is dat het synchronisatieproces pas kan worden uitgevoerd wanneer het experiment is afgelopen, en dit volledig handmatig. De opgenomen audiobestanden moet worden verzameld op een computer, vervolgens kan met behulp van de audiobestanden de latency worden berekend tussen elke datastroom worden berekend. Vervolgens kunnen de datastromen worden gesynchroniseerd. Voor de musicologen die deze experimenten uitvoeren is deze werkwijze veel te omslachtig. Daarom is een eenvoudigere realtime systeem om de synchronisatie uit te voeren zeer gewenst.
+
+Een ander probleem is iets vager en minder duidelijk te omschrijven. De resultaten van het kruiscovariantie algoritme bevatten soms afwijkingen die moeilijk te verklaren zijn. De precieze oorzaak hiervan, en hoe dit kan worden opgelost zal ook worden onderzocht. Ook is het kruiscovariantie algoritme in vergelijking met het accoustic fingerprinting algoritme véél gevoeliger voor storingen en ruis, veroorzaakt door slechte opnames. Aangezien de opnameapparatuur (zeker op microcontrollers) bij de uit te voeren experimenten vaak van slechte kwaliteit is, is het belangrijk om de algoritmes robuust genoeg te maken zodat ze hier niet over struikelen.
+
+\section{Doel van het onderzoek}
+
+Dit onderzoek wil drie zaken bereiken: 
+
+\subsubsection{Optimalisatie van algoritmes}
+Het testen en bug-vrij maken van de synchronisatiealgoritmes. Ook moeten ze eventueel worden aangepast zodat ze in een realtime implementatie gebruikt kunnen worden. Het beoogde doel is dat de algoritmes in staat moeten kunnen zijn om audio opgenomen met een basic microfoon op een microcontroller te synchroniseren met een nauwkeurigheid van minstens 1 milliseconde.
+
+\subsubsection{Implementatie van een Java bibliotheek}
+Het schrijven van een bibliotheek in Java die gebruik maakt van deze algoritmes om audiostromen te synchroniseren. Deze bibliotheek moet kunnen worden aangeroepen vanuit eender welke andere Java applicatie, en moet periodiek de huidige latency per audiostroom teruggeven.
+
+\subsubsection{Implementatie van een MAX/MSP module}
+De implementatie van een module in MAX/MSP\footnote{Cycling ‘74 Max/MSP is een softwarepakket en een visuele programmeertaal waarmee audio, video en multimedia kan worden verwerkt met behulp van onafhankelijke modules. Deze modules kunnen met elkaar worden om zo complexe zaken te bereiken. Buiten de standaard meegeleverde modules is het ook mogelijk om zelf modules te schrijven.\cite{maxmsp2016}} die realtime synchronisatie mogelijk moet maken via een interface die bruikbaar is voor musicologen/onderzoekers met een beperkte informatica achtergrond.
+
+Deze module moet in staat zijn om verschillende datastromen als input binnen te krijgen, de synchronisatiebibliotheek aan te roepen, en de gesynchroniseerde datastromen als output terug te geven. Een andere Max module kan er dan voor zorgen dat deze data wordt weggeschreven naar een WAVE-bestand.
+
+\section{Huidige implementatie}
+
+Om het vervolg van deze scriptie goed te kunnen begrijpen is een introductie tot de bestaande toepassingen waarop wordt verder gebouwd, noodzakelijk. De twee belangrijkste bibliotheken zijn TarsosDSP en Panako. 
+
+\subsection{TarsosDSP}
+TarsosDSP\footnote{Deze bibliotheek is veel uitgebreider dan wat hier wordt geschreven. Deze paper geeft hierover meer informatie: \url{http://0110.be/files/attachments/415/aes53_tarsos_dsp.pdf}\cite{six2014tarsosdsp}} is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM door \citefullauthor{six2014tarsosdsp}. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid.
+
+TarsosDSP werkt met een zeer eenvoudige \textit{processing pipeline}. We kunnen zelf een processing pipeline creëren door een instantie aan te maken van de klasse \texttt{AudioDispatcher}. Het aanmaken van een \texttt{AudioDispatcher} is het eenvoudigst met behulp van de klasse \texttt{AudioDispatcherFactory}. Deze Factory klasse voorziet in statische methodes om een \texttt{AudioDispatcher} aan te maken met als input een audiobestand, een array van \texttt{float} waarden, of de data van een microfoon. Aan deze pipeline kunnen vervolgens verschillende \texttt{AudioProcessors} worden toegevoegd. Een \texttt{AudioProcessors} moet verplicht de \texttt{process} en \texttt{processingFinished} methodes implementeren. De \texttt{process} methode heeft als parameter een object van de klasse \texttt{AudioEvent}. Dit object bevat een audio blok, voorgesteld als \texttt{float} array met waarden tussen -1.0 en 1.0. De grootte van dit blokje audio, en de mate van overlapping tussen de opeenvolgende blokjes audio is instelbaar. Verder bevat het AudioEvent object ook nog andere metadata zoals onder meer een \textit{timestamp}.
+
+Afhankelijk van de implementatie van de \texttt{process} methode kan de audiostroom op een bepaalde manier verwerkt, geanalyseerd of gewijzigd worden.
+
+\subsection{Panako}
+
+Panako\footnote{Ook deze bibliotheek wordt meer uitvoerig besproken in een paper geschreven door de auteurs: \url{http://0110.be/files/attachments/415/ismir_2014_panako_fingerprinter.pdf}\cite{six2014panako}} is ook een Java bibliotheek, samen met enkele applicaties die deze bibliotheek aanroepen. Panako is ook ontwikkeld aan het IPEM door \citefullauthor{six2014panako} en maakt gebruik van TarsosDSP als onderliggende technologie voor de verwerking van de audio.
+
+Panako bevat een open-source implementatie van het accoustic fingerprinting algoritme beschreven in de paper van \citefullauthor{Wang2003a}. Dit algoritme is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of de audio sneller of trager is afgespeeld toch gedetecteerd kan worden.
+
+De bibliotheek bevat verschillende applicaties die gebruik maken van dit algoritme. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters.
+
+Er is ook een applicatie beschikbaar om verschillende geluidsfragmenten te synchroniseren. Deze applicatie maakt buiten van het accoustic fingerprinting algoritme ook nog gebruik van het kruiscovariantie algoritme, dit is ook geïmplementeerd in Panako. Op welk principe dat dit algoritme gebaseerd is, en hoe dit geïmplementeerd is wordt verder in deze scriptie besproken. Wanneer de latency tussen de verschillende fragmenten is gedetecteerd genereert de applicatie een shell script dat met behulp van FFmpeg\footnote{Dit is een command-line applicatie voor het opnemen, verwerken en streamen van audio en video. Meer informatie: \url{https://ffmpeg.org/}} stukjes van de geluidsbestanden wegknipt of stilte toevoegt. Het resultaat is dat na het uitvoeren van het script de geluidsbestanden gesynchroniseerd zijn.
+

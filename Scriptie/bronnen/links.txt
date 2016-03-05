@@ -1,0 +1,4 @@
+https://xiph.org/video/vid1.shtml
+http://soundfile.sapp.org/doc/WaveFormat/
+http://0110.be/posts/TarsosDSP_PureData_or_MAX_MSP_external
+http://0110.be/releases/TeensyDAQ/TeensyDAQ-1.1/

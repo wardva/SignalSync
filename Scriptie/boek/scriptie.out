@@ -1,0 +1,26 @@
+\BOOKMARK [0][-]{section*.2}{Extended abstract}{}% 1
+\BOOKMARK [0][-]{chapter*.4}{Gebruikte afkortingen}{}% 2
+\BOOKMARK [0][-]{chapter.1}{Inleiding}{}% 3
+\BOOKMARK [1][-]{section.1.1}{Probleemschets}{chapter.1}% 4
+\BOOKMARK [1][-]{section.1.2}{Doel van het onderzoek}{chapter.1}% 5
+\BOOKMARK [1][-]{section.1.3}{Huidige implementatie}{chapter.1}% 6
+\BOOKMARK [2][-]{subsection.1.3.1}{TarsosDSP}{section.1.3}% 7
+\BOOKMARK [2][-]{subsection.1.3.2}{Panako}{section.1.3}% 8
+\BOOKMARK [0][-]{chapter.2}{Applicatie-ontwerp}{}% 9
+\BOOKMARK [0][-]{chapter.3}{Accoustic fingerprinting}{}% 10
+\BOOKMARK [1][-]{section.3.1}{Optimalisaties}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.2}{Parameterisatie}{chapter.3}% 12
+\BOOKMARK [1][-]{section.3.3}{Uitgevoerde testen}{chapter.3}% 13
+\BOOKMARK [0][-]{chapter.4}{Kruiscovariantie}{}% 14
+\BOOKMARK [1][-]{section.4.1}{Optimalisaties}{chapter.4}% 15
+\BOOKMARK [1][-]{section.4.2}{Parameterisatie}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.3}{Uitgevoerde testen}{chapter.4}% 17
+\BOOKMARK [0][-]{chapter.5}{Implementatie in MAX/MSP}{}% 18
+\BOOKMARK [0][-]{chapter.6}{Conclusie}{}% 19
+\BOOKMARK [0][-]{appendix*.8}{Referentielijst}{}% 20
+\BOOKMARK [0][-]{appendix*.9}{Lijst van figuren}{}% 21
+\BOOKMARK [0][-]{appendix*.9}{Lijst van figuren}{}% 22
+\BOOKMARK [0][-]{appendix*.10}{Lijst van tabellen}{}% 23
+\BOOKMARK [0][-]{appendix*.10}{Lijst van tabellen}{}% 24
+\BOOKMARK [0][-]{appendix*.11}{Lijst van codefragmenten}{}% 25
+\BOOKMARK [0][-]{appendix*.11}{Lijst van codefragmenten}{}% 26

@@ -1,6 +1,0 @@
-\select@language {dutch}
-\contentsline {chapter}{\numberline {1}Dit is een hoofdstuk}{1}
-\contentsline {section}{\numberline {1.1}Sectie}{1}
-\contentsline {section}{\numberline {1.2}Nog een sectie}{1}
-\contentsline {subsection}{\numberline {1.2.1}Een subsectie}{1}
-\contentsline {section}{\numberline {1.3}En nu de nuttige dingen}{2}
