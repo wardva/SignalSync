@@ -1,0 +1,3 @@
+ffmpeg -f lavfi -i aevalsrc=0:d=0.08001065 -i  "C:\Users\Ward\Documents\Masterproef\Git\SignalSync\testdata\Clean\Sonic Youth - Star Power_80_0hz.wav"  -filter_complex "[0:0] [1:0] concat=n=2:v=0:a=1 [a]" -map [a] "synced_Sonic Youth - Star Power_80_0hz.wav"
+ffmpeg -f lavfi -i aevalsrc=0:d=0.288 -i  "C:\Users\Ward\Documents\Masterproef\Git\SignalSync\testdata\Clean\Sonic Youth - Star Power_300_0hz.wav"  -filter_complex "[0:0] [1:0] concat=n=2:v=0:a=1 [a]" -map [a] "synced_Sonic Youth - Star Power_300_0hz.wav"
+ffmpeg -f lavfi -i aevalsrc=0:d=2.0000088 -i  "C:\Users\Ward\Documents\Masterproef\Git\SignalSync\testdata\Clean\Sonic Youth - Star Power_2000_0hz.wav"  -filter_complex "[0:0] [1:0] concat=n=2:v=0:a=1 [a]" -map [a] "synced_Sonic Youth - Star Power_2000_0hz.wav"

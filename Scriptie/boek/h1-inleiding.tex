@@ -1,56 +1,169 @@
-\chapter{Inleiding}
+\chapter{Introductie}
 
 \section{Probleemschets}
 
-Het probleem dat in deze masterproef zal worden onderzocht doet zich heel specifiek voor bij verschillende experimenten die aan het IPEM worden uitgevoerd. Het IPEM is de onderzoeksinstelling van het departement musicologie aan Universiteit Gent. De focus ligt vooral op onderzoek naar de interactie van muziek op fysieke aspecten van de mens zoals dansen, sporten en fysieke revalidatie.\cite{ipem2016}
+Het probleem dat in deze masterproef zal worden onderzocht doet zich heel specifiek voor bij verschillende experimenten die aan het IPEM worden uitgevoerd. Dit is de onderzoeksinstelling van het departement musicologie aan Universiteit Gent. De focus van het IPEM ligt vooral op onderzoek naar de interactie van muziek op fysieke aspecten van de mens zoals dansen, sporten en fysieke revalidatie.\cite{ipem2016}
 
-Om de relatie tussen muziek en beweging te kunnen onderzoeken worden er allerhande sensoren gebruikt die bepaalde gebeurtenissen omzetten in analyseerbare data. Een mogelijk experiment (puur imaginair) kan bijvoorbeeld gebruik maken van een videocamera om een persoon te filmen en verschillende accelerometers om de bewegingen van de persoon te detecteren. Er wordt ook muziek afgespeeld zodat men met behulp van de videobeelden en de data van de accelerometers kan analyseren hoe de persoon reageert op de afgespeelde muziek.
+Om de relatie tussen muziek en beweging te onderzoeken worden er tal van experimenten uitgevoerd. Deze experimenten maken gebruik van allerhande sensoren om bepaalde gebeurtenissen omzetten in analyseerbare data. 
 
-Om het zojuist beschreven experiment verder te onderzoeken moeten er minstens drie datastromen worden geanalyseerd: de videobeelden, de data van de accelerometer(s), en de afgespeelde audio. Een probleem dat zich hierbij voordoet is de synchronisatie van deze verschillende datastromen. Om een goede analyse mogelijk te maken is het zeer gewenst dat men exact weet (tot op de milliseconde nauwkeurig) wanneer een bepaalde gebeurtenis in een datastroom zich heeft voorgedaan, zodat men deze gebeurtenis kan vergelijken met de gebeurtenissen in de andere datastromen.
+Bij een klassieke experiment wordt onderzocht wat de invloed is van muziek op de lichamelijke activiteit van een persoon. Alle bewegingen worden geregistreerd met een videocamera en verschillende accelerometers.
 
-Bij het IPEM maakt men gebruik van een systeem dat gebruikt maakt van audio opnames om de datastromen te kunnen synchroniserenn. Het principe werkt als volgt: men zorgt ervoor dat elke datastroom vergezeld wordt met een perfect gesynchroniseerde audiostroom, afkomstig van een opname van het omgevingsgeluid. In het voorgaande experiment is dit eenvoudig te verwezenlijken. Bij de videobeelden kan automatisch een audiospoor mee worden opgenomen. De accelerometer kan geplaatst worden op een microcontroller (bijvoorbeeld een Arduino), hierop kan een klein microfoontje geplaatst worden. Aangezien beide componenten zo dicht op de hardware geplaatst zijn is de latency tussen beide datastromen te verwaarlozen. 
-%TODO bewijzen dat dit te verwaarlozen is.
-De afgespeelde audio kan gebruikt worden als referentie, aangezien dit uiteraard al een perfecte weergave is van het omgevingsgeluid. Na het uitvoeren van het experiment beschikt men dus over drie datastromen, waarbij elke datastroom vergezeld is van een quasi perfect synchrone opname van het omgevingsgeluid (dat in de ruimte waar het experiment is uitgevoerd voor elke opname gelijk is). Het probleem van de synchronizatie van de verschillende datastromen kan bijgevolg gereduceerd worden tot het synchroniseren van de verschillende audiostromen.
+Hierbij moeten minstens drie datastromen worden geanalyseerd: de videobeelden, de data van de accelerometer(s) en de afgespeelde audio. Een  uitdaging hierbij is de synchronisatie van deze verschillende datastreams. Om een goede analyse mogelijk te maken is het zeer gewenst dat men exact weet (tot op de milliseconde nauwkeurig) wanneer een bepaalde gebeurtenis in een datastroom zich heeft voorgedaan, zodat men deze gebeurtenis kan vergelijken met de gebeurtenissen in de andere datastromen. Door de verschillen in samplefrequentie en door de verschillende vertragingen van elke opname is dit zeker geen sinecure. \cite{six2015multimodal}
 
-Door de typisch eigenschappen van geluid is het helemaal niet zo moeilijk om verschillende audiostromen te synchroniseren. Bij het IPEM heeft men een bepaald systeem ontwikkeld dat dergelijke synchronisatie mogelijk maakt met behulp van \textit{accoustic fingerprinting}. Accoustic fingerprinting is vooral bekend van de enorm populaire smartphone app voor muziek identificatie: \textit{Shazam}. Hierbij wordt dit principe gebruikt om een kort stukje opgenomen audio te vergelijken met een gigantische database van akoestische fingerprints.\footnote{In deze scriptie wordt er verondersteld dat het principe achter accoustic fingerprinting gekend is bij de lezer. Een grondige theoretische bespreking van dit algoritme is te vinden in de paper van \citeauthor{Wang2003a}, één van de oprichters van Shazam ltd. De implementatie die bij het IPEM gebruikt wordt voor de synchronisatie van de audiostromen wordt verderop in deze scriptie besproken.} Na het uitvoeren van het fingerprinting algoritme is het mogelijk om een bijkomend algoritme uit te voeren namelijk: synchronisatie met \textit{kruiscovariantie}. Dit algoritme zorgt er voor dat de synchronisatie een veel nauwkeuriger resultaat oplevert.
+Bij het IPEM maakt men gebruik van een systeem waarbij audio opnames het synchronisatieproces vereenvoudigen. Het principe werkt als volgt: men zorgt ervoor dat elke datastroom vergezeld van een perfect gesynchroniseerde audiostroom, afkomstig van een opname van het omgevingsgeluid. In het voorgaande experiment is dit eenvoudig te verwezenlijken. Bij de videobeelden kan automatisch een audiospoor mee worden opgenomen. De accelerometer kan geplaatst worden op een microcontroller vergezeld van een kleine microfoon.. Aangezien beide componenten zo dicht op de hardware geplaatst zijn is de latency tussen beide datastromen te verwaarlozen.\footnote{De latency van de audioverwerking op een \textit{Axoloti} microcontroller is vastgesteld op 0.333 ms. Meer informatie: \url{http://www.axoloti.com/more-info/latency/}} De afgespeelde audio kan gebruikt worden als referentie, aangezien dit uiteraard al een perfecte weergave is van het omgevingsgeluid. 
 
-Ondanks het feit dat er al een systeem bestaat om datastromen te synchroniseren zijn er in de praktijk toch nog heel wat beperkingen. De grootste beperking is dat het synchronisatieproces pas kan worden uitgevoerd wanneer het experiment is afgelopen, en dit volledig handmatig. De opgenomen audiobestanden moet worden verzameld op een computer, vervolgens kan met behulp van de audiobestanden de latency worden berekend tussen elke datastroom worden berekend. Vervolgens kunnen de datastromen worden gesynchroniseerd. Voor de musicologen die deze experimenten uitvoeren is deze werkwijze veel te omslachtig. Daarom is een eenvoudigere realtime systeem om de synchronisatie uit te voeren zeer gewenst.
+Na het uitvoeren van het experiment beschikt men dus over drie datastromen, waarbij we voor elke datastroom ook beschikken over een quasi perfect synchrone opname van het omgevingsgeluid. Aangezien het experiment in één ruimte is uitgevoerd zijn de verschillende opnames van het omgevingsgeluid zeer gelijkend. Het probleem van de synchronisatie van de verschillende datastromen kan bijgevolg gereduceerd worden tot het synchroniseren van de verschillende audiostromen.
 
-Een ander probleem is iets vager en minder duidelijk te omschrijven. De resultaten van het kruiscovariantie algoritme bevatten soms afwijkingen die moeilijk te verklaren zijn. De precieze oorzaak hiervan, en hoe dit kan worden opgelost zal ook worden onderzocht. Ook is het kruiscovariantie algoritme in vergelijking met het accoustic fingerprinting algoritme véél gevoeliger voor storingen en ruis, veroorzaakt door slechte opnames. Aangezien de opnameapparatuur (zeker op microcontrollers) bij de uit te voeren experimenten vaak van slechte kwaliteit is, is het belangrijk om de algoritmes robuust genoeg te maken zodat ze hier niet over struikelen.
+Door de typisch eigenschappen van geluid is het helemaal niet zo moeilijk om verschillende audiostromen te synchroniseren. Bij het IPEM heeft men een systeem ontwikkeld dat in staat is om verschillende audiostreams te synchroniseren. Dit systeem maakt gebruik van \textit{accoustic fingerprinting} en synchronisatie met \textit{kruiscovariantie}.
 
-\section{Doel van het onderzoek}
+Dit systeem heeft in de praktijk echter heel wat beperkingen. De grootste beperking is dat het synchronisatieproces pas kan worden uitgevoerd wanneer het experiment is afgelopen, en dit volledig handmatig. De opgenomen audiobestanden moet worden verzameld op een computer, vervolgens kan met behulp van de audiobestanden de latency van elke datastroom worden berekend. Vervolgens kunnen de datastromen worden gesynchroniseerd. Voor de musicologen die deze experimenten uitvoeren is deze werkwijze veel te omslachtig. Daarom is een eenvoudiger realtime systeem om de synchronisatie uit te voeren zeer gewenst.
+
+\begin{figure}[!h]
+	\captionsetup{width=0.7\textwidth}
+	\centering
+	\includegraphics[width=0.5\textwidth]{syncsinc.png}
+	\caption{Huidige werkwijze om streams te synchroniseren: Een drag and drop interface waarin de opgenomen fragmenten gesleept kunnen worden na afloop van het experiment. Vervolgens wordt de latency berekend.}
+\end{figure}
+
+
+Een ander probleem is iets vager en minder duidelijk te omschrijven. De resultaten van het kruiscovariantie algoritme bevatten soms afwijkingen die moeilijk te verklaren zijn. De precieze oorzaak hiervan, en hoe dit kan worden opgelost zal ook worden onderzocht. Ook is het kruiscovariantie algoritme in vergelijking met het accoustic fingerprinting algoritme véél gevoeliger voor storingen en ruis, veroorzaakt door slechte opnames. Aangezien de opnameapparatuur (zeker op microcontrollers) bij de uit te voeren experimenten vaak van slechte kwaliteit is, is het belangrijk om de algoritmes voldoende robuust te maken zodat ze hier niet over struikelen.\\
+
+\section{Evaluatiecriteria}
+\label{evaluatie-criteria}
+
+Uit de probleemcontext wordt duidelijk dat het te ontwikkelen systeem moet voldoen aan heel wat vereisten. In deze sectie zullen de vereisten eenduidig geformuleerd en besproken worden zodat het mogelijk is om er in verdere analyses en testen naar te verwijzen.  
+
+\subsubsection{Realtime synchronisatie}
+
+Een cruciale vereiste is dat de toepassing in \textit{realtime} moet kunnen werken. Concreet wil dit zeggen dat het tijdens en van het experiment mogelijk moet zijn om alle latencies van de streams op te vragen. 
+
+Het is moeilijk om het opvragen van deze gegevens echt in realtime mogelijk te maken. Veel algoritmes vereisen een bepaalde hoeveelheid data om berekening op uit te voeren voordat ze tot een resultaat komen. De streams moeten dus gebufferd worden. Dit zorgt er in feite voor dat het systeem niet meer realtime is in de enge zin van het woord. Een buffer met als maximumgrootte de hoeveelheid data verzameld in tien seconden lijkt ons aanvaardbaar.
+
+\subsubsection{Detecteren van gedropte data}
+
+De beperkte resources van een microcontroller kan voor problemen zorgen bij het verwerken van streams. Zo kan het gebeuren dat er gegevens van streams verloren gaan. Bij de synchronisatie van streams met gedropte data leidt dit probleem voor een plotse verhoging van de latency. Hoewel het onmogelijk is om de gedropte data te reconstrueren is het wel gewenst dat de wijziging in latency gedetecteerd wordt en dat hier mee wordt rekening gehouden bij de verdere verwerking.
+
+\subsubsection{Detecteren van drift}
+
+Elke stream heeft een bepaalde samplefrequentie. Het is belangrijk dat de samplefrequentie gekend is om de gegevens correct en precies te kunnen verwerken. Het kan echter voorvallen dat de samplefrequentie bij de verwerking op microcontrollers minder nauwkeurig gekend is. Een stream waarbij de samplefrequentie 1Hz afwijkt van de theoretische waarde zal na 60 seconden een latency hebben opgebouwd van 60 samples. Bij een samplefrequentie van 8000 Hz komt dit overeen met 7,5 ms\footnote{Berekening: $ 60 / 8000 Hz = 0.0075 s = 7.5 ms $}. Dit probleem mag in ons systeem zeker niet worden verwaarloosd. 
+
+\section{Bestaande methoden}
+
+%TODO bespreken van de evaluatiecriteria
+Er bestaan verschillende methoden om datastreams te synchroniseren. Welke methode te verkiezen is hangt volledig af van de toepassing.
+
+In deze sectie komen de belangrijkste methoden aan bod en zullen ze worden getoetst aan de eerder beschreven evaluatiecriteria. 
+
+\subsection{Event-gebaseerde synchronisatie}
+
+Deze methode wordt beschreven in \cite{bannach2009automatic, six2015multimodal} en is een eenvoudige, intuïtieve methode om synchronisatie van verschillende datastreams uit te voeren. De synchronisatie gebeurt aan de hand van markeringen die in de verschillende streams worden aangebracht. In audiostreams kan een kort en krachtig geluid een markering plaatsen. Een lichtflits kan dit realiseren in videostreams. De latency wordt bepaald door het verschil te berekenen tussen de tijdspositie van de markeringen in de streams. De synchronisatie kan vervolgens zowel manueel als softwarematig worden uitgevoerd.
+
+Deze methode kent heel wat beperkingen. Zo vormt bij de synchronisatie van een groot aantal streams de schaalbaarheid een probleem. Ook wanneer er in een stream samples gedropt worden of er drift ontstaat, leidt dit tot foutieve synchronisatie. De methode kan deze twee problemen niet detecteren tot er opnieuw markeringen worden aangebracht en de streams gesynchroniseerd worden. Verder laten ook niet alle sensoren toe om markeringen aan te brengen: zo is de synchronisatie van een ECG onmogelijk met deze methode.
+
+Het manueel aanwenden van deze methode blijkt derhalve in een realtime situatie niet mogelijk.  Wanneer de synchronisatie echter door software wordt uitgevoerd is deze methode wel in realtime bruikbaar. In dat geval moet er per tijdsinterval een markering worden aangebracht om de problemen veroorzaakt door drift en gedropte samples te overbruggen.
+
+\subsection{Synchronisatie met een kloksignaal}
+
+Artikel \cite{jaimovich2010synchronization} beschrijft een methode waarbij door een kloksignaal realtime streams van verschillende soorten toestellen worden gesynchroniseerd. Hiervoor gebruikt men standaard audio en video synchronisatieprotocollen. Elk toestel kan gebruik maken van verschillende samplefrequenties en communicatieprotocollen.
+
+De methode maakt gebruik van een \textit{master time code} signaal dat verstuurd wordt naar elk toestel. Dit laat het realtime analyseren van elke stream toe. Bij deze analyse kan vervolgens meteen de samplefrequentie en latency bepaald worden. 
+
+Een groot nadeel van dit systeem is dat elk toestel een kloksignaal als input moet kunnen toelaten en verwerken. In het geval van de verwerking van videobeelden kan deze methode enkel gebruikt worden met zeer dure videocamera's. Bij goedkopere camera's (zoals's webcams) zal men op zoek moeten gaan naar een alternatief. \cite{six2015multimodal}
+
+
+
+\subsection{Dynamic timewarping}
+
+Dynamic timewarping (DTW) is een techniek die gebruikt wordt voor het detecteren van gelijkenissen tussen twee tijdreeksen\footnote{Een tijdreeks is een sequentie van opeenvolgende datapunten over een continu tijdsinterval, waarbij de datapunten elkaar na telkens hetzelfde interval opvolgen.}. Om een optimaal resultaat te bekomen wordt gebruikt gemaakt van een padkost van de ene tijdreeks naar de andere. Hierbij kunnen de tijdreeksen worden kromgetrokken door ze niet-lineair uit te rekken of in te krimpen ten opzichte van de tijdas \cite{salvador2007toward}. De minimale kost kan in kwadratische tijd berekend worden door gebruik te maken van dynamisch programmeren \cite{dixon2005live}. DTW is een veelgebruikte techniek in domeinen zoals spraakherkenning, bio-informatica, data-mining, etc \cite{ratanamahatana2004everything}.
+
+Aangezien DTW het toelaat om tijdreeksen krom te trekken is het gewenst dat zowel het verleden als de toekomst van de streams voor het algoritme toegankelijk is. Een uitbreiding op dit algoritme beschreven door \citeauthor{dixon2005live} laat toe één tijdreeks in realtime te streamen mits de andere stream op voorhand is gekend \cite{dixon2005live}. Toch houdt deze uitbreiding geen oplossing in voor het gestelde probleem. Alle streams komen immers in realtime toe en we willen zo snel mogelijk de latency tussen de streams achterhalen.
+
+Het bufferen van de binnenkomende streams en vervolgens het DTW algoritme uit te voeren op de buffers leek een mogelijke manier om dit probleem te omzeilen.
+
+Of het algoritme na deze aanpassing voldoet aan onze vereisten diende een klein experiment uit te wijzen. De resultaten hiervan zijn te vinden in appendix A: \nameref{appendix-a}.
+
+Het experiment toonde evenwel aan dat DTW niet bruikbaar is voor de realtime stream synchronisatie. De resultaten bleken niet nauwkeurig genoeg, zeker niet wanneer we ook de performantie van het algoritme in beschouwing namen.
+
+\subsection{Accoustic fingerprinting}
+
+De techniek van accoustic fingerprinting extraheert en vergelijkt fingerprints van audiofragmenten. Een accoustic fingerprint bevat gecondenseerde informatie gebaseerd op typische eigenschappen van het audiofragment. De kracht van dit algoritme schuilt in haar snelheid en robuustheid. Het is immers uitzonderlijk bestand tegen achtergrondgeluiden en ruis. Door deze eigenschappen is het algoritme in staat om in enkele seconden een database met miljoenen fingerprints van audiofragmenten te doorzoeken. De bekendste toepassing van accoustic fingerprinting is de identificatie van liedjes op basis van een korte opname\footnote{Het grootste voorbeeld hiervan is de smartphone app Shazam. Deze app is de eerste toepassing dat gebruik maakte van dit algoritme.}.
+
+Het is onder meer deze techniek die het IPEM gebruikt om de opgenomen audiostreams van experimenten te synchroniseren. In tegenstelling tot \textit{Shazam} gaat men uiteraard niet op zoek naar matches in een database maar zoekt men ze rechtstreeks tussen de audiofragmenten. Het uitgangspunt is immers dat er tussen de opnames gelijkenissen moeten gevonden kunnen worden.
+
+\subsubsection{Werking}
+
+%TODO eventueel nog afbeeldingen toevoegen zoals in de paper van Joren. Referenen, zelf maken?
+
+De cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van de meest betrouwbare \textit{feature} om de fingerprints op te baseren. Mogelijke features zijn frequentie, toonhoogte, tempo, ritme, dynamiek, etc. Veel features zijn echter moeilijk (softwarematig) te bepalen wat hen niet bruikbaar maakt in een robuust fingerprinting systeem. Een feature die wel geschikt is voor het bepalen van fingerprints zijn de pieken in het frequentiespectrum.
+
+\begin{figure}[!h]
+	\caption{Spectrogram van Venetian Snares - Look}
+	\centering
+	\includegraphics[width=0.5\textwidth]{spectrogram3.png}
+\end{figure}
+
+Een fingerprinter gebaseerd op de extractie van spectrale pieken gaat in verschillende stappen te werk: 
+Eerst wordt er van elk audiofragment een spectrogram\footnote{Een spectrogram is een grafische voorstelling van de frequentie en intensiteit van geluid ten opzicht van de tijd \cite{spectrogram_dict}} gegenereerd. Dit kan snel gebeuren met het Fast Fourrier Transformation algoritme (FFT). In artikel \cite{oppenheim1970speech} wordt deze methode uitgebreid besproken. Vervolgens worden de fingerprints bepaald door telkens twee pieken in het spectrogram te verbinden. Een tijd-frequentie punt in het spectrogram is een kandidaat-piek als het punt een hogere energetische waarde heeft dan al zijn buren \cite{Wang2003a}. Welke pieken precies met elkaar worden verbonden hangt af van verschillende parameters.
+
+Na het bepalen van de fingerprints worden ze opgeslagen in een datastructuur waarin er snel naar matches kan worden gezocht.
+Van elke fingerprint worden volgende parameters bepaald:
+\begin{itemize}[noitemsep]
+	\item $ f1 $: de frequentie van de eerste spectrale piek van de fingerprint.
+	\item $ f1 $: de tijd van de eerste spectrale piek van de fingerprint.
+	\item $ \Delta f $: het verschil van de frequenties van beide spectrale pieken van de fingerprint.
+	\item $ \Delta t $: het verschil in tijd van beide spectrale pieken van de fingerprint.
+\end{itemize}
+
+De fingerprints worden in volgende structuur bijgehouden: $ ( id; t1; hash(f1; \Delta f; \Delta t) ) $.
+
+De hash wordt gebruikt om verschillende fingerprints te kunnen matchen. Deze bevat $ f1 $ en $ \Delta f $ omdat bij een match de beginfrequentie en het verschil in frequentie van beide fingerprints gelijk moet zijn. Enkel $ \Delta t $ wordt bijgehouden aangezien de begintijd van beide fingerprints waarschijnlijk niet zal overeenkomen. Het verschil in tijd tussen de fingerprints moet uiteraard wel overeenkomen.
+
+Na het extraheren en opslaan van de fingerprints kunnen er matches gezocht worden door de hashwaarden van de fingerprints van beide audiofragmenten met elkaar te vergelijken. Van elke match wordt de offset berekend, wat het verschil is tussen $ t1 $ van beide fingerprints. Wanneer beide fragmenten overeenkomen zal dit resulteren in een groot aantal matches met dezelfde offset. 
+
+Accoustic fingerprinting kunnen we toepassen op streams door ze te bufferen. Na het opbouwen van de buffers dient het algoritme hierop te worden uitgevoerd. De offset die gebruikt werd bij het matchen stelt de latency voor tussen beide streams.
+
+Een uitgebreidere beschrijving is te vinden in het artikel van \citefullauthor{Wang2003a}. Deze methode is echter beperkt tot het vergelijken van audiofragmenten die in tijd noch toonhoogte gewijzigd zijn. Aan het IPEM is een aangepaste methode ontwikkeld die dit wel toelaat \cite{six2014panako}.
+
+\subsubsection{Toepassing in realtime}
+
+Accoustic fingerprinting lijkt in tegenstelling tot de eerder besproken methodes wel bruikbaar in een realtime toepassing. Afhankelijk van de gebruikte parameters en de kwaliteit van de audio is een buffergrootte van enkele seconden voldoende om de latency tussen de streams te bepalen. De toepasbaarheid van dit algoritme zal verder worden onderzocht.
+
+De nauwkeurigheid van dit algoritme hangt af van de grootte van de \textit{FFT bins}. De waarde hiervan is afhankelijk van de parameters van het FFT algoritme. Een nauwkeurigheid van 16 ms of 32 ms is standaard.
+
+\subsubsection{Gedropte samples en drift}
+
+De snelheid waarin gedropte samples gedetecteerd kunnen worden is afhankelijk van de implementatie van het algoritme. Een mogelijke strategie verwerkt enkel de offset met de meeste matches. In dat geval duurt het maximaal één buffertijd\footnote{In dit onderzoek hebben we besloten om de maximale buffertijd te beperken: zie \nameref{evaluatie-criteria}} voordat gedropte samples gedetecteerd worden. Indien er bij het zoeken van matches meerdere offsets als resultaat worden toegelaten is een snellere detectie mogelijk. De snelheid hangt in dat geval af van de parameters van het algoritme.
+
+\subsection{Kruiscovariantie}
+
+Kruiscovariantie (ook wel kruiscorrelatie genoemd) is een berekening uit de signaalverwerking waarbij de gelijkenis tussen twee signalen wordt bepaald. De latency tussen twee audiofragmenten kan bepaald worden door deze berekening uit te voeren voor elke mogelijke verschuiving. De verschuiving waarbij de kruiscovariantie het hoogst is bepaalt de latency.
+
+Stel twee audioblokken $ a $ en $ b $ bestaande uit $ s $ samples en verschuiving $ i $. Voor elke $ i $ gaande van 0 tot $ s $ wordt de kruiscovariantie berekent met volgende formule:
+
+\begin{equation}
+ \sum_{j=0}^{s} a_{j} * b_{(i+j)\ mod\ s}
+\end{equation}
+
+De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden bepaalt men door dit resultaat te delen door de samplefrequentie.
+
+De methode kan de latency tot op één sample nauwkeurig bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is zeker voldoende voor onze toepassing.
+
+Een nadeel aan deze methode is de performantie. Het berekenen van de beste kruiscovariantie van twee audioblokken bestaande uit s samples kan gebeuren in  $O(s^{2})$. Het is dus belangrijk om bij deze berekening de grootte van de audioblokken te beperken.
+
+In artikel \citealp{six2015multimodal} wordt deze techniek meer in detail besproken.
+
+\section{Doel van deze masterproef}
 
 Dit onderzoek wil drie zaken bereiken: 
 
-\subsubsection{Optimalisatie van algoritmes}
-Het testen en bug-vrij maken van de synchronisatiealgoritmes. Ook moeten ze eventueel worden aangepast zodat ze in een realtime implementatie gebruikt kunnen worden. Het beoogde doel is dat de algoritmes in staat moeten kunnen zijn om audio opgenomen met een basic microfoon op een microcontroller te synchroniseren met een nauwkeurigheid van minstens 1 milliseconde.
+\subsubsection{Selectie en optimalisatie van algoritmes}
+Dit houdt in: bepalen welke algoritmes we zullen gebruiken om het probleem op te lossen en het zoeken naar optimalisaties en de juiste parameters voor maximale efficiëntie. Als ons probleem dit toelaat zal er gebruik gemaakt worden van algoritmes waarvan al een IPEM implementatie beschikbaar is. Deze moeten dan wel nog geoptimaliseerd worden voor onze toepassing. 
 
-\subsubsection{Implementatie van een Java bibliotheek}
-Het schrijven van een bibliotheek in Java die gebruik maakt van deze algoritmes om audiostromen te synchroniseren. Deze bibliotheek moet kunnen worden aangeroepen vanuit eender welke andere Java applicatie, en moet periodiek de huidige latency per audiostroom teruggeven.
+Het beoogde doel is dat de algoritmes in staat zijn om audio opgenomen met een basic microfoon op een microcontroller te synchroniseren met een nauwkeurigheid van minstens één milliseconde.
 
-\subsubsection{Implementatie van een MAX/MSP module}
-De implementatie van een module in MAX/MSP\footnote{Cycling ‘74 Max/MSP is een softwarepakket en een visuele programmeertaal waarmee audio, video en multimedia kan worden verwerkt met behulp van onafhankelijke modules. Deze modules kunnen met elkaar worden om zo complexe zaken te bereiken. Buiten de standaard meegeleverde modules is het ook mogelijk om zelf modules te schrijven.\cite{maxmsp2016}} die realtime synchronisatie mogelijk moet maken via een interface die bruikbaar is voor musicologen/onderzoekers met een beperkte informatica achtergrond.
+\subsubsection{Ontwerp en implementatie van een softwarebibliotheek}
+Het tweede doel van het onderzoek betreft het schrijven van een softwarebibliotheek. Deze bibliotheek zal gebruik maken van de geoptimaliseerde algoritmes om de audiostromen te synchroniseren. Deze bibliotheek moet vanuit andere software kunnen worden opgeroepen en gedetailleerde informatie teruggeven over de synchronisatie van de verschillende audiostreams.
 
-Deze module moet in staat zijn om verschillende datastromen als input binnen te krijgen, de synchronisatiebibliotheek aan te roepen, en de gesynchroniseerde datastromen als output terug te geven. Een andere Max module kan er dan voor zorgen dat deze data wordt weggeschreven naar een WAVE-bestand.
+\subsubsection{Ontwerp en implementatie van een gebruiksvriendelijke interface}
 
-\section{Huidige implementatie}
-
-Om het vervolg van deze scriptie goed te kunnen begrijpen is een introductie tot de bestaande toepassingen waarop wordt verder gebouwd, noodzakelijk. De twee belangrijkste bibliotheken zijn TarsosDSP en Panako. 
-
-\subsection{TarsosDSP}
-TarsosDSP\footnote{Deze bibliotheek is veel uitgebreider dan wat hier wordt geschreven. Deze paper geeft hierover meer informatie: \url{http://0110.be/files/attachments/415/aes53_tarsos_dsp.pdf}\cite{six2014tarsosdsp}} is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM door \citefullauthor{six2014tarsosdsp}. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid.
-
-TarsosDSP werkt met een zeer eenvoudige \textit{processing pipeline}. We kunnen zelf een processing pipeline creëren door een instantie aan te maken van de klasse \texttt{AudioDispatcher}. Het aanmaken van een \texttt{AudioDispatcher} is het eenvoudigst met behulp van de klasse \texttt{AudioDispatcherFactory}. Deze Factory klasse voorziet in statische methodes om een \texttt{AudioDispatcher} aan te maken met als input een audiobestand, een array van \texttt{float} waarden, of de data van een microfoon. Aan deze pipeline kunnen vervolgens verschillende \texttt{AudioProcessors} worden toegevoegd. Een \texttt{AudioProcessors} moet verplicht de \texttt{process} en \texttt{processingFinished} methodes implementeren. De \texttt{process} methode heeft als parameter een object van de klasse \texttt{AudioEvent}. Dit object bevat een audio blok, voorgesteld als \texttt{float} array met waarden tussen -1.0 en 1.0. De grootte van dit blokje audio, en de mate van overlapping tussen de opeenvolgende blokjes audio is instelbaar. Verder bevat het AudioEvent object ook nog andere metadata zoals onder meer een \textit{timestamp}.
-
-Afhankelijk van de implementatie van de \texttt{process} methode kan de audiostroom op een bepaalde manier verwerkt, geanalyseerd of gewijzigd worden.
-
-\subsection{Panako}
-
-Panako\footnote{Ook deze bibliotheek wordt meer uitvoerig besproken in een paper geschreven door de auteurs: \url{http://0110.be/files/attachments/415/ismir_2014_panako_fingerprinter.pdf}\cite{six2014panako}} is ook een Java bibliotheek, samen met enkele applicaties die deze bibliotheek aanroepen. Panako is ook ontwikkeld aan het IPEM door \citefullauthor{six2014panako} en maakt gebruik van TarsosDSP als onderliggende technologie voor de verwerking van de audio.
-
-Panako bevat een open-source implementatie van het accoustic fingerprinting algoritme beschreven in de paper van \citefullauthor{Wang2003a}. Dit algoritme is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of de audio sneller of trager is afgespeeld toch gedetecteerd kan worden.
-
-De bibliotheek bevat verschillende applicaties die gebruik maken van dit algoritme. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters.
-
-Er is ook een applicatie beschikbaar om verschillende geluidsfragmenten te synchroniseren. Deze applicatie maakt buiten van het accoustic fingerprinting algoritme ook nog gebruik van het kruiscovariantie algoritme, dit is ook geïmplementeerd in Panako. Op welk principe dat dit algoritme gebaseerd is, en hoe dit geïmplementeerd is wordt verder in deze scriptie besproken. Wanneer de latency tussen de verschillende fragmenten is gedetecteerd genereert de applicatie een shell script dat met behulp van FFmpeg\footnote{Dit is een command-line applicatie voor het opnemen, verwerken en streamen van audio en video. Meer informatie: \url{https://ffmpeg.org/}} stukjes van de geluidsbestanden wegknipt of stilte toevoegt. Het resultaat is dat na het uitvoeren van het script de geluidsbestanden gesynchroniseerd zijn.
-
+Uiteindelijk is het de bedoeling dat dit onderzoek resulteert in een gebruiksvriendelijke applicatie die toegankelijk is voor onderzoekers/musicologen zonder uitgebreide informatica kennis. De software moet in staat zijn om van verschillende binnenkomende datastromen (vergezeld met audiostream) te synchroniseren en op één of andere manier weg te schrijven naar een persistent medium.

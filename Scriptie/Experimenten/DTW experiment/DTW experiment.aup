@@ -1,0 +1,35 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="DTW experiment_data" version="1.3.0" audacityversion="2.1.0" sel0="0.0000000000" sel1="60.1935000000" vpos="0" h="0.0000000000" zoom="8.0905713209" rate="8000.0" snapto="off" selectionformat="samples">
+	<tags>
+		<tag name="GENRE" value="Other"/>
+		<tag name="TITLE" value="Star Power"/>
+		<tag name="ARTIST" value="Sonic Youth"/>
+	</tags>
+	<wavetrack name="Mixen" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="8000" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="481548">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000ee9.au" len="262144" min="-1.0" max="0.999969" rms="0.224333"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e00006ea.au" len="219404" min="-1.0" max="0.999969" rms="0.249437"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Mixen" channel="1" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="8000" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="481548">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000fb3.au" len="262144" min="-0.3815" max="0.384613" rms="0.058388"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e0000c07.au" len="219404" min="-0.335052" max="0.329071" rms="0.056471"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>

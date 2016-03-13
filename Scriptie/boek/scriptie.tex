@@ -5,7 +5,7 @@
 \usepackage{amssymb}                    % Voor speciale symbolen zoals de verzameling Z, R...
 \usepackage{url}                        % Om url's te verwerken
 \usepackage{graphicx}                   % Om figuren te kunnen verwerken
-\usepackage[small,bf,hang]{caption2}    % Om de captions wat te verbeteren
+\usepackage[small,bf]{caption2}    % Om de captions wat te verbeteren
 \usepackage{xspace}                     % Magische spaties na een commando
 \usepackage[utf8]{inputenc}           	% Om niet ascii karakters rechtstreeks te kunnen typen
 \usepackage{float}                      % Om nieuwe float environments aan te maken. Ook optie H!
@@ -21,14 +21,18 @@
 \usepackage{pdfpages}  					% pdf pagina's importeren
 \usepackage[numbers]{natbib}			% Extra citeer mogelijkheden
 \usepackage{parskip}					% Geen indentatie bij begin paragraaf
-\usepackage[para]{footmisc}				%
+\usepackage[hang,flushmargin,bottom]{footmisc} % Voetnoten beter weergeven (niet laten splitsen)
+\usepackage{enumitem} %Betere opsommingen
+\usepackage{sidecap}  %Caption lang
+\usepackage[toc,page]{appendix} %Appendices toevoegen
+\interfootnotelinepenalty=10000
 
 \newcommand{\npar}{\par \vspace{2.3ex plus 0.3ex minus 0.3ex} \noindent}	% Om witruimte te krijgen tussen paragrafen
 \graphicspath{{figuren/}}               % De plaats waar latex zijn figuren gaat halen.
-\usepackage[bf]{caption2}	% Mooiere captions
+%\usepackage[bf]{caption2}				% Mooiere captions
 \usepackage[a4paper,plainpages=false]{hyperref}    % Om hyperlinks te hebben in het pdfdocument.
 \newcommand{\command}[1]{\lstinline[basicstyle=\tt]{#1}\xspace} %Voor commando's
-\hyphenation{}
+\hyphenation{} 							% Splitsing van woorden
 
 \renewcommand{\chaptermark}[1]{\markright{\MakeUppercase{#1}}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection~#1}}
@@ -61,6 +65,7 @@
 \renewcommand{\baselinestretch}{1.5}
 
 
+%Pdf instellen, links, meta info
 \hypersetup {
 	pdfauthor = {Ward Van Assche},
 	pdftitle = {Realtime signaal synchronisatie	met accoustic fingerprinting},
@@ -69,6 +74,7 @@
 %	pdfborder = {0 0 0}
 }
 
+%Titels wijzigen in correcte Nederlandse term
 \renewcommand\lstlistlistingname{Lijst van codefragmenten}
 \renewcommand\lstlistingname{Codefragment}
 \addto{\captionsdutch}{\renewcommand{\bibname}{Referentielijst}}
@@ -92,7 +98,7 @@
 % overzicht
 \include{overzicht}
 
-% abstract
+% abstract pdf toevoegen
 \addcontentsline{toc}{chapter}{Extended abstract}
 \includepdf[pages=-]{../abstract/abstract.pdf}
 \pagestyle{fancy}
@@ -105,40 +111,34 @@
 % afkortingen
 \input{afkortingen}
 
-% opmaak voor het eigenlijke boek; onderstaande lijnen
-% weglaten als de eerste regel van een nieuwe alinea moet
-% inspringen in plaats van extra tussenruimte
-%\setlength{\parindent}{0pt}
-%\setlength{\parskip}{0.5\baselineskip plus 0.5ex minus 0.2ex}
-%\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
-
 % hoofdstukken
 \mainmatter
 
 % hier worden de hoofdstukken ingevoegd (\includes)
 \include{h1-inleiding}
-\include{h2-ontwerp}
-\include{h3-fingerprinting}
-\include{h4-kruiscovariantie}
-\include{h5-maxmsp}
-\include{h6-conclusie}
+\include{h2-methode}
+\include{h3-evaluatie}
+\include{h4-conclusie}
 
 % appendices
-\appendix
-
+\begin{appendices}
+	\include{appendix-a}
+\end{appendices}
 % Bibliografie toevoegen
 \bibliographystyle{plainnat}
 \bibliography{../bronnen/bronnen}
 
 \backmatter
 
-% eventueel: lijst van uren en tabellen
+%Lijst van figuren toevoegen, en toevoegen aan inhoudstabel
 \listoffigures
 \addcontentsline{toc}{chapter}{Lijst van figuren}
 
+%Lijst van tabellen toevoegen, en toevoegen aan inhoudstabel
 \listoftables
 \addcontentsline{toc}{chapter}{Lijst van tabellen}
 
+%Lijst van codefragmenten toevoegen, en toevoegen aan inhoudstabel
 \lstlistoflistings
 \addcontentsline{toc}{chapter}{Lijst van codefragmenten}
 

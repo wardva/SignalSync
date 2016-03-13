@@ -1,4 +1,4 @@
-\begin{thebibliography}{5}
+\begin{thebibliography}{19}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -16,12 +16,91 @@ Cycling ‘74 max.
 \newblock \url{https://cycling74.com/}.
 \newblock [Online; geraadpleegd 05-maart-2016].
 
+\bibitem[aud(2015)]{audacity2016}
+{Audacity}.
+\newblock \url{http://audacity.sourceforge.net/}, 2015.
+\newblock [Online; accessed 12-March-2016].
+
+\bibitem[cyc(2016)]{cycling2016}
+{CYCLING ‘74 MAX}.
+\newblock \url{https://cycling74.com/}, 2016.
+\newblock [Online; accessed 12-March-2016].
+
+\bibitem[spe(2016)]{spectrogram_dict}
+Dictionary.com unabridged.
+\newblock Mar 2016.
+\newblock URL \url{http://www.dictionary.com/browse/sound-spectrogram}.
+
+\bibitem[Bannach et~al.(2009)Bannach, Amft, and Lukowicz]{bannach2009automatic}
+David Bannach, Oliver Amft, and Paul Lukowicz.
+\newblock Automatic event-based synchronization of multimodal data streams from
+  wearable and ambient sensors.
+\newblock In \emph{Smart sensing and context}, pages 135--148. Springer, 2009.
+
+\bibitem[Barras(2012)]{barras2012sox}
+Benjamin Barras.
+\newblock Sox: Sound exchange.
+\newblock Technical report, 2012.
+
+\bibitem[Cannam et~al.(2010)Cannam, Landone, and Sandler]{cannam2010sonic}
+Chris Cannam, Christian Landone, and Mark Sandler.
+\newblock Sonic visualiser: An open source application for viewing, analysing,
+  and annotating music audio files.
+\newblock In \emph{Proceedings of the 18th ACM international conference on
+  Multimedia}, pages 1467--1468. ACM, 2010.
+
+\bibitem[Dixon(2005)]{dixon2005live}
+Simon Dixon.
+\newblock Live tracking of musical performances using on-line time warping.
+\newblock In \emph{Proceedings of the 8th International Conference on Digital
+  Audio Effects}, pages 92--97. Citeseer, 2005.
+
+\bibitem[Dixon and Widmer(2005)]{dixon2005match}
+Simon Dixon and Gerhard Widmer.
+\newblock Match: A music alignment tool chest.
+\newblock In \emph{ISMIR}, pages 492--497, 2005.
+
+\bibitem[Jaimovich and Knapp(2010)]{jaimovich2010synchronization}
+Javier Jaimovich and Benjamin Knapp.
+\newblock Synchronization of multimodal recordings for musical performance
+  research.
+\newblock In \emph{NIME}, pages 372--374, 2010.
+
+\bibitem[Koll{\'a}r()]{kollarconfiguration}
+Roman Koll{\'a}r.
+\newblock Configuration of ffmpeg for high stability during encoding.
+
+\bibitem[Oppenheim(1970)]{oppenheim1970speech}
+Alan~V Oppenheim.
+\newblock Speech spectrograms using the fast fourier transform.
+\newblock \emph{IEEE spectrum}, 8\penalty0 (7):\penalty0 57--62, 1970.
+
+\bibitem[Ratanamahatana and Keogh(2004)]{ratanamahatana2004everything}
+Chotirat~Ann Ratanamahatana and Eamonn Keogh.
+\newblock Everything you know about dynamic time warping is wrong.
+\newblock In \emph{Third Workshop on Mining Temporal and Sequential Data}.
+  Citeseer, 2004.
+
+\bibitem[Salvador and Chan(2007)]{salvador2007toward}
+Stan Salvador and Philip Chan.
+\newblock Toward accurate dynamic time warping in linear time and space.
+\newblock \emph{Intelligent Data Analysis}, 11\penalty0 (5):\penalty0 561--580,
+  2007.
+
 \bibitem[Six and Leman(2014)]{six2014panako}
 Joren Six and Marc Leman.
 \newblock {Panako - A Scalable Acoustic Fingerprinting System Handling
   Time-Scale and Pitch Modification}.
 \newblock In \emph{{Proceedings of the 15th ISMIR Conference (ISMIR 2014)}},
   2014.
+
+\bibitem[Six and Leman(2015)]{six2015multimodal}
+Joren Six and Marc Leman.
+\newblock {Synchronizing Multimodal Recordings Using Audio-To-Audio Alignment}.
+\newblock \emph{{Journal of Multimodal User Interfaces}}, 9\penalty0
+  (3):\penalty0 223--229, 2015.
+\newblock ISSN 1783-7677.
+\newblock \doi{10.1007/s12193-015-0196-1}.
 
 \bibitem[Six et~al.(2014)Six, Cornelis, and Leman]{six2014tarsosdsp}
 Joren Six, Olmo Cornelis, and Marc Leman.

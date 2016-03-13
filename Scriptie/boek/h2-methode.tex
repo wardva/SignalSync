@@ -1,0 +1,112 @@
+\chapter{Methode}
+
+\section{Gebruikte technologieën en software}
+
+\subsection{TarsosDSP}
+
+TarsosDSP is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid. Deze bibliotheek wordt beschreven in artikel \cite{six2014tarsosdsp}. 
+
+Een processing pipeline wordt voorgesteld als instantie van de klasse \texttt{AudioDispatcher}. Het aanmaken gebeurt met behulp van de klasse \texttt{AudioDispatcherFactory}. Deze bevat statische methodes om een \texttt{AudioDispatcher} aan te maken van een audiobestand, een \texttt{float} array of een microfoon. Aan de pipeline kunnen verschillende \texttt{AudioProcessor}s worden toegevoegd. Een \texttt{AudioProcessor} is een interface met de methodes \texttt{process} en \texttt{processingFinished}. De \texttt{process} methode heeft als enige parameter een \texttt{AudioEvent}. Dit object bevat een audio blok, voorgesteld als \texttt{float} array met waarden tussen -1.0 en 1.0. De grootte van dit blokje audio, en de mate van overlapping tussen de opeenvolgende blokjes audio is instelbaar. Verder bevat dit object nog andere metadata zoals onder meer een \textit{timestamp}.
+
+Afhankelijk van de implementatie van de \texttt{process} methode kan de audiostroom op een bepaalde manier verwerkt, geanalyseerd of gewijzigd worden.
+
+\subsection{Panako}
+
+Panako is net zoals TarsosDSP een Java bibliotheek, door de zelfde auteurs ontwikkeld aan het IPEM. Panako bevat buiten implementaties van algoritmen ook enkele applicaties die hiervan gebruik maken.  Deze bibliotheek wordt beschreven in artikel \cite{six2014panako}. Panako heeft TarsosDSP als enige \textit{dependency}.
+
+Panako bevat een open-source implementatie van het accoustic fingerprinting algoritme beschreven in de paper van Avery Li-Chun Wang\cite{Wang2003a}. Dit algoritme is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of audio die sneller of trager is afgespeeld toch gedetecteerd kan worden.
+
+De bibliotheek bevat verschillende applicaties die gebruik maken van dit algoritme. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters.
+
+Er is ook een applicatie beschikbaar om verschillende geluidsfragmenten te synchroniseren. Deze applicatie maakt behalve van het accoustic fingerprinting algoritme ook nog gebruik van het kruiscovariantie algoritme. 
+
+Wanneer de latency tussen de verschillende audiofragmenten bepaald is, dan kan de applicatie een shell script genereren dat met behulp van \textit{FFmpeg} stukjes van de geluidsbestanden wegknipt of er stilte aan toevoegt. Het resultaat is dat na het uitvoeren van het script de geluidsbestanden gesynchroniseerd zijn.
+
+\subsection{FFmpeg}
+
+FFmpeg is een command-line multimedia framework dat gebruikt wordt voor encoderen, decoderen, multiplexen, demultiplexen, streamen en afspelen van audio en video. \cite{kollarconfiguration}
+
+In dit onderzoek wordt FFmpeg voornamelijk gebruikt in scripts bij het geautomatiseerd genereren van testdata.
+
+\subsection{SoX}
+
+SoX is net zoals FFmeg een command-line tool voor audioverwerking. Buiten de mogelijkheid om audiobestanden te converteren laat SoX ook minder triviale operaties toe. Zo is het onder meer mogelijk om het volume aan te passen, effecten toe te voegen, de bestanden bij te knippen of gegenereerde geluiden in een audiobestand te mixen.
+\cite{barras2012sox}
+
+In dit onderzoek wordt SoX ook gebruikt in scripts bij het manipuleren van de testdata.
+
+\subsection{Sonic Visualiser}
+
+Sonic Visualiser is een gebruiksvriendelijke desktopapplicatie voor de analyse, visualisatie van audiobestanden. Sonic Visualiser laat toe om audiobestanden vanuit verschillende perspectieven te analyseren, zo kan zowel de waveform als het spectrogram van een audiobestand gevisualiseerd worden. Sonic Visualiser is uitbreidbaar met plug-ins in het Vamp formaat. \cite{cannam2010sonic}
+
+Sonic visualiser is in dit onderzoek gebruikt om handmatig de latency tussen verschillende audiofragmenten te bepalen. De applicatie is ook gebruikt geweest om de principes achter de algoritmes te visualiseren. 
+
+\subsection{Audacity}
+
+Audacity is een open-source desktopapplicatie voor het bewerken, opnemen en converteren van audio. Ook is het met Audacity mogelijk om verscheidene effecten aan audio toe te voegen.\cite{audacity2016}
+
+Alle opnames en handmatige bewerkingen op audiobestanden in dit onderzoek zijn uitgevoerd met Audacity.
+
+
+\subsection{Max/MSP}
+
+Max/MSP is een visuele programmeertaal voor muziek en multimedia. Het is een modulair systeem waarbij modules met elkaar verbonden kunnen worden om zo complexe systemen op te bouwen. Max/MSP beschikt ook over een API waarmee nieuwe modules mee ontwikkeld kunnen worden. \cite{cycling2016}
+
+Max/MSP kan realtime audio verwerken, daarom zullen we deze toepassing gebruiken voor het ontwikkelen van onze gebruikersinterface. 
+
+\section{Gebruikte algoritmen}
+
+\subsection{Accoustic fingerprinting}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsubsection{Werking}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsubsection{Optimalisaties}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsubsection{Parameters en hun invloed op het algoritme}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsection{Kruiscovariantie}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsubsection{Werking}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+
+\subsubsection{Optimalisaties}
+
+%Bugfixes: onderschatten en overschatten van fingerprint maakt verschil
+%Verschillende keren per slice uitvoeren, threshold
+%Bandpass filtering die toch niet geïmplementeerd is.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsubsection{Parameters en hun invloed op het algoritme}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\section{Implementatie van een softwarebibliotheek}
+
+De Java bibliotheek die verantwoordelijk is voor de realtime synchronisatie van de audiostromen heeft verschillende taken. Eerst en vooral moet de gestreamde data gebufferd worden, het is namelijk onmogelijk om de synchronisatiealgoritmes uit te voeren zonder dat er enkele seconden audio van elke stream zich in het geheugen bevind. Deze verantwoordelijkheid wordt afgehandeld in het \textit{slicer}-gedeelte van de bibliotheek. Wanneer de audio gebufferd is kan het synchronisatie-deel van de applicatie een synchronisatiealgoritme aanroepen en het geretourneerde resultaat teruggeven aan de gebruiker, of de aanroepende applicatie. Welk algoritme precies gebruikt wordt, en de specifieke parameters ervan, is configureerbaar met behulp van een configuratiebestand.
+
+\subsection{Bufferen van de audio}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\subsection{Synchronisatie}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+
+\section{Implementatie van een Max/MSP module}
+
+Gans dit onderzoek heeft uiteindelijk de bedoeling te resulteren in het ontwerp en implementatie van een module in MAX/MSP\footnote{Cycling ‘74 Max/MSP is een softwarepakket en een visuele programmeertaal waarmee audio, video en multimedia kan worden verwerkt met behulp van onafhankelijke modules. Deze modules kunnen met elkaar worden verbonden om zo complexe zaken te bereiken. Buiten de standaard meegeleverde modules is het ook mogelijk om zelf modules te schrijven.\cite{maxmsp2016}} die realtime synchronisatie mogelijk moet maken via een interface die bruikbaar is voor musicologen/onderzoekers met een beperkte informatica achtergrond.
+
+Deze module moet in staat zijn om verschillende datastromen als input binnen te krijgen, de synchronisatiebibliotheek aan te roepen, en de gesynchroniseerde datastromen als output terug te geven. Een andere Max module kan er dan voor zorgen dat deze data wordt weggeschreven naar een WAVE-bestand.
