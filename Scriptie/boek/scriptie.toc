@@ -30,39 +30,39 @@
 \contentsline {subsection}{\numberline {2.1.5}Sonic Visualiser}{16}{subsection.2.1.5}
 \contentsline {subsection}{\numberline {2.1.6}Audacity}{17}{subsection.2.1.6}
 \contentsline {subsection}{\numberline {2.1.7}Max/MSP}{17}{subsection.2.1.7}
-\contentsline {section}{\numberline {2.2}Gebruikte algoritmen}{17}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Accoustic fingerprinting}{17}{subsection.2.2.1}
+\contentsline {section}{\numberline {2.2}Gebruikte algoritmen}{18}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Accoustic fingerprinting}{18}{subsection.2.2.1}
 \contentsline {subsubsection}{Werking}{18}{section*.14}
 \contentsline {subsubsection}{Optimalisaties}{18}{section*.15}
 \contentsline {subsubsection}{Parameters en hun invloed op het algoritme}{18}{section*.16}
-\contentsline {subsection}{\numberline {2.2.2}Kruiscovariantie}{19}{subsection.2.2.2}
-\contentsline {subsubsection}{Werking}{19}{section*.17}
-\contentsline {subsubsection}{Optimalisaties}{19}{section*.18}
-\contentsline {subsubsection}{Parameters en hun invloed op het algoritme}{20}{section*.19}
-\contentsline {section}{\numberline {2.3}Implementatie van een softwarebibliotheek}{20}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}Bufferen van de audio}{20}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}Synchronisatie}{21}{subsection.2.3.2}
-\contentsline {section}{\numberline {2.4}Implementatie van een Max/MSP module}{21}{section.2.4}
-\contentsline {chapter}{\numberline {3}Evaluatie}{22}{chapter.3}
-\contentsline {section}{\numberline {3.1}Unit testen}{22}{section.3.1}
-\contentsline {section}{\numberline {3.2}Stresstesten}{23}{section.3.2}
-\contentsline {section}{\numberline {3.3}Test in de praktijk}{23}{section.3.3}
-\contentsline {section}{\numberline {3.4}Usability testen}{23}{section.3.4}
-\contentsline {section}{\numberline {3.5}Analyse van de complexiteitsgraad}{24}{section.3.5}
-\contentsline {subsection}{\numberline {3.5.1}Accoustic fingerprinting}{24}{subsection.3.5.1}
-\contentsline {subsubsection}{Tijdscomplexiteit}{24}{section*.20}
-\contentsline {subsubsection}{Ruimtecomplexiteit}{24}{section*.21}
-\contentsline {subsection}{\numberline {3.5.2}Kruiscovariantie}{25}{subsection.3.5.2}
-\contentsline {subsubsection}{Tijdscomplexiteit}{25}{section*.22}
-\contentsline {subsubsection}{Ruimtecomplexiteit}{25}{section*.23}
-\contentsline {section}{\numberline {3.6}Praktische bruikbaarheid van het systeem}{25}{section.3.6}
-\contentsline {chapter}{\numberline {4}Conclusie}{26}{chapter.4}
-\contentsline {chapter}{Appendices}{28}{section*.24}
-\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{29}{B"ylage.a.A}
-\contentsline {chapter}{Referentielijst}{31}{chapter*.25}
-\contentsline {chapter}{L"yst van figuren}{34}{chapter*.26}
-\contentsline {chapter}{Lijst van figuren}{34}{chapter*.26}
-\contentsline {chapter}{L"yst van tabellen}{35}{chapter*.27}
-\contentsline {chapter}{Lijst van tabellen}{35}{chapter*.27}
-\contentsline {chapter}{Lijst van codefragmenten}{36}{chapter*.28}
-\contentsline {chapter}{Lijst van codefragmenten}{36}{chapter*.28}
+\contentsline {subsection}{\numberline {2.2.2}Kruiscovariantie}{18}{subsection.2.2.2}
+\contentsline {subsubsection}{Werking}{18}{section*.17}
+\contentsline {subsubsection}{Optimalisaties}{18}{section*.18}
+\contentsline {subsubsection}{Parameters en hun invloed op het algoritme}{18}{section*.19}
+\contentsline {section}{\numberline {2.3}Implementatie van een softwarebibliotheek}{18}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Bufferen van de audio}{18}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Synchronisatie}{18}{subsection.2.3.2}
+\contentsline {section}{\numberline {2.4}Implementatie van een Max/MSP module}{18}{section.2.4}
+\contentsline {chapter}{\numberline {3}Evaluatie}{19}{chapter.3}
+\contentsline {section}{\numberline {3.1}Unit testen}{20}{section.3.1}
+\contentsline {section}{\numberline {3.2}Stresstesten}{20}{section.3.2}
+\contentsline {section}{\numberline {3.3}Test in de praktijk}{20}{section.3.3}
+\contentsline {section}{\numberline {3.4}Usability testen}{20}{section.3.4}
+\contentsline {section}{\numberline {3.5}Analyse van de complexiteitsgraad}{20}{section.3.5}
+\contentsline {subsection}{\numberline {3.5.1}Accoustic fingerprinting}{20}{subsection.3.5.1}
+\contentsline {subsubsection}{Tijdscomplexiteit}{20}{section*.20}
+\contentsline {subsubsection}{Ruimtecomplexiteit}{20}{section*.21}
+\contentsline {subsection}{\numberline {3.5.2}Kruiscovariantie}{20}{subsection.3.5.2}
+\contentsline {subsubsection}{Tijdscomplexiteit}{20}{section*.22}
+\contentsline {subsubsection}{Ruimtecomplexiteit}{20}{section*.23}
+\contentsline {section}{\numberline {3.6}Praktische bruikbaarheid van het systeem}{20}{section.3.6}
+\contentsline {chapter}{\numberline {4}Conclusie}{21}{chapter.4}
+\contentsline {chapter}{Appendices}{22}{section*.24}
+\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{23}{B"ylage.a.A}
+\contentsline {chapter}{Referentielijst}{25}{chapter*.25}
+\contentsline {chapter}{L"yst van figuren}{28}{chapter*.26}
+\contentsline {chapter}{Lijst van figuren}{28}{chapter*.26}
+\contentsline {chapter}{L"yst van tabellen}{29}{chapter*.27}
+\contentsline {chapter}{Lijst van tabellen}{29}{chapter*.27}
+\contentsline {chapter}{Lijst van codefragmenten}{30}{chapter*.28}
+\contentsline {chapter}{Lijst van codefragmenten}{30}{chapter*.28}

@@ -132,7 +132,7 @@ De nauwkeurigheid van dit algoritme hangt af van de grootte van de \textit{FFT b
 
 \subsubsection{Gedropte samples en drift}
 
-De snelheid waarin gedropte samples gedetecteerd kunnen worden is afhankelijk van de implementatie van het algoritme. Een mogelijke strategie verwerkt enkel de offset met de meeste matches. In dat geval duurt het maximaal één buffertijd\footnote{In dit onderzoek hebben we besloten om de maximale buffertijd te beperken: zie \nameref{evaluatie-criteria}} voordat gedropte samples gedetecteerd worden. Indien er bij het zoeken van matches meerdere offsets als resultaat worden toegelaten is een snellere detectie mogelijk. De snelheid hangt in dat geval af van de parameters van het algoritme.
+De snelheid waarmee gedropte samples of drift gedetecteerd kunnen worden is afhankelijk van de implementatie van het algoritme. Een mogelijke strategie verwerkt enkel de offset met de meeste matches. In dat geval duurt het maximaal één buffertijd\footnote{In dit onderzoek hebben we besloten om de maximale buffertijd te beperken: zie \nameref{evaluatie-criteria}} voordat het algoritme zich aanpast aan drift of gedropte samples. Indien er bij het zoeken van matches meerdere offsets als resultaat worden toegelaten is een snellere detectie mogelijk. De snelheid hangt in dat geval af van de parameters van het algoritme.
 
 \subsection{Kruiscovariantie}
 
