@@ -22,7 +22,7 @@ Dit systeem heeft in de praktijk echter heel wat beperkingen. De grootste beperk
 	\captionsetup{width=0.7\textwidth}
 	\centering
 	\includegraphics[width=0.5\textwidth]{syncsinc.png}
-	\caption{Huidige werkwijze om streams te synchroniseren: Een drag and drop interface waarin de opgenomen fragmenten gesleept kunnen worden na afloop van het experiment. Vervolgens wordt de latency berekend.}
+	\caption[Huidge werkwijze voor streamsynchronisatie]{Huidige werkwijze om streams te synchroniseren: Een drag and drop interface waarin de opgenomen fragmenten gesleept kunnen worden na afloop van het experiment. Vervolgens wordt de latency berekend.}
 \end{figure}
 
 
@@ -49,7 +49,6 @@ Elke stream heeft een bepaalde samplefrequentie. Het is belangrijk dat de sample
 
 \section{Bestaande methoden}
 
-%TODO bespreken van de evaluatiecriteria
 Er bestaan verschillende methoden om datastreams te synchroniseren. Welke methode te verkiezen is hangt volledig af van de toepassing.
 
 In deze sectie komen de belangrijkste methoden aan bod en zullen ze worden getoetst aan de eerder beschreven evaluatiecriteria. 
@@ -97,7 +96,7 @@ Het is onder meer deze techniek die het IPEM gebruikt om de opgenomen audiostrea
 De cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van de meest betrouwbare \textit{feature} om de fingerprints op te baseren. Mogelijke features zijn frequentie, toonhoogte, tempo, ritme, dynamiek, etc. Veel features zijn echter moeilijk (softwarematig) te bepalen wat hen niet bruikbaar maakt in een robuust fingerprinting systeem. Een feature die wel geschikt is voor het bepalen van fingerprints zijn de pieken in het frequentiespectrum.
 
 \begin{figure}[!h]
-	\caption{Spectrogram van Venetian Snares - Look}
+	\caption[Voorbeeldspectogram]{Spectrogram van Venetian Snares - Look}
 	\centering
 	\includegraphics[width=0.5\textwidth]{spectrogram3.png}
 \end{figure}
@@ -117,6 +116,15 @@ Van elke fingerprint worden volgende parameters bepaald:
 De fingerprints worden in volgende structuur bijgehouden: $ ( id; t1; hash(f1; \Delta f; \Delta t) ) $.
 
 De hash wordt gebruikt om verschillende fingerprints te kunnen matchen. Deze bevat $ f1 $ en $ \Delta f $ omdat bij een match de beginfrequentie en het verschil in frequentie van beide fingerprints gelijk moet zijn. Enkel $ \Delta t $ wordt bijgehouden aangezien de begintijd van beide fingerprints waarschijnlijk niet zal overeenkomen. Het verschil in tijd tussen de fingerprints moet uiteraard wel overeenkomen.
+
+\begin{figure}
+	\captionsetup{width=0.7\textwidth}
+	\caption[De anatomie van een fingerprint]{De anatomie van een fingerprint in het tijd-frequentie domein. Met toestemming overgenomen uit artikel \cite{six2015multimodal}.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/fingerprint_example_graph}
+	\end{center}
+\end{figure}
 
 Na het extraheren en opslaan van de fingerprints kunnen er matches gezocht worden door de hashwaarden van de fingerprints van beide audiofragmenten met elkaar te vergelijken. Van elke match wordt de offset berekend, wat het verschil is tussen $ t1 $ van beide fingerprints. Wanneer beide fragmenten overeenkomen zal dit resulteren in een groot aantal matches met dezelfde offset. 
 

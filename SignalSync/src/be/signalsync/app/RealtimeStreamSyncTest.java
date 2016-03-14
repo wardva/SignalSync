@@ -19,7 +19,7 @@ public class RealtimeStreamSyncTest {
 		syncer.addEventListener(new SyncEventListener() {
 			@Override
 			public void onSyncEvent(final List<Float> data) {
-				data.forEach(d -> System.out.printf("%.4f\n", d));
+				data.forEach(d -> System.out.printf("%.3f\n", d));
 				System.out.println("---------------------------------");
 			}
 		});
