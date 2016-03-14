@@ -22,27 +22,33 @@ public class StreamSlicer extends Slicer<float[]> implements AudioProcessor {
 	 * The timestamp in seconds when the previous slice occured.
 	 */
 	private double previousSliceTimestamp;
-
+	
 	/**
-	 * The interval between each slice.
+	 * The size of each slice in seconds.
 	 */
-	private final double interval;
+	private final int sliceSize;
+	/**
+	 * The step between each slice in seconds.
+	 */
+	private final int sliceStep;
 
-	public StreamSlicer(final double interval, final SliceListener<float[]> listener) {
+	public StreamSlicer(final int sliceSize, final int sliceStep, final SliceListener<float[]> listener) {
 		super();
 		floatBuffers = new ArrayList<>();
 		previousSliceTimestamp = 0;
-		this.interval = interval;
+		this.sliceSize = sliceSize;
+		this.sliceStep = sliceStep;
 		addEventListener(listener);
 	}
 
 	@Override
 	public boolean process(final AudioEvent audioEvent) {
+		System.out.println(audioEvent.getTimeStamp());
 		final float[] current = audioEvent.getFloatBuffer();
 		final float[] bufCopy = new float[current.length];
 		System.arraycopy(current, 0, bufCopy, 0, current.length);
 		floatBuffers.add(bufCopy);
-		if (audioEvent.getTimeStamp() - previousSliceTimestamp > interval) {
+		if (audioEvent.getTimeStamp() - previousSliceTimestamp > sliceSize) {
 			previousSliceTimestamp = audioEvent.getTimeStamp();
 			slice();
 		}

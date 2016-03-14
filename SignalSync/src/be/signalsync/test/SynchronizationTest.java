@@ -50,7 +50,7 @@ public class SynchronizationTest {
 
 	public SynchronizationTest(final String reference, final String other, final int expectedLatency, final int currentFrequency) {
 		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
-		final int bufferSize = Config.getInt(Key.BUFFER_SIZE);
+		final int bufferSize = Config.getInt(Key.NFFT_BUFFER_SIZE);
 		this.latency = expectedLatency * MILLIS_TO_SECONDS;
 		this.frequency = currentFrequency;
 		this.streams = new ArrayList<>();

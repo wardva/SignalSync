@@ -21,7 +21,7 @@ public class FileStreamSet extends StreamSet {
 			streamExecutor = Executors.newFixedThreadPool(filenames.length);
 			streams.clear();
 			for (final String f : filenames) {
-				streams.add(AudioDispatcherFactory.fromFile(new File(f), Config.getInt(Key.BUFFER_SIZE), 0));
+				streams.add(AudioDispatcherFactory.fromFile(new File(f), Config.getInt(Key.NFFT_BUFFER_SIZE), 0));
 			}
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();

@@ -18,16 +18,19 @@ public enum Key {
 	 * The size of the audio block and consequently the size (in samples) of the
 	 * FFT.
 	 */
-	BUFFER_SIZE(512),
+	NFFT_BUFFER_SIZE(512),
 	/**
 	 * The size of the audio block step size (in samples).
 	 */
-	STEP_SIZE(256),
+	NFFT_STEP_SIZE(256),
 	/**
-	 * The interval in seconds between each slice.
+	 * The size in seconds between each slice.
 	 */
-	REFRESH_INTERVAL(10),
-
+	SLICE_SIZE_S(10),
+	/**
+	 * The step size between each slice in seconds.
+	 */
+	SLICE_STEP_S(1),
 	/**
 	 * Which synchronization algorithm should be used. Possible values:
 	 * crosscovariance or fingerprint

@@ -29,8 +29,8 @@ public class RecordedSlicerApp {
 	
 	private void generateSlices(String directory, String filename) {
 		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
-		final int bufferSize = Config.getInt(Key.BUFFER_SIZE);
-		final int stepSize = Config.getInt(Key.STEP_SIZE);
+		final int bufferSize = Config.getInt(Key.NFFT_BUFFER_SIZE);
+		final int stepSize = Config.getInt(Key.NFFT_STEP_SIZE);
 		final int overlap = bufferSize - stepSize;
 		
 		final StreamSlicer s = new StreamSlicer(10, new SliceListener<float[]>() {

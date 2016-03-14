@@ -53,7 +53,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 		this.listeners = new HashSet<>();
 		this.syncer = SyncStrategy.getInstance();
 		
-		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.REFRESH_INTERVAL));
+		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
 		this.slicer.addEventListener(this);
 	}
 

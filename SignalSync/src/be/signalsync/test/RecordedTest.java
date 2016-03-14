@@ -61,7 +61,7 @@ public class RecordedTest {
 
 	public RecordedTest(String reference, String other, double expectedLatency, String type) {
 		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
-		final int bufferSize = Config.getInt(Key.BUFFER_SIZE);
+		final int bufferSize = Config.getInt(Key.NFFT_BUFFER_SIZE);
 		this.latency = expectedLatency;
 		this.type = type;
 		this.streams = new ArrayList<>();

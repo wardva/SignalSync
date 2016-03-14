@@ -32,8 +32,8 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 	private static final float MIN_FREQUENCY = 100;
 	private static final float MAX_FREQUENCY = 4000;
 	private static final int SAMPLE_RATE = Config.getInt(Key.SAMPLE_RATE);
-	private static final int SIZE = Config.getInt(Key.BUFFER_SIZE);
-	private static final int STEP_SIZE = Config.getInt(Key.STEP_SIZE);
+	private static final int SIZE = Config.getInt(Key.NFFT_BUFFER_SIZE);
+	private static final int STEP_SIZE = Config.getInt(Key.NFFT_STEP_SIZE);
 	private static final int OVERLAP = SIZE - STEP_SIZE;
 
 	protected FingerprintSyncStrategy() {

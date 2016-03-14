@@ -31,8 +31,8 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 	private final FingerprintSyncStrategy fingerprinter;
 	private static final int SAMPLE_RATE = Config.getInt(Key.SAMPLE_RATE);
-	private static final int BUFFER_SIZE = Config.getInt(Key.BUFFER_SIZE);
-	private static final int STEP_SIZE = Config.getInt(Key.STEP_SIZE);
+	private static final int BUFFER_SIZE = Config.getInt(Key.NFFT_BUFFER_SIZE);
+	private static final int STEP_SIZE = Config.getInt(Key.NFFT_STEP_SIZE);
 	private static final int OVERLAP = BUFFER_SIZE - STEP_SIZE;
 	private static final float FFT_HOPSIZE_S = STEP_SIZE / (float) SAMPLE_RATE;
 
@@ -275,7 +275,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 
 		public AudioSkipper(final double audioToSkip) {
 			this.audioToSkip = audioToSkip;
-			audioFrame = new float[Config.getInt(Key.BUFFER_SIZE)];
+			audioFrame = new float[Config.getInt(Key.NFFT_BUFFER_SIZE)];
 		}
 
 		public float[] getAudioFrame() {

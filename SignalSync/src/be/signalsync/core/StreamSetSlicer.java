@@ -45,8 +45,9 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 	 * Creates a new StreamSetSlicer from a StreamSet.
 	 * @param streamSet The streamset to extract the slices from.
 	 * @param time The time in seconds of each slice.
+	 * @param step The step size between each slice in seconds.
 	 */
-	public StreamSetSlicer(final StreamSet streamSet, final long time) {
+	public StreamSetSlicer(final StreamSet streamSet, final int sliceSize, final int sliceStep) {
 		super();
 		this.streamSet = streamSet;
 		this.size = streamSet.getStreams().size();
@@ -56,7 +57,7 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 		//Iterate over the streams.
 		for (final AudioDispatcher d : this.streamSet.getStreams()) {
 			//Create and attach a streamSlicer to the current stream.
-			final StreamSlicer slicer = new StreamSlicer(time, this);
+			final StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, this);
 			d.addAudioProcessor(slicer);
 			//Put the streamslicer into the slicesmap, together with a blockingqueue 
 			//which will contain the slices received from this slicer.
