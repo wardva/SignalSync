@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,6 +32,15 @@ public class SynchronizationTest {
 	private final List<float[]> streams;
 	private final double latency;
 	private final int frequency;
+	
+	@Before
+	public void setParameters() {
+		//The optimal parameters for this test.
+		Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, "6");
+		Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, "150");
+		Config.set(Key.CROSS_COVARIANCE_NUMBER_OF_TESTS, "5");
+		Config.set(Key.CROSS_COVARIANCE_THRESHOLD, "1");
+	}
 
 	@Parameters
 	public static Collection<Object[]> data() {

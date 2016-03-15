@@ -4,7 +4,7 @@ import java.util.List;
 
 import be.signalsync.core.RealtimeStreamSync;
 import be.signalsync.core.SyncEventListener;
-import be.signalsync.streamsets.DummyTwoStreamSet;
+import be.signalsync.streamsets.CustomStreamSet;
 import be.signalsync.streamsets.StreamSet;
 
 /**
@@ -14,7 +14,7 @@ import be.signalsync.streamsets.StreamSet;
  */
 public class RealtimeStreamSyncTest {
 	public static void main(final String[] args) {
-		final StreamSet streamSet = new DummyTwoStreamSet();
+		final StreamSet streamSet = new CustomStreamSet();
 		final RealtimeStreamSync syncer = new RealtimeStreamSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {
 			@Override

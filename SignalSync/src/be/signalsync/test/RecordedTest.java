@@ -37,9 +37,10 @@ public class RecordedTest {
 	
 	@Before
 	public void setParameters() {
+		//The optimal parameters for this test.
 		Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, "30");
 		Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, "30");
-		Config.set(Key.CROSS_COVARIANCE_NUMBER_OF_TESTS, "10");
+		Config.set(Key.CROSS_COVARIANCE_NUMBER_OF_TESTS, "50");
 		Config.set(Key.CROSS_COVARIANCE_THRESHOLD, "1");
 	}
 

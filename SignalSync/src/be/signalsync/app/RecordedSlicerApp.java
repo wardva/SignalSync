@@ -3,7 +3,7 @@ package be.signalsync.app;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import be.signalsync.core.SliceListener;
 import be.signalsync.core.Slicer;
-import be.signalsync.core.StreamSlicer;
+import be.signalsync.core.SteppedStreamSlicer;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
@@ -33,7 +33,7 @@ public class RecordedSlicerApp {
 		final int stepSize = Config.getInt(Key.NFFT_STEP_SIZE);
 		final int overlap = bufferSize - stepSize;
 		
-		final StreamSlicer s = new StreamSlicer(10, new SliceListener<float[]>() {
+		final SteppedStreamSlicer slicer = new SteppedStreamSlicer(new SliceListener<float[]>() {
 			private int i = 0;
 
 			@Override
@@ -57,7 +57,7 @@ public class RecordedSlicerApp {
 		});
 
 		final AudioDispatcher d = AudioDispatcherFactory.fromPipe(directory + filename, sampleRate, bufferSize, 0);
-		d.addAudioProcessor(s);
+		d.addAudioProcessor(slicer);
 		d.run();
 	}
 }
