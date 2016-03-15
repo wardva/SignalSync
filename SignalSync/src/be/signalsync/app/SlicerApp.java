@@ -43,7 +43,8 @@ public class SlicerApp {
 		final int stepSize = Config.getInt(Key.NFFT_STEP_SIZE);
 		final int overlap = bufferSize - stepSize;
 		
-		final SteppedStreamSlicer slicer = new SteppedStreamSlicer(new SliceListener<float[]>() {
+		final SteppedStreamSlicer slicer = new SteppedStreamSlicer();
+		slicer.addEventListener(new SliceListener<float[]>() {
 			private int i = 0;
 
 			@Override

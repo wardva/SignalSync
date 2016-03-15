@@ -12,7 +12,8 @@ public class SlicerTest {
 	public static void main(String[] args) {
 		AudioDispatcher d = AudioDispatcherFactory.fromPipe("./testdata/Clean/Sonic Youth - Star Power_2000_50hz.wav", Config.getInt(Key.SAMPLE_RATE),
 				Config.getInt(Key.NFFT_BUFFER_SIZE), Config.getInt(Key.NFFT_STEP_SIZE));
-		d.addAudioProcessor(new SteppedStreamSlicer(new SliceListener<float[]>() {
+		SteppedStreamSlicer slicer = new SteppedStreamSlicer();
+		slicer.addEventListener(new SliceListener<float[]>() {
 			@Override
 			public void onSliceEvent(float[] slices, Slicer<float[]> s) {
 				System.out.println("slices length: " + slices.length);
@@ -20,7 +21,8 @@ public class SlicerTest {
 			
 			@Override
 			public void done(Slicer<float[]> s) {}
-		}));
+		});
+		d.addAudioProcessor(slicer);
 		d.run();
 	}
 }

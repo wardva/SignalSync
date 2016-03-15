@@ -57,7 +57,8 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 		//Iterate over the streams.
 		for (final AudioDispatcher d : this.streamSet.getStreams()) {
 			//Create and attach a streamSlicer to the current stream.
-			final SteppedStreamSlicer slicer = new SteppedStreamSlicer(this);
+			final SteppedStreamSlicer slicer = new SteppedStreamSlicer();
+			slicer.addEventListener(this);
 			d.addAudioProcessor(slicer);
 			//Put the streamslicer into the slicesmap, together with a blockingqueue 
 			//which will contain the slices received from this slicer.
@@ -103,7 +104,7 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 						}
 						//Finished one iteration, now we have a buffer from each slicer
 						//and we can emit a slice event containing the slices.
-						emitSliceEvent(new ArrayList<float[]>(slices), 0, 0);
+						emitSliceEvent(new ArrayList<float[]>(slices));
 						//Clear the slicesList and start a new iteration.
 						slices.clear();
 					}

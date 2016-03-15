@@ -3,7 +3,8 @@ package be.signalsync.core;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
+import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 
@@ -30,6 +31,10 @@ public class SteppedStreamSlicer extends Slicer<float[]> implements AudioProcess
 		currentSec = -1;
 	}
 	
+	public SteppedStreamSlicer() {
+		this(Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
+	}
+	
 	@Override
 	public boolean process(AudioEvent audioEvent) {
 		int second = (int) audioEvent.getTimeStamp();
@@ -44,7 +49,10 @@ public class SteppedStreamSlicer extends Slicer<float[]> implements AudioProcess
 			currentSecBuffer = new ArrayList<>();
 			buffer.add(currentSecBuffer);
 		}
-		currentSecBuffer.add(audioEvent.getFloatBuffer());
+		final float[] eventBuffer = audioEvent.getFloatBuffer();
+		float[] eventBufferCopy = new float[eventBuffer.length];
+		System.arraycopy(eventBuffer, 0, eventBufferCopy, 0, eventBuffer.length);
+		currentSecBuffer.add(eventBufferCopy);
 		return true;
 	}
 

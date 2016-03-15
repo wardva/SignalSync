@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,7 +66,9 @@ public class SteppedSlicerTest {
 			
 			@Override
 			public void onSliceEvent(float[] slice, Slicer<float[]> s) {
-				Assert.assertEquals(expectedSliceLengths[eventNr], slice.length, 0);
+				Assert.assertEquals(expectedSliceLengths[eventNr], slice.length, 1);
+				DoubleStream ds = IntStream.range(0, slice.length).mapToDouble(i -> slice[i]);
+				Assert.assertTrue(ds.allMatch(x -> x >= eventNr * sliceStep && x < eventNr * sliceStep + sliceSize));
 				++eventNr;
 			}
 			
@@ -74,7 +78,8 @@ public class SteppedSlicerTest {
 			}
 		};
 		
-		SteppedStreamSlicer slicer = new SteppedStreamSlicer(listener, sliceSize, sliceStep, sampleRate, 1);
+		SteppedStreamSlicer slicer = new SteppedStreamSlicer(sliceSize, sliceStep);
+		slicer.addEventListener(listener);
 		
 		for(AudioEvent a : audioEvents) {
 			slicer.process(a);

@@ -6,8 +6,9 @@ package be.signalsync.streamsets;
  * @author Ward Van Assche
  */
 public class CustomStreamSet extends FileStreamSet {
-	private static String[] streams = new String[] { "./testdata/Clean/Sonic Youth - Star Power_0_0hz.wav",
-			"./testdata/Clean/Sonic Youth - Star Power_300_50hz.wav" };
+	private static String[] streams = new String[] { "./testdata/Recorded/opname-reference.wav",
+			"./testdata/Recorded/opname-1.wav", "./testdata/Recorded/opname-2.wav", 
+			"./testdata/Recorded/opname-3.wav" };
 
 	public CustomStreamSet() {
 		super(streams);
