@@ -50,6 +50,10 @@ public class Config {
 	public static int getInt(final Key key) {
 		return Integer.parseInt(get(key));
 	}
+	
+	public static double getDouble(final Key key) {
+		return Double.parseDouble(get(key));
+	}
 
 	/**
 	 * Use preferences to store configuration that changes during runtime and

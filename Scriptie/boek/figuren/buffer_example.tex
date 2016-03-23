@@ -1,0 +1,37 @@
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+xlabel={Tijd (seconden)},
+xmin=170,xmax=200,
+ymin=0,ymax=1,
+legend style={
+	cells={anchor=west},
+	legend pos=outer north east,
+},
+yticklabels={,,},
+xticklabel style={grid=major},
+extra x ticks={176,177,186,187},
+extra x tick labels={,,,},
+extra tick style={grid=major, grid style={dotted}},
+hide y axis
+]
+\addplot[thick,black] graphics[xmin=140,ymin=0,xmax=200,ymax=1] {wave.png};
+
+after end axis/.code={
+	\draw[black,<->] (axis cs:175,0.1) -- (axis cs:185,0.1)	node [pos=0.5,above,font=\scriptsize] {buffer $i-1$};
+	
+	\draw[black,<->] (axis cs:176,0.2) -- (axis cs:186,0.2)	node [pos=0.5,above,font=\scriptsize] {buffer $i$};
+	
+	\draw[black,<->] (axis cs:177,0.3) -- (axis cs:187,0.3)	node [pos=0.5,above,font=\scriptsize] {buffer $i+1$};
+}]
+
+%\node at (50,18) [] {\small$\Delta t$};
+%\addplot[style=dotted,color=gray,very thick] coordinates{ (90,129)
+%	(90,100)}; 
+%\addplot[style=dotted,color=gray,very thick] coordinates{
+%	(150,190) (150,100)};
+%\addplot[color=black,<->,thick] coordinates{ (90,115)
+%	(150,115)};
+
+\end{axis}
+
+\end{tikzpicture}

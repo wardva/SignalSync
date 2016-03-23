@@ -27,6 +27,9 @@
 \usepackage[toc,page]{appendix} 		%Appendices toevoegen
 \usepackage{tikz}						%Toevoegen van tikz figuren
 \usepackage{pgfplots}					%Grafieken plotten in tikz figuren
+\usepackage{amsmath}
+\usepackage{authblk} 
+\usetikzlibrary{arrows}
 \usepackage{wrapfig}					%Figuren wrappen
 \interfootnotelinepenalty=10000
 
@@ -34,8 +37,9 @@
 \graphicspath{{figuren/}}               % De plaats waar latex zijn figuren gaat halen.
 %\usepackage[bf]{caption2}				% Mooiere captions
 \usepackage[a4paper,plainpages=false]{hyperref}    % Om hyperlinks te hebben in het pdfdocument.
+
 \newcommand{\command}[1]{\lstinline[basicstyle=\tt]{#1}\xspace} %Voor commando's
-\hyphenation{} 							% Splitsing van woorden
+\hyphenation{tijd-as} 							% Splitsing van woorden
 
 \renewcommand{\chaptermark}[1]{\markright{\MakeUppercase{#1}}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection~#1}}
@@ -84,6 +88,9 @@
 
 \begin{document}
 \selectlanguage{dutch}
+
+%officieel Plato titelblad
+\includepdf[pages=-]{./titelblad.pdf}
 
 % titelblad (voor kaft)
 \include{titel}

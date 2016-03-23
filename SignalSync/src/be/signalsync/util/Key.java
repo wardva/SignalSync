@@ -63,7 +63,27 @@ public enum Key {
 	 * The number of tests that should give the same results before the result value
 	 * is retained.
 	 */
-	CROSS_COVARIANCE_THRESHOLD(1);
+	CROSS_COVARIANCE_THRESHOLD(1),
+	
+	/**
+	 * The name of the Teensy port to read.
+	 */
+	TEENSY_PORT("COM3"),
+	
+	/**
+	 * The index of the first Teensy channel.
+	 */
+	TEENSY_START_CHANNEL(0),
+	
+	/**
+	 * The number of Teensy channels.
+	 */
+	TEENSY_CHANNEL_COUNT(2),
+	
+	/**
+	 * The received Teensy audio is multiplicated with this value.
+	 */
+	TEENSY_GAIN(1);
 
 	String defaultValue;
 

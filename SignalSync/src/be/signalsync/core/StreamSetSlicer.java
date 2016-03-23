@@ -10,6 +10,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +29,7 @@ import be.tarsos.dsp.AudioDispatcher;
 public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListener<float[]> {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
 	private final StreamSet streamSet;
+	private final Lock iteratorLock;
 	
 	private final ExecutorService collectExecutor;
 	
@@ -37,11 +40,6 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 	private final Map<Slicer<float[]>, BlockingQueue<float[]>> slicesMap;
 	
 	/**
-	 * The number of streamsets which are still active.
-	 */
-	private int size;
-
-	/**
 	 * Creates a new StreamSetSlicer from a StreamSet.
 	 * @param streamSet The streamset to extract the slices from.
 	 * @param time The time in seconds of each slice.
@@ -50,9 +48,9 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 	public StreamSetSlicer(final StreamSet streamSet, final int sliceSize, final int sliceStep) {
 		super();
 		this.streamSet = streamSet;
-		this.size = streamSet.getStreams().size();
-		this.slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(size));
+		this.slicesMap = Collections.synchronizedMap(new LinkedHashMap<>(streamSet.getStreams().size()));
 		this.collectExecutor = Executors.newSingleThreadExecutor();
+		this.iteratorLock = new ReentrantLock();
 		
 		//Iterate over the streams.
 		for (final AudioDispatcher d : this.streamSet.getStreams()) {
@@ -86,7 +84,8 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 			public void run() {
 				try {
 					//Keep doing this while there are streamsets active.
-					while (size > 0) {
+					while (!slicesMap.isEmpty()) {
+						iteratorLock.lock();
 						//Iterate over the diffent blockingqueues of the slicesMap
 						for (final BlockingQueue<float[]> q : slicesMap.values()) {
 							//This part has to be synchronized.
@@ -102,6 +101,7 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 								slices.add(d);
 							}
 						}
+						iteratorLock.unlock();
 						//Finished one iteration, now we have a buffer from each slicer
 						//and we can emit a slice event containing the slices.
 						emitSliceEvent(new ArrayList<float[]>(slices));
@@ -123,6 +123,7 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 	 */
 	@Override
 	public void done(final Slicer<float[]> slicer) {
+		iteratorLock.lock();
 		try {
 			//Get the blockingqueue from the slicer.
 			BlockingQueue<float[]> q = slicesMap.get(slicer);
@@ -131,13 +132,13 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 				//While there are still slices in the queue, we have to wait before
 				//removing the queue from the slicesMap.
 				while(!q.isEmpty()) {
+					iteratorLock.unlock();
 					q.wait();
 				}
 			}
 			slicesMap.remove(slicer);
-			size--;
 			//If the size is 0, the slicers are finished and we can shutdown the collectExecutor.
-			if (size == 0) {
+			if (slicesMap.isEmpty()) {
 				collectExecutor.shutdown();
 				final boolean shuttedDown = collectExecutor.awaitTermination(5, TimeUnit.SECONDS);
 				if (!shuttedDown) {
@@ -150,6 +151,7 @@ public class StreamSetSlicer extends Slicer<List<float[]>> implements SliceListe
 		catch (InterruptedException e) {
 			Log.log(Level.SEVERE, "InterruptedExeception thrown in StreamSetSlicer", e);
 		}
+		iteratorLock.unlock();
 	}
 
 	/**

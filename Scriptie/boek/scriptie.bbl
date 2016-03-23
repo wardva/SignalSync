@@ -1,4 +1,4 @@
-\begin{thebibliography}{19}
+\begin{thebibliography}{23}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -16,20 +16,30 @@ Cycling ‘74 max.
 \newblock \url{https://cycling74.com/}.
 \newblock [Online; geraadpleegd 05-maart-2016].
 
+\bibitem[xip()]{xiph2016}
+{A Digital Media Primer for Geeks}.
+\newblock \url{https://xiph.org/video/vid1.shtml}.
+\newblock [Online; geraadpleegd 21-maart-2016].
+
 \bibitem[aud(2015)]{audacity2016}
 {Audacity}.
 \newblock \url{http://audacity.sourceforge.net/}, 2015.
-\newblock [Online; accessed 12-March-2016].
+\newblock [Online; geraadpleegd 12-maart-2016].
 
 \bibitem[cyc(2016)]{cycling2016}
-{CYCLING ‘74 MAX}.
+{Cycling '74 Max}.
 \newblock \url{https://cycling74.com/}, 2016.
-\newblock [Online; accessed 12-March-2016].
+\newblock [Online; geraadpleegd 12-maart-2016].
 
 \bibitem[spe(2016)]{spectrogram_dict}
 Dictionary.com unabridged.
 \newblock Mar 2016.
 \newblock URL \url{http://www.dictionary.com/browse/sound-spectrogram}.
+
+\bibitem[tee(2016)]{teensy2016}
+{Teensy USB Development Board}.
+\newblock \url{https://www.pjrc.com/teensy/}, 2016.
+\newblock [Online; geraadpleegd 19-maart-2016].
 
 \bibitem[Bannach et~al.(2009)Bannach, Amft, and Lukowicz]{bannach2009automatic}
 David Bannach, Oliver Amft, and Paul Lukowicz.
@@ -86,6 +96,17 @@ Stan Salvador and Philip Chan.
 \newblock Toward accurate dynamic time warping in linear time and space.
 \newblock \emph{Intelligent Data Analysis}, 11\penalty0 (5):\penalty0 561--580,
   2007.
+
+\bibitem[Six(2011)]{pitchrepresentation}
+Joren Six.
+\newblock Pitch, pitch interval and pitch ratio representation.
+\newblock Technical report, 2011.
+
+\bibitem[Six(2015)]{tarsosmanual2016}
+Joren Six.
+\newblock \emph{Digital Sound Processing and Java}.
+\newblock UGent, IPEM, Sint-Pietersnieuwstraat 41, 9000 Ghent - Belgium, 5
+  2015.
 
 \bibitem[Six and Leman(2014)]{six2014panako}
 Joren Six and Marc Leman.
