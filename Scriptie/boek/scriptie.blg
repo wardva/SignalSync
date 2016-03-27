@@ -4,8 +4,9 @@ A level-1 auxiliary file: voorwoord.aux
 A level-1 auxiliary file: overzicht.aux
 A level-1 auxiliary file: h1-inleiding.aux
 A level-1 auxiliary file: h2-methode.aux
-A level-1 auxiliary file: h3-evaluatie.aux
-A level-1 auxiliary file: h4-conclusie.aux
+A level-1 auxiliary file: h3-implementatie.aux
+A level-1 auxiliary file: h4-evaluatie.aux
+A level-1 auxiliary file: h5-conclusie.aux
 A level-1 auxiliary file: appendix-a.aux
 The style file: plainnat.bst
 Database file #1: ../bronnen/bronnen.bib
@@ -15,9 +16,7 @@ Warning--to sort, need author or key in spectrogram_dict
 Warning--to sort, need author or key in audacity2016
 Warning--to sort, need author or key in cycling2016
 Warning--to sort, need author or key in teensy2016
-Warning--to sort, need author or key in maxmsp2016
 Warning--empty year in ipem2016
-Warning--empty year in maxmsp2016
 Warning--empty year in xiph2016
 Warning--empty author in spectrogram_dict
 Warning--empty journal in spectrogram_dict
@@ -25,5 +24,6 @@ Warning--empty institution in barras2012sox
 Warning--empty journal in kollarconfiguration
 Warning--empty year in kollarconfiguration
 Warning--empty year in kollarconfiguration
+Warning--empty journal in nyquist1928certain
 Warning--empty institution in pitchrepresentation
-(There were 17 warnings)
+(There were 16 warnings)

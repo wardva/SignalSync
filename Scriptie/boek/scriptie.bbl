@@ -1,4 +1,4 @@
-\begin{thebibliography}{23}
+\begin{thebibliography}{24}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -9,11 +9,6 @@
 Ipem - systematic musicology.
 \newblock
   \url{https://www.ugent.be/lw/kunstwetenschappen/en/research-groups/musicology/ipem}.
-\newblock [Online; geraadpleegd 05-maart-2016].
-
-\bibitem[max()]{maxmsp2016}
-Cycling ‘74 max.
-\newblock \url{https://cycling74.com/}.
 \newblock [Online; geraadpleegd 05-maart-2016].
 
 \bibitem[xip()]{xiph2016}
@@ -70,6 +65,13 @@ Simon Dixon and Gerhard Widmer.
 \newblock Match: A music alignment tool chest.
 \newblock In \emph{ISMIR}, pages 492--497, 2005.
 
+\bibitem[Fries and Fries(2005)]{fries2005digital}
+B.~Fries and M.~Fries.
+\newblock \emph{Digital Audio Essentials: A comprehensive guide to creating,
+  recording, editing, and sharing music and other audio}.
+\newblock O'Reilly Digital Studio. O'Reilly Media, 2005.
+\newblock ISBN 9781491925638.
+
 \bibitem[Jaimovich and Knapp(2010)]{jaimovich2010synchronization}
 Javier Jaimovich and Benjamin Knapp.
 \newblock Synchronization of multimodal recordings for musical performance
@@ -79,6 +81,11 @@ Javier Jaimovich and Benjamin Knapp.
 \bibitem[Koll{\'a}r()]{kollarconfiguration}
 Roman Koll{\'a}r.
 \newblock Configuration of ffmpeg for high stability during encoding.
+
+\bibitem[Nyquist(1928)]{nyquist1928certain}
+Harry Nyquist.
+\newblock Certain topics in telegraph transmission theory.
+\newblock 1928.
 
 \bibitem[Oppenheim(1970)]{oppenheim1970speech}
 Alan~V Oppenheim.

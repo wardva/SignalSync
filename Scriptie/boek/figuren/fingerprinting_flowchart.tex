@@ -1,0 +1,20 @@
+\begin{tikzpicture}[scale=1]
+\tikzstyle{block} = [rectangle, draw, fill=blue!0, 
+text width=15em, text centered, rounded corners, minimum height=2em] 
+
+\node at (0,0) [minimum width=2cm] (A) {};
+
+\node (rect) at (3,0) [draw,thin,minimum width=3cm,minimum height=1cm,align=center,font=\footnotesize] (B) {Feature \\[-0.7em] extractie};
+
+\node (rect) at (7,0) [draw,thin,minimum width=3cm,minimum height=1cm,align=center,font=\footnotesize] (C) {Fingerprint \\[-0.7em] constructie};
+
+\node (rect) at (11,0) [draw,thin,minimum width=3cm,minimum height=1cm,align=center,font=\footnotesize] (D) {Matchen en \\[-0.7em] bepalen latency};
+
+\node at (14,0) [minimum width=2cm] (E) {};
+
+\draw [->] (A) -- (B);
+\draw [->] (B) -- (C);
+\draw [->] (C) -- (D);
+\draw [->] (D) -- (E);
+
+\end{tikzpicture}

@@ -1,71 +1,92 @@
 \chapter{Methode}
 
-\section{Technologieën en software}
-
-\subsection{TarsosDSP}
-
-TarsosDSP is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid. Deze bibliotheek wordt beschreven in artikel \cite{six2014tarsosdsp}. 
-
-Een processing pipeline wordt voorgesteld als instantie van de klasse \texttt{AudioDispatcher}. Het aanmaken gebeurt met behulp van de klasse \texttt{AudioDispatcherFactory}. Deze bevat statische methodes om een \texttt{AudioDispatcher} aan te maken van een audiobestand, een \texttt{float} array of een microfoon. Aan de pipeline kunnen verschillende \texttt{AudioProcessor}s worden toegevoegd. Een \texttt{AudioProcessor} is een interface met de methodes \texttt{process} en \texttt{processingFinished}. De \texttt{process} methode heeft als enige parameter een \texttt{AudioEvent}. Dit object bevat een audio blok, voorgesteld als \texttt{float} array met waarden tussen -1.0 en 1.0. De grootte van dit blokje audio, en de mate van overlapping tussen de opeenvolgende blokjes audio is instelbaar. Verder bevat dit object nog andere metadata zoals onder meer een \textit{timestamp}.
-
-Afhankelijk van de implementatie van de \texttt{process} methode kan de audiostroom op een bepaalde manier verwerkt, geanalyseerd of gewijzigd worden.
-
-\subsection{Panako}
-
-Panako is net zoals TarsosDSP een Java bibliotheek, door de zelfde auteurs ontwikkeld aan het IPEM. Panako bevat buiten implementaties van algoritmen ook enkele applicaties die hiervan gebruik maken.  Deze bibliotheek wordt beschreven in artikel \cite{six2014panako}. Panako heeft TarsosDSP als enige \textit{dependency}.
-
-Panako bevat een open-source implementatie van het accoustic fingerprinting algoritme beschreven in de paper van Avery Li-Chun Wang\cite{Wang2003a}. Dit algoritme is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of audio die sneller of trager is afgespeeld toch gedetecteerd kan worden.
-
-De bibliotheek bevat verschillende applicaties die gebruik maken van dit algoritme. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters.
-
-Er is ook een applicatie beschikbaar om verschillende geluidsfragmenten te synchroniseren. Deze applicatie maakt behalve van het accoustic fingerprinting algoritme ook nog gebruik van het kruiscovariantie algoritme. 
-
-Wanneer de latency tussen de verschillende audiofragmenten bepaald is, dan kan de applicatie een shell script genereren dat met behulp van \textit{FFmpeg} stukjes van de geluidsbestanden wegknipt of er stilte aan toevoegt. Het resultaat is dat na het uitvoeren van het script de geluidsbestanden gesynchroniseerd zijn.
-
-\subsection{FFmpeg}
-
-FFmpeg is een command-line multimedia framework dat gebruikt wordt voor encoderen, decoderen, multiplexen, demultiplexen, streamen en afspelen van audio en video. \cite{kollarconfiguration}
-
-In dit onderzoek wordt FFmpeg voornamelijk gebruikt in scripts bij het geautomatiseerd genereren van testdata.
-
-\subsection{SoX}
-
-SoX is net zoals FFmeg een command-line tool voor audioverwerking. Buiten de mogelijkheid om audiobestanden te converteren laat SoX ook minder triviale operaties toe. Zo is het onder meer mogelijk om het volume aan te passen, effecten toe te voegen, de bestanden bij te knippen of gegenereerde geluiden in een audiobestand te mixen.
-\cite{barras2012sox}
-
-In dit onderzoek wordt SoX ook gebruikt in scripts bij het manipuleren van de testdata.
-
-\subsection{Sonic Visualiser}
-
-Sonic Visualiser is een gebruiksvriendelijke desktopapplicatie voor de analyse, visualisatie van audiobestanden. Sonic Visualiser laat toe om audiobestanden vanuit verschillende perspectieven te analyseren, zo kan zowel de waveform als het spectrogram van een audiobestand gevisualiseerd worden. Sonic Visualiser is uitbreidbaar met plug-ins in het Vamp formaat. \cite{cannam2010sonic}
-
-Sonic visualiser is in dit onderzoek gebruikt om handmatig de latency tussen verschillende audiofragmenten te bepalen. De applicatie is ook gebruikt geweest om de principes achter de algoritmes te visualiseren. 
-
-\subsection{Audacity}
-
-Audacity is een open-source desktopapplicatie voor het bewerken, opnemen en converteren van audio. Ook is het met Audacity mogelijk om verscheidene effecten aan audio toe te voegen.\cite{audacity2016}
-
-Alle opnames en handmatige bewerkingen op audiobestanden in dit onderzoek zijn uitgevoerd met Audacity.
-
-
-\subsection{Max/MSP}
-
-Max/MSP is een visuele programmeertaal voor muziek en multimedia. Het is een systeem waarbij modules met elkaar verbonden kunnen worden om zo complexe systemen op te bouwen. Max/MSP beschikt ook over een API waarmee nieuwe modules mee ontwikkeld kunnen worden. \cite{cycling2016}
-
-Max/MSP kan realtime audio verwerken, daarom zullen we deze toepassing gebruiken voor het ontwikkelen van onze gebruikersinterface. 
-
-\subsection{Teensy}
-
-De Teensy is een kleine microcontroller die via USB geprogrammeerd kan worden. De Teensy is compatibel met de Arduino software en is hierdoor zeer gebruiksvriendelijk. \cite{teensy2016}
-
-De sensoren die gebruikt worden bij de experimenten van het IPEM zijn meestal aangesloten op Teensy microcontrollers.
-Om de synchronisatiealgoritmes en het bijhorende systeem in een representatieve situatie te testen zal daarom ook gebruik gemaakt worden van een Teensy microcontroller.
-
-In hoofdstuk \ref{evaluatie} wordt deze testopstelling meer in detail besproken.
-
 \section{Algoritmen}
 
-Eerder in deze scriptie (sectie \ref{bestaande-methoden}) hebben we de voornaamste methoden waarmee datastreams gesynchroniseerd kunnen worden besproken. Hoewel de meeste methoden niet voldeden aan onze vereiste zijn er toch twee die zeer goed bruikbaar zijn voor snelle en nauwkeurige synchronisatie van realtime streams. Zowel accoustic fingerprinting als kruiscovariantie zijn algoritmen met hun eigen voordeel waar andere algoritmen moeilijk aan kunnen tippen.
+Eerder in deze scriptie (sectie \ref{bestaande-methoden}) hebben we een korte inleiding gegeven tot de voornaamste methoden waarmee datastreams gesynchroniseerd kunnen worden. Hoewel de meeste algoritmen niet voldeden aan onze vereiste waren er toch twee die ons wel bruikbaar leken voor snelle en nauwkeurige synchronisatie van realtime streams. In dit gedeelte zullen deze methoden in detail worden behandeld. Vervolgens onderzoeken we in welke mate het mogelijk is om deze algoritmes te combineren in één systeem.
+
+\subsection{Accoustic fingerprinting}
+
+Zoals in de introductie al is beschreven maakt het accoustic fingerprinting algoritme gebruik van fingerprints geëxtraheerd uit audiofragmenten. Het op zoek gaan naar gelijkenissen gebeurt door deze fingerprints met elkaar te vergelijken. Hoe dit precies in zijn werk gaat en hoe het mogelijk is om met deze techniek de latency tussen audiofragmenten te bepalen zal hieronder worden verklaart.
+
+\subsubsection{Werking}
+\begin{figure}[h]
+	\captionsetup{width=\textwidth}
+	\caption[Schema synchronisatie met fingerprinting]{Schematische voorstelling van synchronisatie met behulp van een accoustic fingerprinting systeem.}
+	\advance\parskip0.5cm
+	\input{figuren/fingerprinting_flowchart.tikz}
+	\advance\parskip1cm
+\end{figure}
+\vspace{2.5cm}
+
+De cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van de meest betrouwbare \textit{feature} om de fingerprints op te baseren. Mogelijke features zijn frequentie, toonhoogte, tempo, ritme, dynamiek, etc. Veel features zijn echter moeilijk (softwarematig) te bepalen wat hen niet bruikbaar maakt in een robuust fingerprinting systeem. Een feature die wel geschikt is voor het bepalen van fingerprints zijn de pieken in het frequentiespectrum.
+
+\begin{figure}[!h]
+	\caption[Voorbeeld van een spectrogram]{Spectrogram van Venetian Snares - Look}
+	\centering
+	\includegraphics[width=0.5\textwidth]{spectrogram3.png}
+\end{figure}
+Een fingerprinter gebaseerd op de extractie van spectrale pieken gaat in verschillende stappen te werk: 
+Eerst wordt er van elk audiofragment een spectrogram\footnote{Een spectrogram is een grafische voorstelling van de frequentie en intensiteit van geluid ten opzicht van de tijd \cite{spectrogram_dict}} gegenereerd. Dit kan snel gebeuren met het Fast Fourrier Transformation algoritme (FFT). In artikel \cite{oppenheim1970speech} wordt deze methode uitgebreid besproken. Vervolgens worden de fingerprints bepaald door telkens twee pieken in het spectrogram te verbinden. Een tijd-frequentie punt in het spectrogram is een kandidaat-piek als het punt een hogere energetische waarde heeft dan al zijn buren \cite{Wang2003a}. Welke pieken precies met elkaar worden verbonden hangt af van verschillende parameters.
+
+Na het bepalen van de fingerprints worden ze opgeslagen in een datastructuur waarin er snel naar matches kan worden gezocht.
+Van elke fingerprint worden volgende parameters bepaald:
+\begin{itemize}[noitemsep]
+	\item $ f1 $: de frequentie van de eerste spectrale piek van de fingerprint.
+	\item $ t1 $: de tijd van de eerste spectrale piek van de fingerprint.
+	\item $ \Delta f $: het verschil van de frequenties van beide spectrale pieken van de fingerprint.
+	\item $ \Delta t $: het verschil in tijd van beide spectrale pieken van de fingerprint.
+\end{itemize}
+
+De fingerprints worden in volgende structuur bijgehouden: $ ( id; t1; hash(f1; \Delta f; \Delta t) ) $.
+
+De hash wordt gebruikt om verschillende fingerprints te kunnen matchen. Deze bevat $ f1 $ en $ \Delta f $ omdat bij een match de beginfrequentie en het verschil in frequentie van beide fingerprints gelijk moet zijn. Enkel $ \Delta t $ wordt bijgehouden aangezien de begintijd van beide fingerprints waarschijnlijk niet zal overeenkomen. Het verschil in tijd tussen de fingerprints moet wel overeenkomen.
+
+\begin{figure}[h]
+	\captionsetup{width=0.7\textwidth}
+	\caption[De anatomie van een fingerprint]{De anatomie van een fingerprint in het tijd-frequentie domein. Met toestemming overgenomen uit artikel \cite{six2015multimodal}.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/fingerprint_example_graph}
+	\end{center}
+\end{figure}
+
+Na het extraheren en opslaan van de fingerprints kunnen er matches gezocht worden door de hashwaarden van de fingerprints van beide audiofragmenten met elkaar te vergelijken. Van elke match wordt de offset berekend, wat het verschil is tussen $ t1 $ van beide fingerprints. Wanneer beide fragmenten overeenkomen zal dit resulteren in een groot aantal matches met dezelfde offset. 
+
+Accoustic fingerprinting kunnen we toepassen op streams door ze te bufferen. Na het opbouwen van de buffers dient het algoritme hierop te worden uitgevoerd. De maximale offset die gevonden werd bij het matchen komt overeen met de latency tussen beide streams.
+
+Een uitgebreidere beschrijving is te vinden in artikel \cite{Wang2003a}. Deze methode is echter beperkt tot het vergelijken van audiofragmenten die in tijd noch toonhoogte gewijzigd zijn. Aan het IPEM is een aangepaste methode ontwikkeld die dit wel toelaat \cite{six2014panako}.
+
+\subsubsection{Toepassing in realtime}
+
+Door het bufferen van de streams kan accoustic fingerprinting gebruikt worden in een realtime toepassing. Afhankelijk van de gebruikte parameters en de kwaliteit van de audio is een buffergrootte van enkele seconden voldoende om de latency tussen de streams te bepalen. Verder in dit hoofdstuk zal het bufferen worden besproken.
+
+De nauwkeurigheid van dit algoritme hangt af van de grootte van de \textit{FFT bins}. De waarde hiervan is afhankelijk van de parameters van het FFT algoritme. Een nauwkeurigheid van 16 ms of 32 ms is standaard.
+
+\subsection{Kruiscovariantie}
+
+Deze methode bepaalt de gelijkenis tussen twee audiofragmenten en resulteert in een bepaalde. De latency tussen twee audiofragmenten kan bepaald worden door deze berekening uit te voeren voor elke mogelijke verschuiving. De verschuiving waarbij de kruiscovariantie het hoogst is bepaalt de latency.
+
+\subsubsection{Werking}
+
+Stel twee audioblokken $ a $ en $ b $ bestaande uit $ s $ samples en verschuiving $ i $. Voor elke $ i $ gaande van 0 tot $ s $ wordt de kruiscovariantie berekent met volgende formule:
+
+\begin{equation}
+\sum_{j=0}^{s} a_{j} \cdot b_{(i+j)\ mod\ s}
+\end{equation}
+
+De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden bepaalt men door dit resultaat te delen door de samplefrequentie.
+
+De methode kan de latency tot op één sample nauwkeurig bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is ruim voldoende voor onze toepassing.
+
+Een nadeel aan deze methode is de performantie. Het berekenen van de beste kruiscovariantie van twee audioblokken bestaande uit s samples kan gebeuren in  $O(s^{2})$. Het is dus belangrijk om bij deze berekening de grootte van de audioblokken te beperken.
+
+In artikel \citealp{six2015multimodal} wordt deze techniek meer in detail besproken.
+
+\subsubsection{Toepassing in realtime}
+
+Het bufferen van de audiostreams maakt ook dit algoritme in realtime toepasbaar. In tegenstelling tot accoustic fingerprinting is het niet de bedoeling dat de berekeningen op de volledige buffer wordt uitgevoerd. Door de kwadratische tijdscomplexiteit zou dit onnoemelijk veel rekenkracht vragen.\footnote{Voor het berekenen van de kruiscovariantie tussen twee buffers met $10s$ audio en een samplefrequentie van $8000hz$ zijn er asymptotisch 6400000000 berekeningen vereist.} Hoe de berekening dan wel moet worden uitgevoerd wordt verderop uitgelegd.
+
+\subsection{Toepasbaarheid}
 
 Het accoustic fingerprinting algoritme is zeer snel en robuust en kan gebruikt worden om gebufferde audiostreams te synchroniseren tot enkele tientallen milliseconden nauwkeurig (afhankelijk van de parameters van het FFT algoritme).
 
@@ -73,11 +94,7 @@ Het kruiscovariantie algoritme kan eveneens gebruikt worden om (gebufferde) audi
 
 De kenmerken van deze algoritmen zijn heel erg complementair. De gemakkelijkste manier om een robuust, snel én nauwkeurig systeem op te bouwen is door het beste van de twee werelden te combineren. Het accoustic fingerprinting algoritme kan zorgen voor de synchronisatie tot op enkele tientallen milliseconden nauwkeurig. Dit resultaat laat toe dat we het kruiscovariantie algoritme kunnen uitvoeren op zeer korte stukjes audio (een honderdtal milliseconden volstaat).
 
-Hoe dit in de praktijk gebracht wordt zal worden besproken in volgende sectie.
-
-\section{Implementatie}
-
-\subsection{Bufferen van streams}
+\section{Bufferen van streams}
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -88,84 +105,10 @@ Hoe dit in de praktijk gebracht wordt zal worden besproken in volgende sectie.
 	\end{center}
 \end{figure}
 
-%TODO Bufferen
-\textit{TODO: uitleg over de buffers, hoe ze verschuiven, wat hun invloed is op de nauwkeurigheid van de algoritmes en hoe dit geïmplementeerd is.}
+Zowel in de introductie als bij de gedetailleerde bespreking van de algoritmes is er vaak aangehaald dat de streams gebufferd zullen worden. Hoe dit precies in zijn werk zal gaan is echter nog niet besproken. In dit deel wordt dit concept meer gedetaileerd uitgelegd.
 
-\subsection{Accoustic fingerprinting}
+Bij het bufferen maken we gebruik van een \textit{sliding window}. Deze techniek zorgt ervoor dat de algoritmes voldoende data hebben om berekeningen op uit te voeren terwijl wijzigingen aan de latency (door drift of gedropte samples) toch voldoende snel gedetecteerd worden.
 
-De Panako softwarebibliotheek bevat een zeer goede implementatie van het accoustic fingerprinting algoritme. Om wijzigingen mogelijk te maken hebben we de code van het algoritme overgenomen in ons eigen project. Deze code is wel nog steeds afhankelijk van enkele klassen uit het Panako project. 
+De grootte van de buffer heeft invloed op de kwaliteit van de geretourneerde resultaten. Het is logisch dat de algoritmes de latency beter kunnen bepalen door 10s in plaats van 1s audio te analyseren. Een nadeel is echter dat het langer duurt vooraleer de latency of een wijziging ervan gedetecteerd kan worden. Indien er bijvoorbeeld buffers gebruikt worden die 10s audio kunnen bevatten, dan zal een wijziging aan de latency gemiddeld na iets meer dan 5 seconden gedetecteerd worden. Dit is te verklaren aangezien de buffer vanaf dat moment procentueel meer audio bevat met de gewijzigde latency dan audio met de oude latency.
 
-\subsubsection{Optimalisaties}
-
-Aan dit algoritme is één vereenvoudiging aangebracht. Het originele algoritme bevatte namelijk de mogelijkheid om alle offsets boven een bepaalde drempelwaarde te verwerken. Deze feature laat toe dat er meerdere matches kunnen gevonden worden binnen één uitvoering van het algoritme. Om dit te ondersteunen moeten alle matches echter wel één voor één worden vergeleken met de drempelwaarde. Omdat we in onze toepassing enkel geïnteresseerd zijn in de beste offsetwaarde is dit overbodig. De beste offset en bijhorende fingerprints wordt apart bijgehouden. De naverwerking wordt hierdoor vermeden.
-
-\subsubsection{Parameters en hun invloed op het algoritme}
-
-De werking van dit algoritme is afhankelijk van een aantal parameters die een grote invloed kunnen hebben op de performantie en de nauwkeurigheid van het uiteindelijke resultaat. Daarom is het van belang om voor het uitvoeren van het algoritme de waarde van deze parameters te controleren. De optimale waarde van elke parameter is afhankelijk van verschillende factoren die van situatie tot situatie kunnen verschillen:
-
-\begin{itemize}[noitemsep]
-	\item De vereiste nauwkeurigheid van het algoritme.
-	\item De vereiste performantie van het algoritme.
-	\item De mate waarin er omgevingsgeluid aanwezig is.
-	\item De opnamekwaliteit van het omgevingsgeluid.
-\end{itemize}
-
-De meeste parameters worden bijgehouden in een configuratiebestand waardoor ze ook na compilatie wijzigbaar zijn. Dit zijn de belangrijkste parameters uit het configuratiebestand die invloed hebben op het algoritme:
-
-\begin{description}
-	\item[\texttt{SAMPLE\_RATE}] \hfill \\
-		Deze parameter bepaalt de samplefrequentie van de binnenkomende audiostreams. Het verhogen van deze parameter zorgt voor een tragere verwerking maar een betere nauwkeurigheid.
-	\item[\texttt{NFFT\_BUFFER\_SIZE}] \hfill \\
-		Het FFT algoritme waarmee het spectrogram gegenereerd wordt maakt gebruik van een verschuivende buffer. De frequentiesterktes op een bepaalde plaats op de tijd\-as worden berekend per buffer. De grootte van deze buffer wordt bepaald door deze parameter.
-	\item[\texttt{NFFT\_STEP\_SIZE}] \hfill \\
-		Deze parameter stelt het aantal samples in van elke verschuiving in het FFT algoritme. Deze parameter beïnvloedt rechtstreeks de nauwkeurigheid van het accoustic fingerprinting algoritme. Wanneer deze parameter is ingesteld op 128 samples en de samplefrequentie 8000hz bedraagt dan is de maximale nauwkeurigheid $128/8000Hz = 0.016s = 16ms$.
-	\item[\texttt{MIN\_ALIGNED\_MATCHES}] \hfill \\
-		Een match tussen twee audiofragmenten wordt pas als geldig beschouwd wanneer er een bepaald aantal fingerprint matches met dezelfde offset gevonden zijn. Dit aantal wordt bepaalt door deze parameter.
-	\item[\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT}] \hfill \\
-		Deze parameter bepaalt het maximum aantal fingerprints waaraan een event point (een punt op het spectrogram) kan deelnemen. Hoe hoger deze parameter hoe vlugger er matches kunnen gevonden worden. Wanneer \texttt{MIN\_ALIGNED\_MATCHES} hierbij niet wordt aangepast stijgt de kans op false positives. Bij een hoge waarde moeten meer berekeningen worden uitgevoerd, dit heeft invloed op de performantie.
-	\item[\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE}] \hfill \\
-		Dit is de minimale afstand tussen twee event points op het spectrogram die samen een fingerprint kunnen vormen. Omdat deze parameter een afstand uitdrukt in het tijd-frequentie domein is de eenheid ervan cent-seconde. Seconde is de eenheid van de waarden op de tijdas. Cent\footnote{Cent is een relatieve logaritmische eenheid waarmee het verschil tussen twee frequenties wordt uitgedrukt. Een belangrijke eigenschap van deze eenheid is dat de waarden als muzikale intervallen benaderd kunnen. Ze kunnen zonder problemen bij elkaar worden opgeteld of van elkaar worden afgetrokken en behouden hierbij hun betekenis. Het frequentieverschil in cent kan men als volgt berekenen:\\ \begin{math}
-			c = 1200 \times \log_{2}(\frac{f_{1}}{f_{2}})
-			\end{math} \cite{pitchrepresentation}} 
-		is de eenheid van het verschil in frequentie tussen de twee event points. 
-
-\end{description}
-
-Verder maakt het algoritme nog gebruik van twee hardgecodeerde parameters die niet instelbaar zijn in het configuratiebestand: \texttt{MIN\_FREQUENCY} en \texttt{MAX\_FREQUENCY}. Deze parameters bepalen binnen welke frequentiebereik er naar fingerprints gezocht worden. De waarden waarop deze ingesteld staan bevinden zich op de rand van de frequenties die door muziek of stemgeluid geproduceerd worden.
-
-\subsubsection{Optimale instellingen}
-
-%TODO optimale instellingen
-\textit{De optimale instellingen van de parameters bespreken. Uitleggen waarom ze zo extreem zijn en waarom dit eigenlijk geen kwaad kan...}
-
-
-\subsection{Kruiscovariantie}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-\subsubsection{Werking}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-
-\subsubsection{Optimalisaties}
-
-%Bugfixes: onderschatten en overschatten van fingerprint maakt verschil
-%Verschillende keren per slice uitvoeren, threshold
-%Bandpass filtering die toch niet geïmplementeerd is.
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-\subsubsection{Parameters en hun invloed op het algoritme}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-\subsection{Structuur softwarebibliotheek}
-
-%De Java bibliotheek die verantwoordelijk is voor de realtime synchronisatie van de audiostromen heeft verschillende taken. Eerst en vooral moet de gestreamde data gebufferd worden, het is namelijk onmogelijk om de synchronisatiealgoritmes uit te voeren zonder dat er enkele seconden audio van elke stream zich in het geheugen bevind. Deze verantwoordelijkheid wordt afgehandeld in het \textit{slicer}-gedeelte van de bibliotheek. Wanneer de audio gebufferd is kan het synchronisatie-deel van de applicatie een synchronisatiealgoritme aanroepen en het geretourneerde resultaat teruggeven aan de gebruiker, of de aanroepende applicatie. Welk algoritme precies gebruikt wordt, en de specifieke parameters ervan, is configureerbaar met behulp van een configuratiebestand.
-
-\subsection{Implementatie van een Max/MSP module}
-
-%Gans dit onderzoek heeft uiteindelijk de bedoeling te resulteren in het ontwerp en implementatie van een module in MAX/MSP\footnote{Cycling ‘74 Max/MSP is een softwarepakket en een visuele programmeertaal waarmee audio, video en multimedia kan worden verwerkt met behulp van onafhankelijke modules. Deze modules kunnen met elkaar worden verbonden om zo complexe zaken te bereiken. Buiten de standaard meegeleverde modules is het ook mogelijk om zelf modules te schrijven.\cite{maxmsp2016}} die realtime synchronisatie mogelijk moet maken via een interface die bruikbaar is voor musicologen/onderzoekers met een beperkte informatica achtergrond.
-
-%Deze module moet in staat zijn om verschillende datastromen als input binnen te krijgen, de synchronisatiebibliotheek aan te roepen, en de gesynchroniseerde datastromen als output terug te geven. Een andere Max module kan er dan voor zorgen dat deze data wordt weggeschreven naar een WAVE-bestand.
+In de evaluatiecriteria is er bepaald dat een wijziging aan de latency (door drift of gedropte samples) binnen één seconde gedetecteerd moet worden. Een verschuivende buffer kan hier voor zorgen: in plaats van een vast aantal seconden audio te bufferen en vervolgens de volledige grootte van de buffer op te schuiven wordt de buffer over een veel kleinere afstand verschoven. Hierdoor kunnen latencywijzigingen, ondanks de vertraging waarmee we de resultaten verkrijgen, toch nauwkeuriger en sneller bepaalt worden.

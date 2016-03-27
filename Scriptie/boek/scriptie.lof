@@ -4,10 +4,16 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Huidge werkwijze voor streamsynchronisatie}}{3}{figure.1.1}
 \contentsline {figure}{\numberline {1.2}{\ignorespaces Samplen van audio}}{4}{figure.1.2}
-\contentsline {figure}{\numberline {1.3}{\ignorespaces Voorbeeld van een spectrogram}}{10}{figure.1.3}
-\contentsline {figure}{\numberline {1.4}{\ignorespaces De anatomie van een fingerprint}}{11}{figure.1.4}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Schematische weergave van de buffer}}{20}{figure.2.1}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Schema synchronisatie met fingerprinting}}{14}{figure.2.1}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Voorbeeld van een spectrogram}}{14}{figure.2.2}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces De anatomie van een fingerprint}}{16}{figure.2.3}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Schematische weergave van de buffer}}{19}{figure.2.4}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Gebruikersinterface van Sonic Visualiser}}{23}{figure.3.1}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Gebruikersinterface van Audacity}}{24}{figure.3.2}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Gebruikersinterface van MAX/MSP}}{25}{figure.3.3}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Teensy microcontroller}}{26}{figure.3.4}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
