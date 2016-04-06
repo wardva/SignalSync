@@ -2,7 +2,7 @@ package be.signalsync.streamsets;
 
 
 /**
- * A streamset containing some given streams.
+ * A streamset containing some streams.
  * @author Ward Van Assche
  */
 public class CustomStreamSet extends FileStreamSet {

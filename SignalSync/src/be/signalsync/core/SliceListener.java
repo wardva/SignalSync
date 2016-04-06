@@ -11,5 +11,5 @@ package be.signalsync.core;
  */
 public interface SliceListener<T> {
 	void done(Slicer<T> s);
-	void onSliceEvent(T slices, Slicer<T> s);
+	void onSliceEvent(SliceEvent<T> event);
 }

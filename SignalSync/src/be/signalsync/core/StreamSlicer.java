@@ -15,24 +15,33 @@ import be.tarsos.dsp.AudioProcessor;
  * @author Ward Van Assche
  *
  */
-public class SteppedStreamSlicer extends Slicer<float[]> implements AudioProcessor {
+public class StreamSlicer extends Slicer<float[]> implements AudioProcessor {
 	
-	private int sliceSize;
-	private int sliceStep;
+	private final int sliceSize;
+	private final int sliceStep;
+	private final int sampleRate;
+	private int sampleCtr;
 	
 	private List<List<float[]>> buffer;
 	private List<float[]> currentSecBuffer;
 	private int currentSec;
 	
-	public SteppedStreamSlicer(int sliceSize, int sliceStep) {
+	public StreamSlicer(int sliceSize, int sliceStep, int sampleRate) {
 		this.sliceSize = sliceSize;
 		this.sliceStep = sliceStep;
-		buffer = new LinkedList<>();
-		currentSec = -1;
+		this.sampleRate = sampleRate;
+		this.buffer = new LinkedList<>();
+		this.sampleCtr = 0;
+		this.currentSec = -1;
 	}
 	
-	public SteppedStreamSlicer() {
-		this(Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
+	
+	public StreamSlicer(int sliceSize, int sliceStep) {
+		this(sliceSize, sliceStep, Config.getInt(Key.SAMPLE_RATE));
+	}
+	
+	public StreamSlicer() {
+		this(Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S), Config.getInt(Key.SAMPLE_RATE));
 	}
 	
 	@Override
@@ -43,7 +52,8 @@ public class SteppedStreamSlicer extends Slicer<float[]> implements AudioProcess
 			if(Math.abs(currentSec-sliceSize) % sliceStep == 0 && currentSec >= sliceSize) {
 				List<List<float[]>> sliceBuffers = buffer.subList(buffer.size() - sliceSize, buffer.size());
 				float[] merged = flatten(sliceBuffers);
-				emitSliceEvent(merged);
+				double beginSliceTime = ((double) (sampleCtr - merged.length)) / sampleRate;
+				emitSliceEvent(merged, beginSliceTime);
 				buffer.subList(0, sliceStep).clear();
 			}
 			currentSecBuffer = new ArrayList<>();
@@ -53,6 +63,7 @@ public class SteppedStreamSlicer extends Slicer<float[]> implements AudioProcess
 		float[] eventBufferCopy = new float[eventBuffer.length];
 		System.arraycopy(eventBuffer, 0, eventBufferCopy, 0, eventBuffer.length);
 		currentSecBuffer.add(eventBufferCopy);
+		sampleCtr += audioEvent.getBufferSize();
 		return true;
 	}
 

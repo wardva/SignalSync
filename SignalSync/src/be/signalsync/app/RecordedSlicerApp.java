@@ -1,9 +1,11 @@
 package be.signalsync.app;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
+
+import be.signalsync.core.SliceEvent;
 import be.signalsync.core.SliceListener;
 import be.signalsync.core.Slicer;
-import be.signalsync.core.SteppedStreamSlicer;
+import be.signalsync.core.StreamSlicer;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
@@ -33,7 +35,7 @@ public class RecordedSlicerApp {
 		final int stepSize = Config.getInt(Key.NFFT_STEP_SIZE);
 		final int overlap = bufferSize - stepSize;
 		
-		final SteppedStreamSlicer slicer = new SteppedStreamSlicer();
+		final StreamSlicer slicer = new StreamSlicer();
 		slicer.addEventListener(new SliceListener<float[]>() {
 			private int i = 0;
 
@@ -43,9 +45,9 @@ public class RecordedSlicerApp {
 			}
 
 			@Override
-			public void onSliceEvent(final float[] slices, final Slicer<float[]> s) {
+			public void onSliceEvent(SliceEvent<float[]> event) {
 				try {
-					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(slices, sampleRate, bufferSize, overlap);
+					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(event.getSlices(), sampleRate, bufferSize, overlap);
 					final String newname = "./Slices/Recorded/" + filename + " - slice - " + i++ + ".wav";
 					writer.addAudioProcessor(new WaveformWriter(writer.getFormat(), newname));
 					writer.run();

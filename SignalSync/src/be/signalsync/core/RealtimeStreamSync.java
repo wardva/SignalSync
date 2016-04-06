@@ -19,7 +19,7 @@ import be.signalsync.util.Key;
  * @author Ward Van Assche
  */
 public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnable {
-	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
+	private static Logger Log = Logger.getLogger("signalSync");
 
 	/**
 	 * This object contains the different streams. This object is a runnable and
@@ -51,7 +51,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	public RealtimeStreamSync(final StreamSet streamSet) {
 		this.streamSet = streamSet;
 		this.listeners = new HashSet<>();
-		this.syncer = SyncStrategy.getInstance();
+		this.syncer = SyncStrategy.getDefault();
 		
 		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
 		this.slicer.addEventListener(this);
@@ -89,8 +89,8 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	 * It's called each refresh interval from the scheduled threadpool.
 	 */
 	@Override
-	public void onSliceEvent(final List<float[]> sliceSet, final Slicer<List<float[]>> s) {
-		final List<Float> data = syncer.findLatencies(sliceSet);
+	public void onSliceEvent(SliceEvent<List<float[]>> event) {
+		final List<Float> data = syncer.findLatencies(event.getSlices());
 		emitSyncEvent(data);
 	}
 

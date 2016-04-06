@@ -14,9 +14,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import be.signalsync.core.SliceEvent;
 import be.signalsync.core.SliceListener;
 import be.signalsync.core.Slicer;
-import be.signalsync.core.SteppedStreamSlicer;
+import be.signalsync.core.StreamSlicer;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.io.TarsosDSPAudioFormat;
 
@@ -65,9 +66,9 @@ public class SteppedSlicerTest {
 			private int eventNr = 0;
 			
 			@Override
-			public void onSliceEvent(float[] slice, Slicer<float[]> s) {
-				Assert.assertEquals(expectedSliceLengths[eventNr], slice.length, 1);
-				DoubleStream ds = IntStream.range(0, slice.length).mapToDouble(i -> slice[i]);
+			public void onSliceEvent(SliceEvent<float[]> event) {
+				Assert.assertEquals(expectedSliceLengths[eventNr], event.getSlices().length, 1);
+				DoubleStream ds = IntStream.range(0, event.getSlices().length).mapToDouble(i -> event.getSlices()[i]);
 				Assert.assertTrue(ds.allMatch(x -> x >= eventNr * sliceStep && x < eventNr * sliceStep + sliceSize));
 				++eventNr;
 			}
@@ -78,7 +79,7 @@ public class SteppedSlicerTest {
 			}
 		};
 		
-		SteppedStreamSlicer slicer = new SteppedStreamSlicer(sliceSize, sliceStep);
+		StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep);
 		slicer.addEventListener(listener);
 		
 		for(AudioEvent a : audioEvents) {

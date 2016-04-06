@@ -40,9 +40,10 @@ public abstract class Slicer<T> {
 	 * Send a new slice result to the interested listeners
 	 * @param result The slice result.
 	 */
-	public void emitSliceEvent(final T result) {
+	public void emitSliceEvent(final T result, double beginTime) {
+		SliceEvent<T> event = new SliceEvent<T>(this, result, beginTime);
 		for (final SliceListener<T> l : listeners) {
-			l.onSliceEvent(result, this);
+			l.onSliceEvent(event);
 		}
 	}
 

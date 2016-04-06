@@ -13,8 +13,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.panako.strategy.nfft.NFFTEventPointProcessor;
 import be.panako.strategy.nfft.NFFTFingerprint;
-import be.signalsync.util.Config;
-import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
@@ -27,21 +25,26 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
  *
  */
 public class FingerprintSyncStrategy extends SyncStrategy {
-	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
+	private static Logger Log = Logger.getLogger("SignalSync");
 	
 	private static final float MIN_FREQUENCY = 100;
 	private static final float MAX_FREQUENCY = 4000;
-	private static final int SAMPLE_RATE = Config.getInt(Key.SAMPLE_RATE);
-	private static final int SIZE = Config.getInt(Key.NFFT_BUFFER_SIZE);
-	private static final int STEP_SIZE = Config.getInt(Key.NFFT_STEP_SIZE);
-	private static final int OVERLAP = SIZE - STEP_SIZE;
+	private final int sampleRate;
+	private final int bufferSize;
+	private final int stepSize;
+	private final int overlap;
+	private final int minimumAlignedMatchesThreshold;
 
-	protected FingerprintSyncStrategy() {
+	public FingerprintSyncStrategy(int sampleRate, int bufferSize, int stepSize, int minDistance, int maxFingerprints, int minimumAlignedMatchesThreshold) {
+		this.sampleRate = sampleRate;
+		this.bufferSize = bufferSize;
+		this.stepSize = stepSize;
+		this.overlap = bufferSize - stepSize;
+		this.minimumAlignedMatchesThreshold = minimumAlignedMatchesThreshold;
+		
 		//Changing the Panako configuration entries in the configuration entries from this project.
-		be.panako.util.Config.set(be.panako.util.Key.NFFT_EVENT_POINT_MIN_DISTANCE,
-				Config.get(Key.NFFT_EVENT_POINT_MIN_DISTANCE));
-		be.panako.util.Config.set(be.panako.util.Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT,
-				Config.get(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT));
+		be.panako.util.Config.set(be.panako.util.Key.NFFT_EVENT_POINT_MIN_DISTANCE, Integer.toString(minDistance));
+		be.panako.util.Config.set(be.panako.util.Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, Integer.toString(maxFingerprints));
 	}
 
 	/**
@@ -50,7 +53,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 	 * @return A list containing the fingerprints.
 	 */
 	private List<NFFTFingerprint> extractFingerprints(final AudioDispatcher dispatcher) {
-		NFFTEventPointProcessor minMaxProcessor = new NFFTEventPointProcessor(SIZE, OVERLAP, SAMPLE_RATE);
+		NFFTEventPointProcessor minMaxProcessor = new NFFTEventPointProcessor(bufferSize, overlap, sampleRate);
 		dispatcher.addAudioProcessor(minMaxProcessor);
 		dispatcher.run();
 		dispatcher.removeAudioProcessor(minMaxProcessor);
@@ -67,8 +70,8 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 	 */
 	private List<NFFTFingerprint> filterPrints(final List<NFFTFingerprint> fingerprints) {
 		List<NFFTFingerprint> filtered = new LinkedList<>(fingerprints);
-		final int minf = (int) Math.ceil(MIN_FREQUENCY / (SAMPLE_RATE / SIZE));
-		final int maxf = (int) Math.floor(MAX_FREQUENCY / (SAMPLE_RATE / SIZE));
+		final int minf = (int) Math.ceil(MIN_FREQUENCY / (sampleRate / bufferSize));
+		final int maxf = (int) Math.floor(MAX_FREQUENCY / (sampleRate / bufferSize));
 		for(ListIterator<NFFTFingerprint> it = filtered.listIterator(); it.hasNext(); ) {
 			NFFTFingerprint print = it.next();
 			final boolean smallerThanMin = print.f1 <= minf || print.f2 <= minf;
@@ -96,7 +99,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		if(slices.isEmpty()) {
 			throw new IllegalArgumentException("The slices list can not be empty.");
 		}
-		final float fftHopSizesS = STEP_SIZE / (float) SAMPLE_RATE;
+		final float fftHopSizesS = stepSize / (float) sampleRate;
 		final List<Float> latencies = new ArrayList<>();
 		for (final int[] timing : synchronize(slices)) {
 			if (timing.length > 0) {
@@ -124,7 +127,6 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		// key is the offset, value a list of fingerprint objects. Offset = time
 		// between the two events
 		HashMap<Integer, List<NFFTFingerprint>> mostPopularOffsets = new HashMap<Integer, List<NFFTFingerprint>>();
-		int minimumAlignedMatchesThreshold = Config.getInt(Key.SYNC_MIN_ALIGNED_MATCHES);
 		int maxAlignedOffsets = 0;
 		List<NFFTFingerprint> bestMatchingPairs = null;
 
@@ -206,7 +208,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		try {
 			List<AudioDispatcher> dispatchers = new ArrayList<>();
 			for(float[] f : slices) {
-				dispatchers.add(AudioDispatcherFactory.fromFloatArray(f, SAMPLE_RATE, SIZE, STEP_SIZE));
+				dispatchers.add(AudioDispatcherFactory.fromFloatArray(f, sampleRate, bufferSize, stepSize));
 			}
 			final HashMap<Integer, NFFTFingerprint> ref = getFingerprintData(dispatchers.remove(0));
 			for (final AudioDispatcher dispatcher : dispatchers) {

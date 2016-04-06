@@ -11,8 +11,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import be.signalsync.syncstrategy.CrossCovarianceSyncStrategy;
 import be.signalsync.syncstrategy.FingerprintSyncStrategy;
-import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.FloatBufferGenerator;
 import be.signalsync.util.Key;
@@ -33,13 +33,25 @@ public class SynchronizationTest {
 	private final double latency;
 	private final int frequency;
 	
+	private CrossCovarianceSyncStrategy crossCovarianceStrategy;
+	private FingerprintSyncStrategy fingerprintSyncStrategy;
+	
 	@Before
-	public void setParameters() {
-		//The optimal parameters for this test.
-		Config.set(Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, "6");
-		Config.set(Key.NFFT_EVENT_POINT_MIN_DISTANCE, "150");
-		Config.set(Key.CROSS_COVARIANCE_NUMBER_OF_TESTS, "5");
-		Config.set(Key.CROSS_COVARIANCE_THRESHOLD, "1");
+	public void before() {
+		this.fingerprintSyncStrategy = new FingerprintSyncStrategy(
+				8000, 	//Sample rate
+				512, 	//Buffer size
+				256, 	//Buffer step size
+				100, 	//Minimum distance between fingerprints
+				10,		//Max number of fingerprints for each event point
+				1);		//Minimum aligned matchess
+		
+		this.crossCovarianceStrategy = new CrossCovarianceSyncStrategy(this.fingerprintSyncStrategy, 
+				8000, 	//Sample rate
+				512, 	//Buffer size
+				256, 	//Buffer step size
+				5, 		//Number of tests
+				1);		//Success threshold
 	}
 
 	@Parameters
@@ -81,8 +93,7 @@ public class SynchronizationTest {
 	@Test
 	public void testCrossCovariance() {
 		Config.set(Key.LATENCY_ALGORITHM, "crosscovariance");
-		final SyncStrategy strategy = FingerprintSyncStrategy.getInstance();
-		final List<Float> latencies = strategy.findLatencies(streams);
+		final List<Float> latencies = crossCovarianceStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
 				latency, latencies.get(0), 0.00001);
@@ -91,8 +102,7 @@ public class SynchronizationTest {
 	@Test
 	public void testFingerprint() {
 		Config.set(Key.LATENCY_ALGORITHM, "fingerprint");
-		final SyncStrategy strategy = FingerprintSyncStrategy.getInstance();
-		final List<Float> latencies = strategy.findLatencies(streams);
+		final List<Float> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, frequency: %d", latency, frequency), 
 				latency, latencies.get(0), 0.032);

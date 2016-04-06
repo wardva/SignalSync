@@ -10,13 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import be.signalsync.util.Config;
-import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
-
 
 /**
  * A synchronization strategy which makes use of the Panako fingerprinting algorithm and
@@ -28,16 +25,25 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
  *
  */
 public class CrossCovarianceSyncStrategy extends SyncStrategy {
-	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
+	private static Logger Log = Logger.getLogger("SignalSync");
 	private final FingerprintSyncStrategy fingerprinter;
-	private static final int SAMPLE_RATE = Config.getInt(Key.SAMPLE_RATE);
-	private static final int BUFFER_SIZE = Config.getInt(Key.NFFT_BUFFER_SIZE);
-	private static final int STEP_SIZE = Config.getInt(Key.NFFT_STEP_SIZE);
-	private static final int OVERLAP = BUFFER_SIZE - STEP_SIZE;
-	private static final float FFT_HOPSIZE_S = STEP_SIZE / (float) SAMPLE_RATE;
+	private final int sampleRate;
+	private final int bufferSize;
+	private final int stepSize;
+	private final int overlap;
+	private final int nrOfTests;
+	private final int succesThreshold;
+	private final float FFTHopsize;
 
-	protected CrossCovarianceSyncStrategy() {
-		fingerprinter = new FingerprintSyncStrategy();
+	public CrossCovarianceSyncStrategy(FingerprintSyncStrategy fingerprinter, int sampleRate, int bufferSize, int stepSize, int nrOfTests, int succesThreshold) {
+		this.fingerprinter = fingerprinter;
+		this.sampleRate = sampleRate;
+		this.bufferSize = bufferSize;
+		this.stepSize = stepSize;
+		this.overlap = bufferSize - stepSize;
+		this.nrOfTests = nrOfTests;
+		this.succesThreshold = succesThreshold;
+		this.FFTHopsize = stepSize / (float) sampleRate;
 	}
 
 	/**
@@ -85,7 +91,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 				}
 				else {
 					//No result found, getting the fingerprint offset and adding it to the resuls.
-					float offsetFromMatching = -fingerPrintLatency * FFT_HOPSIZE_S;
+					float offsetFromMatching = -fingerPrintLatency * FFTHopsize;
 					results.add(offsetFromMatching);
 				}
 			}
@@ -107,20 +113,15 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		//A map containing the results: Key: The found result (in sample), Value=The result count
 		Map<Integer, Integer> refinedResult = new HashMap<Integer, Integer>();
 		
-		//The number of cross covariance to execute. The data will be split in equally divided parts.
-		//The cross covariance algorithm will be executed on each part.
-		int numberOfTests = Config.getInt(Key.CROSS_COVARIANCE_NUMBER_OF_TESTS);
-		int succesThreshold = Config.getInt(Key.CROSS_COVARIANCE_THRESHOLD);
-		
 		//The number of nfft steps in the buffers.
-		int steps = reference.length / STEP_SIZE;
+		int steps = reference.length / stepSize;
 		//The size of each divided part from the buffers.
-		int partSize = steps / numberOfTests;
+		int partSize = steps / nrOfTests;
 		//The start position
 		int fp = Math.abs(fingerPrintLatency);
 		
 		//Start iterating. We start at the fingerprint latency value and take steps of the size of partSize.
-		for(int position = fp; position<=BUFFER_SIZE-partSize; position+=partSize) {
+		for(int position = fp; position<=bufferSize-partSize; position+=partSize) {
 			//Calculate the refined lag using the two streams and the calculated timing data.
 			int lag = findCrossCovarianceLag(position, position+fingerPrintLatency, reference, other);
 			//Check if the result already exists in the hashmap, if so, we increment the value, 
@@ -146,10 +147,10 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		//else: calculate the offset in seconds.
 		if(max > succesThreshold) {
 			// lag in seconds
-			double offsetLagInSeconds1 = (BUFFER_SIZE - bestLag) / (float) SAMPLE_RATE;
-			double offsetLagInSeconds2 = bestLag / (float) SAMPLE_RATE;
+			double offsetLagInSeconds1 = (bufferSize - bestLag) / (float) sampleRate;
+			double offsetLagInSeconds2 = bestLag / (float) sampleRate;
 			
-			double offsetFromMatching = -fingerPrintLatency * FFT_HOPSIZE_S;
+			double offsetFromMatching = -fingerPrintLatency * FFTHopsize;
 			
 			double offsetTotalInSeconds1 = offsetFromMatching + offsetLagInSeconds1;
 			// Happens when the fingerprint algorithm overestimated the real latency
@@ -165,7 +166,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 
 			//Test if the difference of the crosscovariance result and fingerprint result
 			//is not too big, if so, the crosscovariance result is probably wrong -> return null.
-			if(Math.abs(offsetFromMatching-offsetTotalInSeconds) < 2*FFT_HOPSIZE_S) { 
+			if(Math.abs(offsetFromMatching-offsetTotalInSeconds) < 2*FFTHopsize) { 
 				System.err.println("Covariancelag is CORRECT!");
 				return (float) offsetTotalInSeconds; 
 			} 
@@ -191,20 +192,20 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		AudioDispatcher otherDispatcher;
 		try {
 			//Create audiodispatchers from the float buffers.
-			refDispatcher = AudioDispatcherFactory.fromFloatArray(reference, SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
-			otherDispatcher = AudioDispatcherFactory.fromFloatArray(other, SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
+			refDispatcher = AudioDispatcherFactory.fromFloatArray(reference, sampleRate, bufferSize, overlap);
+			otherDispatcher = AudioDispatcherFactory.fromFloatArray(other, sampleRate, bufferSize, overlap);
 		} 
 		catch (UnsupportedAudioFileException e) {
 			Log.log(Level.SEVERE, "Audio file problem, check this!", e);
 			return 0;
 		}
 
-		final float sizeS = BUFFER_SIZE / (float) SAMPLE_RATE;
+		final float sizeS = bufferSize / (float) sampleRate;
 
 		//Calculating how much we have to skip each audiodispatcher before we can start
 		//aligning the streams using the crosscovariance algorithm.
-		final double referenceAudioToSkip = sizeS + referenceTime * FFT_HOPSIZE_S;
-		final double otherAudioToSkip = sizeS + otherTime * FFT_HOPSIZE_S;
+		final double referenceAudioToSkip = sizeS + referenceTime * FFTHopsize;
+		final double otherAudioToSkip = sizeS + otherTime * FFTHopsize;
 		
 		AudioSkipper referenceAudioSkipper = new AudioSkipper(referenceAudioToSkip);
 		refDispatcher.addAudioProcessor(referenceAudioSkipper);
@@ -275,7 +276,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 
 		public AudioSkipper(final double audioToSkip) {
 			this.audioToSkip = audioToSkip;
-			audioFrame = new float[Config.getInt(Key.NFFT_BUFFER_SIZE)];
+			audioFrame = new float[bufferSize];
 		}
 
 		public float[] getAudioFrame() {
