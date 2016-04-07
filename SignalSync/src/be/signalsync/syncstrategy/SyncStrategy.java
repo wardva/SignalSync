@@ -39,5 +39,5 @@ public abstract class SyncStrategy {
 			 Config.getInt(Key.CROSS_COVARIANCE_THRESHOLD));
 	}
 
-	public abstract List<Float> findLatencies(List<float[]> sliceSet);
+	public abstract List<Double> findLatencies(List<float[]> sliceSet);
 }

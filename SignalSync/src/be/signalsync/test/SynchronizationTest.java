@@ -93,7 +93,7 @@ public class SynchronizationTest {
 	@Test
 	public void testCrossCovariance() {
 		Config.set(Key.LATENCY_ALGORITHM, "crosscovariance");
-		final List<Float> latencies = crossCovarianceStrategy.findLatencies(streams);
+		final List<Double> latencies = crossCovarianceStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
 				latency, latencies.get(0), 0.00001);
@@ -102,7 +102,7 @@ public class SynchronizationTest {
 	@Test
 	public void testFingerprint() {
 		Config.set(Key.LATENCY_ALGORITHM, "fingerprint");
-		final List<Float> latencies = fingerprintSyncStrategy.findLatencies(streams);
+		final List<Double> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, frequency: %d", latency, frequency), 
 				latency, latencies.get(0), 0.032);

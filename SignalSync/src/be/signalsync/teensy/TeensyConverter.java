@@ -27,8 +27,6 @@ public class TeensyConverter implements DAQDataHandler {
 	private List<BlockingQueue<Byte>> buffers;
 	private List<TarsosDSPAudioInputStream> streams;
 	private AudioFormat format;
-	@SuppressWarnings("unused")
-	private boolean handlerRunning;
 	
 	private final int movingAverageWindowSize = 1000;
 	private Deque<Double> movingAverageWindow;
@@ -70,6 +68,11 @@ public class TeensyConverter implements DAQDataHandler {
 	
 	public void start() {
 		teensy.start();
+	}
+	
+	public void stop() {
+		teensy.stop();
+		stopDataHandler();
 	}
 	
 	@Override

@@ -33,7 +33,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private final int overlap;
 	private final int nrOfTests;
 	private final int succesThreshold;
-	private final float FFTHopsize;
+	private final double FFTHopsize;
 
 	public CrossCovarianceSyncStrategy(FingerprintSyncStrategy fingerprinter, int sampleRate, int bufferSize, int stepSize, int nrOfTests, int succesThreshold) {
 		this.fingerprinter = fingerprinter;
@@ -43,7 +43,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		this.overlap = bufferSize - stepSize;
 		this.nrOfTests = nrOfTests;
 		this.succesThreshold = succesThreshold;
-		this.FFTHopsize = stepSize / (float) sampleRate;
+		this.FFTHopsize = stepSize / (double) sampleRate;
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 *         match found, NaN is added to the list.
 	 */
 	@Override
-	public List<Float> findLatencies(final List<float[]> slices) {
+	public List<Double> findLatencies(final List<float[]> slices) {
 		if(slices.isEmpty()) {
 			throw new IllegalArgumentException("The slices list can not be empty.");
 		}
@@ -65,7 +65,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		final List<float[]> others = new ArrayList<>(slices);
 		float[] reference = others.remove(0);
 		
-		List<Float> results = new ArrayList<>();
+		List<Double> results = new ArrayList<>();
 		//Get the timing information using the fingerprinting algorithm.
 		List<int[]> fingerprintTimingData = fingerprinter.synchronize(slices);
 
@@ -77,21 +77,21 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 			int[] timing = timingDataIterator.next();
 			if (timing.length < 2) {
 				//No timing data available -> no crosscovariance possible.
-				results.add(Float.NaN);
+				results.add(Double.NaN);
 			} 
 			else {
 				//Calculate fingerprint latency
 				int fingerPrintLatency = timing[1] - timing[0];
 				float[] other = othersIterator.next();
 				//Find the best crosscovariance result
-				Float refined = findBestCrossCovarianceResult(fingerPrintLatency, reference, other);
+				Double refined = findBestCrossCovarianceResult(fingerPrintLatency, reference, other);
 				if(refined != null) {
 					//A result is found, adding it to the results.
 					results.add(refined);
 				}
 				else {
 					//No result found, getting the fingerprint offset and adding it to the resuls.
-					float offsetFromMatching = -fingerPrintLatency * FFTHopsize;
+					double offsetFromMatching = -fingerPrintLatency * FFTHopsize;
 					results.add(offsetFromMatching);
 				}
 			}
@@ -109,7 +109,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @param other	A float buffer containing the other stream data.
 	 * @return The latency in seconds, or null.
 	 */
-	private Float findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {
+	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {
 		//A map containing the results: Key: The found result (in sample), Value=The result count
 		Map<Integer, Integer> refinedResult = new HashMap<Integer, Integer>();
 		
@@ -168,7 +168,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 			//is not too big, if so, the crosscovariance result is probably wrong -> return null.
 			if(Math.abs(offsetFromMatching-offsetTotalInSeconds) < 2*FFTHopsize) { 
 				System.err.println("Covariancelag is CORRECT!");
-				return (float) offsetTotalInSeconds; 
+				return offsetTotalInSeconds; 
 			} 
 			System.err.println("Covariancelag is incorrect!");
 		}
@@ -200,7 +200,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 			return 0;
 		}
 
-		final float sizeS = bufferSize / (float) sampleRate;
+		final double sizeS = bufferSize / (double) sampleRate;
 
 		//Calculating how much we have to skip each audiodispatcher before we can start
 		//aligning the streams using the crosscovariance algorithm.

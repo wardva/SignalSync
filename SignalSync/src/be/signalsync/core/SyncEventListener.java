@@ -10,5 +10,5 @@ import java.util.List;
  *
  */
 public interface SyncEventListener {
-	void onSyncEvent(List<Float> data);
+	void onSyncEvent(List<Double> data);
 }

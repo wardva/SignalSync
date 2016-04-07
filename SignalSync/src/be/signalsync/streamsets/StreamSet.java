@@ -3,6 +3,7 @@ package be.signalsync.streamsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import be.tarsos.dsp.AudioDispatcher;
 
@@ -16,9 +17,11 @@ import be.tarsos.dsp.AudioDispatcher;
 public abstract class StreamSet implements Runnable {
 	protected List<AudioDispatcher> streams;
 	protected ExecutorService streamExecutor;
+	private ExecutorService stopExecutor;
 
 	public StreamSet() {
 		streams = new ArrayList<>();
+		stopExecutor = Executors.newCachedThreadPool();
 	}
 
 	protected ExecutorService getStreamExecutor() {
@@ -28,6 +31,25 @@ public abstract class StreamSet implements Runnable {
 	public List<AudioDispatcher> getStreams() {
 		return streams;
 	}
+	
+	public int size() {
+		return streams.size();
+	}
+	
+	public void stop() {
+		for(AudioDispatcher d : streams) {
+			if(!d.isStopped()) {
+				stopExecutor.execute(new Runnable() {
+					@Override
+					public void run() {
+						d.stop();
+					}
+				});
+			}
+		}
+		stopExecutor.shutdown();
+	}
+
 
 	/**
 	 * Execute the streams (reference and other streams).

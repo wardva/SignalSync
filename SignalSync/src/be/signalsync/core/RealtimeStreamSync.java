@@ -42,6 +42,8 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	private final StreamSetSlicer slicer;
 
 	private final SyncStrategy syncer;
+	
+	private final LatencyFilter latencyFilter;
 
 	/**
 	 * Create a new ReatimeStreamSync object.
@@ -52,7 +54,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 		this.streamSet = streamSet;
 		this.listeners = new HashSet<>();
 		this.syncer = SyncStrategy.getDefault();
-		
+		this.latencyFilter = new LatencyFilter(streamSet.size() - 1);
 		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
 		this.slicer.addEventListener(this);
 	}
@@ -78,7 +80,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	 * Emit a synchronization event.
 	 * @param data The data to send to the interested listeners.
 	 */
-	public void emitSyncEvent(final List<Float> data) {
+	public void emitSyncEvent(final List<Double> data) {
 		for (final SyncEventListener l : listeners) {
 			l.onSyncEvent(data);
 		}
@@ -86,12 +88,20 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 
 	/**
 	 * This method will be executed when the streamSet streams have been sliced.
-	 * It's called each refresh interval from the scheduled threadpool.
 	 */
 	@Override
 	public void onSliceEvent(SliceEvent<List<float[]>> event) {
-		final List<Float> data = syncer.findLatencies(event.getSlices());
-		emitSyncEvent(data);
+		List<Double> rawLatencies = syncer.findLatencies(event.getSlices());
+		List<Double> smoothedLatencies = latencyFilter.push(rawLatencies);
+		
+		/*List<Float> timing = new ArrayList<>();
+		timing.add((float) event.getBeginTime());
+		for(float latency : latencies) {
+			timing.add((float) (latency + event.getBeginTime()));
+		}
+		emitSyncEvent(timing);*/
+		
+		emitSyncEvent(smoothedLatencies);
 	}
 
 	/**

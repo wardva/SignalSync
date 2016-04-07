@@ -1,0 +1,9 @@
+begin teensy: 0.912s
+begin echt:   0.778s
+
+latency: 0.134
+
+drum teensy: 76.849
+drum echt: 76.755
+
+latency: 0.094

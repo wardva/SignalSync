@@ -83,7 +83,13 @@ public enum Key {
 	/**
 	 * The received Teensy audio is multiplicated with this value.
 	 */
-	TEENSY_GAIN(1);
+	TEENSY_GAIN(1), 
+
+	/**
+	 * The size of the circular buffer used in the low pass filter
+	 * for filtering the latencies.
+	 */
+	LATENCY_FILTER_BUFFER_SIZE(5);
 
 	String defaultValue;
 
