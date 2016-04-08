@@ -1,7 +1,10 @@
 package be.signalsync.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,17 +13,17 @@ import java.util.logging.Logger;
 
 import be.signalsync.datafilters.DataFilter;
 import be.signalsync.datafilters.DataFilterFactory;
-import be.signalsync.streamsets.StreamSet;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
+import be.tarsos.dsp.AudioDispatcher;
 
 /**
  * This class is used for starting and managing the realtime stream
  * synchronization algorithm.
- * @author Ward Van Assche
+ * @author Ward Vasn Assche
  */
-public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnable {
+public class RealtimeStreamSync implements SliceListener<Map<StreamGroup, float[]>>, Runnable {
 	private static Logger Log = Logger.getLogger("signalSync");
 
 	/**
@@ -39,13 +42,13 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	/**
 	 * The threadpool used for executing the stream streamSet.
 	 */
-	private final ExecutorService streamExecutor = Executors.newSingleThreadExecutor();
+	private final ExecutorService streamExecutor;
 
 	private final StreamSetSlicer slicer;
 
 	private final SyncStrategy syncer;
 	
-	private final DataFilter latencyFilter;
+	private final Map<StreamGroup, DataFilter> latencyFilters;
 
 	/**
 	 * Create a new ReatimeStreamSync object.
@@ -55,10 +58,15 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	public RealtimeStreamSync(final StreamSet streamSet) {
 		this.streamSet = streamSet;
 		this.listeners = new HashSet<>();
-		this.syncer = SyncStrategy.getDefault();
-		this.latencyFilter = DataFilterFactory.getDefault(streamSet.size() - 1);
+		this.syncer = SyncStrategy.createDefault();
+		this.latencyFilters = new HashMap<>(streamSet.size());
 		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
+		this.streamExecutor = Executors.newFixedThreadPool(streamSet.size());
 		this.slicer.addEventListener(this);
+		
+		for(StreamGroup streamGroup : streamSet.getStreamGroups()) {
+			latencyFilters.put(streamGroup, DataFilterFactory.createDefault());
+		}
 	}
 
 	/**
@@ -74,7 +82,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	 * This method will be called when the slicing is done.
 	 */
 	@Override
-	public void done(final Slicer<List<float[]>> s) {
+	public void done(final Slicer<Map<StreamGroup, float[]>> s) {
 		Log.log(Level.INFO, "Done in realtime stream sync, application should exit.");
 	}
 
@@ -82,7 +90,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	 * Emit a synchronization event.
 	 * @param data The data to send to the interested listeners.
 	 */
-	public void emitSyncEvent(final List<Double> data) {
+	public void emitSyncEvent(final Map<StreamGroup, Double> data) {
 		for (final SyncEventListener l : listeners) {
 			l.onSyncEvent(data);
 		}
@@ -92,18 +100,30 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	 * This method will be executed when the streamSet streams have been sliced.
 	 */
 	@Override
-	public void onSliceEvent(SliceEvent<List<float[]>> event) {
-		List<Double> rawLatencies = syncer.findLatencies(event.getSlices());
-		List<Double> smoothedLatencies = latencyFilter.filter(rawLatencies);
+	public void onSliceEvent(SliceEvent<Map<StreamGroup, float[]>> event) {
+		List<StreamGroup> streams = new ArrayList<>(event.getSlices().keySet());
+		List<float[]> slices = new ArrayList<>(event.getSlices().values());
+		
+		List<Double> rawLatencies = new ArrayList<>(streams.size());
+		rawLatencies.add(0.0D); //Reference stream latency
+		rawLatencies.addAll(syncer.findLatencies(slices));
+		
+		Map<StreamGroup, Double> filteredLatencies = new HashMap<>(streams.size());
+		for(int i = 0; i<streams.size(); i++) {
+			StreamGroup streamGroup = streams.get(i);
+			DataFilter filter = latencyFilters.get(streamGroup);
+			double rawLatency = rawLatencies.get(i);
+			double filteredLatency = filter.filter(rawLatency);
+			filteredLatencies.put(streamGroup, filteredLatency);
+		}
 		
 		/*List<Float> timing = new ArrayList<>();
-		timing.add((float) event.getBeginTime());
 		for(float latency : latencies) {
 			timing.add((float) (latency + event.getBeginTime()));
 		}
 		emitSyncEvent(timing);*/
 		
-		emitSyncEvent(smoothedLatencies);
+		emitSyncEvent(filteredLatencies);
 	}
 
 	/**
@@ -117,7 +137,9 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	@Override
 	public void run() {
 		Log.log(Level.INFO, "Starting the synchronization.");
-		streamExecutor.execute(streamSet);
+		for(AudioDispatcher d : streamSet.getAudioStreams()) {
+			streamExecutor.execute(d);
+		}
 		streamExecutor.shutdown();
 	}
 }

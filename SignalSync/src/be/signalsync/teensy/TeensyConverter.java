@@ -25,7 +25,7 @@ public class TeensyConverter implements DAQDataHandler {
 	private double gain;
 	private TeensyDAQ teensy;
 	private List<BlockingQueue<Byte>> buffers;
-	private List<TarsosDSPAudioInputStream> streams;
+	private List<InputStream> streams;
 	private AudioFormat format;
 	
 	private final int movingAverageWindowSize = 1000;
@@ -42,19 +42,23 @@ public class TeensyConverter implements DAQDataHandler {
 		this.movingAverageWindow = new LinkedList<>();
 		for(int i = 0; i<numberOfChannels; i++) {
 			BlockingQueue<Byte> buffer = new LinkedBlockingQueue<>();
-			InputStream inputStream = new TeensyInputStream(buffer);
-			AudioInputStream audioStream = new AudioInputStream(inputStream, format, AudioSystem.NOT_SPECIFIED);
-			TarsosDSPAudioInputStream tarsosStream = new JVMAudioInputStream(audioStream);
 			buffers.add(buffer);
-			streams.add(tarsosStream);
+			InputStream inputStream = new TeensyInputStream(buffer);
+			streams.add(inputStream);
 		}
 		teensy.addDataHandler(this);
 	}
 	
-	public AudioDispatcher getAudioDispatcher(int nr) {
-		TarsosDSPAudioInputStream stream = streams.get(nr);
-		AudioDispatcher dispatcher = new AudioDispatcher(stream, audioBufferSize, 0);
+	public AudioDispatcher getAudioDispatcher(int index) {
+		InputStream input = streams.get(index);
+		AudioInputStream audioStream = new AudioInputStream(input, format, AudioSystem.NOT_SPECIFIED);
+		TarsosDSPAudioInputStream tarsosStream = new JVMAudioInputStream(audioStream);
+		AudioDispatcher dispatcher = new AudioDispatcher(tarsosStream, audioBufferSize, 0);
 		return dispatcher;
+	}
+	
+	public InputStream getInputStream(int index) {
+		return streams.get(index);
 	}
 	
 	public TeensyConverter() {
@@ -98,7 +102,7 @@ public class TeensyConverter implements DAQDataHandler {
 	@Override
 	public void stopDataHandler() {
 		try {
-			for(TarsosDSPAudioInputStream s : streams) {
+			for(InputStream s : streams) {
 				s.close();
 			}
 		} 

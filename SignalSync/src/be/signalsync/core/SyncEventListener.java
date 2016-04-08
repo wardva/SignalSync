@@ -1,6 +1,6 @@
 package be.signalsync.core;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * This interface has to be implemented by a class which is interested in
@@ -10,5 +10,5 @@ import java.util.List;
  *
  */
 public interface SyncEventListener {
-	void onSyncEvent(List<Double> data);
+	void onSyncEvent(Map<StreamGroup, Double> data);
 }

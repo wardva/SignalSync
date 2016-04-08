@@ -6,19 +6,19 @@ import be.signalsync.util.Key;
 
 public abstract class SyncStrategy {
 	
-	public static SyncStrategy getDefault() {
+	public static SyncStrategy createDefault() {
 		final String name = Config.get(Key.LATENCY_ALGORITHM);
 		switch (name) {
 		case "fingerprint":
-			return getDefaultFingerprintStrategy();
+			return createDefaultFingerprintStrategy();
 		case "crosscovariance":
-			return getDefaultCrossCovariance();
+			return createDefaultCrossCovariance();
 		default:
 			throw new IllegalArgumentException("Invalid latency algorithm in config file.");
 		}
 	}
 	
-	public static FingerprintSyncStrategy getDefaultFingerprintStrategy() {
+	public static FingerprintSyncStrategy createDefaultFingerprintStrategy() {
 		FingerprintSyncStrategy strategy = new FingerprintSyncStrategy(
 			 Config.getInt(Key.SAMPLE_RATE), 
 			 Config.getInt(Key.NFFT_BUFFER_SIZE), 
@@ -29,9 +29,9 @@ public abstract class SyncStrategy {
 		return strategy;
 	}
 	
-	public static CrossCovarianceSyncStrategy getDefaultCrossCovariance() {
+	public static CrossCovarianceSyncStrategy createDefaultCrossCovariance() {
 		return new CrossCovarianceSyncStrategy(
-			 getDefaultFingerprintStrategy(),
+			 createDefaultFingerprintStrategy(),
 			 Config.getInt(Key.SAMPLE_RATE), 
 			 Config.getInt(Key.NFFT_BUFFER_SIZE), 
 			 Config.getInt(Key.NFFT_STEP_SIZE),

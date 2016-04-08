@@ -1,21 +1,43 @@
-package be.signalsync.streamsets;
+package be.signalsync.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import be.tarsos.dsp.AudioDispatcher;
 
-/**
- * This class is a container for different streams in a synchronization context.
- * The streams can be executed concurrently using the run method.
- *
- * @author Ward Van Assche
- *
- */
-public abstract class StreamSet implements Runnable {
-	protected List<AudioDispatcher> streams;
+public class StreamSet {
+	
+	private List<StreamGroup> streamGroups;
+	
+	public StreamSet() {
+		this.streamGroups = new ArrayList<>();
+	}
+	
+	public StreamSet(List<StreamGroup> streamGroups) {
+		this.streamGroups = streamGroups;
+	}
+	
+	public List<StreamGroup> getStreamGroups() {
+		return this.streamGroups;
+	}
+	
+	public List<AudioDispatcher> getAudioStreams() {
+		List<AudioDispatcher> audioStreams = new ArrayList<>();
+		for(StreamGroup g : streamGroups) {
+			audioStreams.add(g.getAudioStream());
+		}
+		return audioStreams;
+	}
+	
+	public void addStreamGroup(StreamGroup group) {
+		streamGroups.add(group);
+	}
+	
+	public int size() {
+		return streamGroups.size();
+	}
+	
+	/*protected List<AudioDispatcher> streams;
 	protected ExecutorService streamExecutor;
 	private ExecutorService stopExecutor;
 
@@ -54,11 +76,11 @@ public abstract class StreamSet implements Runnable {
 	/**
 	 * Execute the streams (reference and other streams).
 	 */
-	@Override
+	/*@Override
 	public void run() {
 		for (final AudioDispatcher d : streams) {
 			streamExecutor.execute(d);
 		}
 		streamExecutor.shutdown();
-	}
+	}*/
 }
