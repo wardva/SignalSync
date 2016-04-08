@@ -13,15 +13,17 @@ import org.junit.runners.Parameterized.Parameters;
 
 import be.signalsync.syncstrategy.CrossCovarianceSyncStrategy;
 import be.signalsync.syncstrategy.FingerprintSyncStrategy;
-import be.signalsync.util.Config;
 import be.signalsync.util.FloatBufferGenerator;
-import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
 @RunWith(Parameterized.class)
 public class SynchronizationTest {
 
+	private final static int SAMPLE_RATE = 8000;
+	private final static int NFFT_BUFFER_SIZE = 512;
+	private final static int NFFT_STEP_SIZE = 256;
+	
 	private final static String REFERENCE_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_0_0hz.wav - slice - %d.wav";
 	private final static String OTHER_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_%d_%dhz.wav - slice - %d.wav";
 	private final static int NUMBER_OF_SLICES = 27;
@@ -39,19 +41,19 @@ public class SynchronizationTest {
 	@Before
 	public void before() {
 		this.fingerprintSyncStrategy = new FingerprintSyncStrategy(
-				8000, 	//Sample rate
-				512, 	//Buffer size
-				256, 	//Buffer step size
-				100, 	//Minimum distance between fingerprints
-				10,		//Max number of fingerprints for each event point
-				1);		//Minimum aligned matchess
+				SAMPLE_RATE, 		//Sample rate
+				NFFT_BUFFER_SIZE, 	//Buffer size
+				NFFT_STEP_SIZE, 	//Buffer step size
+				100, 				//Minimum distance between fingerprints
+				10,					//Max number of fingerprints for each event point
+				1);					//Minimum aligned matchess
 		
 		this.crossCovarianceStrategy = new CrossCovarianceSyncStrategy(this.fingerprintSyncStrategy, 
-				8000, 	//Sample rate
-				512, 	//Buffer size
-				256, 	//Buffer step size
-				5, 		//Number of tests
-				1);		//Success threshold
+				SAMPLE_RATE, 		//Sample rate
+				NFFT_BUFFER_SIZE, 	//Buffer size
+				NFFT_STEP_SIZE, 	//Buffer step size
+				5, 					//Number of tests
+				1);					//Success threshold
 	}
 
 	@Parameters
@@ -71,19 +73,17 @@ public class SynchronizationTest {
 
 
 	public SynchronizationTest(final String reference, final String other, final int expectedLatency, final int currentFrequency) {
-		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);
-		final int bufferSize = Config.getInt(Key.NFFT_BUFFER_SIZE);
 		this.latency = expectedLatency * MILLIS_TO_SECONDS;
 		this.frequency = currentFrequency;
 		this.streams = new ArrayList<>();
 		
-		AudioDispatcher refDispatcher = AudioDispatcherFactory.fromPipe(reference, sampleRate, bufferSize, 0);
+		AudioDispatcher refDispatcher = AudioDispatcherFactory.fromPipe(reference, SAMPLE_RATE, NFFT_BUFFER_SIZE, 0);
 		FloatBufferGenerator refBufferGen = new FloatBufferGenerator();
 		refDispatcher.addAudioProcessor(refBufferGen);
 		refDispatcher.run();
 		streams.add(refBufferGen.getTotalBuffer());
 		
-		AudioDispatcher otherDispatcher = AudioDispatcherFactory.fromPipe(other, sampleRate, bufferSize, 0);
+		AudioDispatcher otherDispatcher = AudioDispatcherFactory.fromPipe(other, SAMPLE_RATE, SAMPLE_RATE, 0);
 		FloatBufferGenerator otherBufferGen = new FloatBufferGenerator();
 		otherDispatcher.addAudioProcessor(otherBufferGen);
 		otherDispatcher.run(); 
@@ -92,7 +92,6 @@ public class SynchronizationTest {
 	
 	@Test
 	public void testCrossCovariance() {
-		Config.set(Key.LATENCY_ALGORITHM, "crosscovariance");
 		final List<Double> latencies = crossCovarianceStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
@@ -101,7 +100,6 @@ public class SynchronizationTest {
 
 	@Test
 	public void testFingerprint() {
-		Config.set(Key.LATENCY_ALGORITHM, "fingerprint");
 		final List<Double> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, frequency: %d", latency, frequency), 

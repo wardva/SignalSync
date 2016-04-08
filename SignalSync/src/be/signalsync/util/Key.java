@@ -89,7 +89,12 @@ public enum Key {
 	 * The size of the circular buffer used in the low pass filter
 	 * for filtering the latencies.
 	 */
-	LATENCY_FILTER_BUFFER_SIZE(5);
+	LATENCY_FILTER_BUFFER_SIZE(3),
+	
+	/**
+	 * The type of the latency filter
+	 */
+	LATENCY_FILTER_TYPE("median");
 
 	String defaultValue;
 

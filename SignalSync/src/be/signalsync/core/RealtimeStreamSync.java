@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import be.signalsync.datafilters.DataFilter;
+import be.signalsync.datafilters.DataFilterFactory;
 import be.signalsync.streamsets.StreamSet;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
@@ -43,7 +45,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 
 	private final SyncStrategy syncer;
 	
-	private final LatencyFilter latencyFilter;
+	private final DataFilter latencyFilter;
 
 	/**
 	 * Create a new ReatimeStreamSync object.
@@ -54,7 +56,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 		this.streamSet = streamSet;
 		this.listeners = new HashSet<>();
 		this.syncer = SyncStrategy.getDefault();
-		this.latencyFilter = new LatencyFilter(streamSet.size() - 1);
+		this.latencyFilter = DataFilterFactory.getDefault(streamSet.size() - 1);
 		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
 		this.slicer.addEventListener(this);
 	}
@@ -92,7 +94,7 @@ public class RealtimeStreamSync implements SliceListener<List<float[]>>, Runnabl
 	@Override
 	public void onSliceEvent(SliceEvent<List<float[]>> event) {
 		List<Double> rawLatencies = syncer.findLatencies(event.getSlices());
-		List<Double> smoothedLatencies = latencyFilter.push(rawLatencies);
+		List<Double> smoothedLatencies = latencyFilter.filter(rawLatencies);
 		
 		/*List<Float> timing = new ArrayList<>();
 		timing.add((float) event.getBeginTime());
