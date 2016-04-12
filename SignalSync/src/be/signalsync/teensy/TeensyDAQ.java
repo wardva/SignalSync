@@ -43,10 +43,10 @@ public class TeensyDAQ implements SerialDataLineHandler {
 	
 	
 	public void start(){
-		reader.open();
-		reader.write(String.format("SET SR %04d\n", sampleRate));
-		//wait for the sample rate change to finish
 		try {
+			reader.open();
+			reader.write(String.format("SET SR %04d\n", sampleRate));
+			//wait for the sample rate change to finish
 			Thread.sleep(10);
 		} 
 		catch (InterruptedException e) {

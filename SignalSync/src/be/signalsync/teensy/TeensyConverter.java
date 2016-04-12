@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -24,7 +24,7 @@ public class TeensyConverter implements DAQDataHandler {
 	private int audioBufferSize;
 	private double gain;
 	private TeensyDAQ teensy;
-	private List<BlockingQueue<Byte>> buffers;
+	private List<Queue<Byte>> buffers;
 	private List<InputStream> streams;
 	private AudioFormat format;
 	
@@ -41,7 +41,7 @@ public class TeensyConverter implements DAQDataHandler {
 		this.streams = new ArrayList<>(numberOfChannels);
 		this.movingAverageWindow = new LinkedList<>();
 		for(int i = 0; i<numberOfChannels; i++) {
-			BlockingQueue<Byte> buffer = new LinkedBlockingQueue<>();
+			Queue<Byte> buffer = new ConcurrentLinkedQueue<Byte>();
 			buffers.add(buffer);
 			InputStream inputStream = new TeensyInputStream(buffer);
 			streams.add(inputStream);
@@ -74,11 +74,6 @@ public class TeensyConverter implements DAQDataHandler {
 		teensy.start();
 	}
 	
-	public void stop() {
-		teensy.stop();
-		stopDataHandler();
-	}
-	
 	@Override
 	public void handle(DAQSample sample) {
 		double sampleData = sample.data[0];
@@ -102,63 +97,58 @@ public class TeensyConverter implements DAQDataHandler {
 	@Override
 	public void stopDataHandler() {
 		try {
+			teensy.stop();
 			for(InputStream s : streams) {
 				s.close();
 			}
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private static class TeensyInputStream extends InputStream {
-		private boolean running;
-		private BlockingQueue<Byte> q;
+		private boolean closed;
+		private Queue<Byte> q;
 		
-		public TeensyInputStream(BlockingQueue<Byte> q) {
+		public TeensyInputStream(Queue<Byte> q) {
 			super();
 			this.q = q;
-			this.running = true;
+			this.closed = false;
 		}
 
 		@Override
 		public int read() throws IOException {
 			throw new UnsupportedOperationException();
 		}
+		
+		@Override
+		public int available() throws IOException {
+			return q.size();
+		}
 
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
-			if (b == null) {
+			if(closed) {
+				throw new IOException("The teensy input stream has been closed!");
+			} else if (b == null) {
 	            throw new NullPointerException();
 	        } else if (off < 0 || len < 0 || len > b.length - off) {
 	            throw new IndexOutOfBoundsException();
-	        } else if(!running && q.size() == 0) {
-	        	return -1;
-	        } 
-	        else if (len == 0) {
+	        } else if (len == 0) {
 	            return 0;
 	        }
 			
-			try {
-				byte first = q.take();
-				b[off] = first;
-				
-				int i = 1;
-				while(!q.isEmpty() && i<len) {
-					b[off + i++] = q.take();
-				}
-				return i;
-			} 
-			catch (InterruptedException e) {
-				e.printStackTrace();
-				return -1;
+			int i = 0;
+			while(!q.isEmpty() && i<len) {
+				b[off + i++] = q.poll();
 			}
+			return i;
 		}
 		
 		@Override
 		public void close() throws IOException {
-			super.close();
-			this.running = false;
+			this.closed = true;
+			q.clear();
 		}
 	}
 }

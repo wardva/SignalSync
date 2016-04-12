@@ -6,6 +6,11 @@ import java.util.List;
 
 import be.tarsos.dsp.AudioDispatcher;
 
+/**
+ * 
+ * @author Ward Van Assche
+ *
+ */
 public class StreamGroup {
 	private AudioDispatcher audioStream;
 	private List<InputStream> dataStreams;

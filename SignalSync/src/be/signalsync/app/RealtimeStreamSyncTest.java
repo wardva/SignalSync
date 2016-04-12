@@ -11,7 +11,6 @@ import be.signalsync.core.SyncEventListener;
 
 /**
  * Main class for testing the current SignalSync implementation.
- * 
  * @author Ward
  */
 public class RealtimeStreamSyncTest {

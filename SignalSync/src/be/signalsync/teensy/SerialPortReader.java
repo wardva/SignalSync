@@ -46,6 +46,7 @@ public class SerialPortReader {
 	
 	public void stop(){
 		try {
+            //serialPort.purgePort(SerialPort.PURGE_RXCLEAR | SerialPort.PURGE_TXCLEAR | SerialPort.PURGE_RXABORT | SerialPort.PURGE_TXABORT);
             serialPort.closePort();//close port
         }
         catch (SerialPortException ex) {
