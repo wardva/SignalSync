@@ -49,18 +49,20 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 	}
 	
 	public void start() {
+		post("Start message received");
 		this.startMessageReceived = true;
 		stateChange();
 	}
 	
 	public void stop() {
+		post("Stop message received");
 		this.startMessageReceived = false;
 		stateChange();
 	}
 	
 	@Override
 	protected void dspstate(boolean b) {
-		post("Running: " + b);
+		post("dspstate changed: " + b);
 		this.dacRunning = b;
 		stateChange();
 	}
@@ -81,10 +83,16 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 		post("Start processing");
 		teensyExecutor = Executors.newSingleThreadExecutor();
 		teensy = new TeensyConverter(teensySampleRate, port, channel, numberOfChannels, bufferSize, 1);
-		teensy.start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				teensy.start();
+			}
+		}).start();
 		teensyStream = teensy.getAudioDispatcher(0);
 		teensyStream.addAudioProcessor(this);
-		teensyExecutor.execute(teensyStream);
+		//teensyExecutor.execute(teensyStream);
+		new Thread(teensyStream).start();
 	}
 	
 	private void stopProcessing() {
@@ -96,6 +104,7 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 	
 	public TeensyReader(String port, int sampleRate, int channel, int numberOfChannels) {
 		super();
+		post("constructor called");
 		if(channel < 0 || numberOfChannels < 1 || sampleRate < 0) {
 			bail("(TeensyReader) Invalid argument(s).");
 		}
@@ -129,6 +138,7 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 	
 	@Override
 	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
+		post("dspsetup called");
 		this.bufferSize = sigs_out[0].n;
 		this.targetSampleRate = (int) sigs_out[0].sr;
 		this.sampleRatio = targetSampleRate / teensySampleRate;
@@ -139,6 +149,7 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 	
 	@Override
 	public void perform(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
+		post("Perform called");
 		try {
 			MSPSignal out = sigs_out[0];
 			if(processing) {
@@ -156,7 +167,9 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 	
 	@Override
 	public boolean process(AudioEvent audioEvent) {
+		post("Process called");
 		if(processing) {
+			post("Processing: Length: " + audioEvent.getFloatBuffer().length);
 			inputBuffer.put(audioEvent.getFloatBuffer());
 			resampler.process(sampleRatio, inputBuffer, false, resampledBuffer);
 			buffer.offer(resampledBuffer.array().clone());
@@ -168,6 +181,14 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 
 	@Override
 	public void processingFinished() {
-		post("Processing finished!");
+		post("Processing finished called");
+	}
+	
+	@Override
+	protected void notifyDeleted() {
+		if(processing) {
+			processing = false;
+			stopProcessing();
+		}
 	}
 }

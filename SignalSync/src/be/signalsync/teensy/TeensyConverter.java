@@ -137,7 +137,7 @@ public class TeensyConverter implements DAQDataHandler {
 	        } else if (len == 0) {
 	            return 0;
 	        }
-			
+
 			int i = 0;
 			while(!q.isEmpty() && i<len) {
 				b[off + i++] = q.poll();
