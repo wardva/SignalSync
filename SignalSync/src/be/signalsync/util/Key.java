@@ -94,7 +94,13 @@ public enum Key {
 	/**
 	 * The type of the latency filter
 	 */
-	LATENCY_FILTER_TYPE("median");
+	LATENCY_FILTER_TYPE("median"), 
+	
+	/**
+	 * The channel index of the audio channel. The audio from 
+	 * corresponding channel will be optimized.
+	 */
+	TEENSY_AUDIO_CHANNEL(0);
 
 	String defaultValue;
 

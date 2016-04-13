@@ -1,62 +1,154 @@
 package be.signalsync.max;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import com.cycling74.msp.MSPPerformer;
 import com.cycling74.msp.MSPSignal;
-import be.signalsync.teensy.TeensyConverter;
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.AudioProcessor;
+
+import be.signalsync.teensy.DAQDataHandler;
+import be.signalsync.teensy.DAQSample;
+import be.signalsync.teensy.TeensyDAQ;
 import be.tarsos.dsp.resample.Resampler;
 
-/**
- * This Max/MSP module is used for reading, handling and converting the data read
- * from a Teensy microcontroller into a Max/MSP patch.
- * 
- * @author Ward Van Assche
- *
- */
-public class TeensyReader extends MSPPerformer implements AudioProcessor {
-	private TeensyConverter teensy;
-	private AudioDispatcher teensyStream;
-	private BlockingQueue<float[]> buffer;
-	private ExecutorService teensyExecutor;
-	
-	private String port;
-	private int channel;
+public class TeensyReader extends MSPPerformer implements DAQDataHandler {
+	//General parameters
+	private int startChannel;
 	private int numberOfChannels;
-	
-	private boolean startMessageReceived;
-	private boolean dacRunning;
-	private boolean processing;
-	
-	private double sampleRatio;
+	private int audioChannel;
 	private int teensySampleRate;
-	private double targetSampleRate;
 	private int teensyBufferSize;
-	private int outputBufferSize;
 	
-	private Resampler resampler;
-	private float[] resampleBuffer;
+	//Teensy processing attributes
+	private TeensyDAQ teensy;
+	private Deque<Double> movingAverageWindow;
+	private List<BlockingQueue<Float>> buffers;
+	private double currentAverageSum;
+	private int movingAverageWindowSize;
 	
-	public TeensyReader(String port, int sampleRate, int channel, int numberOfChannels) {
-		super();
-		post("constructor called");
-		if(channel < 0 || numberOfChannels < 1 || sampleRate < 0) {
-			bail("(TeensyReader) Invalid argument(s).");
-		}
-		this.port = port;
-		this.channel = channel;
+	//Max performing attributes
+	private int targetBufferSize;
+	private int targetSampleRate;
+	private boolean startMessageReceived;
+	private boolean processing;
+	private boolean dacRunning;
+	
+	//Resampling attributes
+	private double sampleRatio;
+	private Resampler[] resamplers;
+	private float[] inputBuffer;
+	private float[] targetBuffer;
+	
+	public TeensyReader() {
+		bail("(TeensyReader) Invalid method parameters.");
+	}
+	
+	public TeensyReader(String port, int sampleRate, int startChannel, int audioChannel, int numberOfChannels) {
+		post("Constructor called");
+		//Constants
+		this.startChannel = startChannel;
 		this.numberOfChannels = numberOfChannels;
+		this.audioChannel = audioChannel;
 		this.teensySampleRate = sampleRate;
-		this.buffer = new LinkedBlockingQueue<>();
-		this.teensyExecutor = Executors.newSingleThreadExecutor();
+		
+		//Teensy processing
+		this.movingAverageWindow = new LinkedList<>();
+		this.currentAverageSum = 0.0D;
+		this.movingAverageWindowSize = 2 * sampleRate;
+		this.buffers = new ArrayList<>(numberOfChannels);
+		this.resamplers = new Resampler[numberOfChannels];
+		
+		for(int i = 0; i<numberOfChannels; i++) {
+			BlockingQueue<Float> buffer = new LinkedBlockingQueue<>();
+			buffers.add(buffer);
+		}
+		
+		//Setting up the max module
+		startMessageReceived = processing = dacRunning = false;
 		setInlets();
 		setOutlets();
 		setAssists();
+		
+		this.teensy = new TeensyDAQ(sampleRate, port, startChannel, numberOfChannels);
+		this.teensy.addDataHandler(this);
+		this.teensy.start();
+	}
+	
+	public void start() {
+		post("Start message received");
+		startMessageReceived = true;
+		stateChange();
+	}
+	
+	public void stop() {
+		post("Stop message received");
+		startMessageReceived = false;
+		stateChange();
+	}
+	
+	@Override
+	protected void dspstate(boolean b) {
+		post("dspstate changed: " + b);
+		this.dacRunning = b;
+		stateChange();
+	}
+	
+	public void stateChange() {
+		processing = startMessageReceived && dacRunning;
+	}
+	
+	@Override
+	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
+		if(sigs_out.length != numberOfChannels) {
+			throw new IllegalArgumentException("Invalid array of output signals.");
+		}
+		this.targetSampleRate = (int) sigs_out[0].sr;
+		this.targetBufferSize = sigs_out[0].n;
+
+		this.sampleRatio = targetSampleRate / teensySampleRate;
+		this.teensyBufferSize = (int) Math.round(targetBufferSize / sampleRatio);
+		this.inputBuffer = new float[teensyBufferSize];
+		this.targetBuffer = new float[targetBufferSize];
+		for(int i = 0; i<numberOfChannels; i++) {
+			this.resamplers[i] = new Resampler(true, sampleRatio, sampleRatio);
+		}
+	}
+	
+	@Override
+	public void perform(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
+		try {
+			for(int i = 0; i<numberOfChannels; i++) {
+				BlockingQueue<Float> buffer = buffers.get(i);
+				MSPSignal out = sigs_out[i];
+				if(processing) {
+					for(int j = 0; j<teensyBufferSize; j++) {
+						Float value = buffer.poll(2, TimeUnit.SECONDS);
+						if(value == null) {
+							post("Error: polled value is null");
+							break;
+						}
+						else {
+							inputBuffer[j] = value;
+						}
+					}
+					resamplers[i].process(sampleRatio, inputBuffer, 0, teensyBufferSize, false, targetBuffer, 0, targetBufferSize);
+					System.arraycopy(targetBuffer, 0, out.vec, 0, targetBufferSize);
+				}
+				else {
+					Arrays.fill(out.vec, 0);
+				}
+			}
+		} 
+		catch (Exception e) {
+			post("Fatal error: ");
+			e.printStackTrace();
+		}
 	}
 	
 	private void setInlets() {
@@ -71,107 +163,47 @@ public class TeensyReader extends MSPPerformer implements AudioProcessor {
 	
 	private void setAssists() {
 		String assists[] = new String[numberOfChannels];
-		Arrays.fill(assists, "A data signal stream.");
-		assists[0] = "The audio signal stream.";
+		for(int i = 0; i<numberOfChannels; i++) {
+			assists[i] = "Teensy channel " + (i + startChannel);
+		}
 		setOutletAssist(assists);
 	}
 	
 	@Override
-	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
-		post("dspsetup called");
-		this.targetSampleRate = (int) sigs_out[0].sr;
-		this.sampleRatio = targetSampleRate / teensySampleRate;
-		this.outputBufferSize = sigs_out[0].n;
-		this.teensyBufferSize = (int) Math.round(outputBufferSize / sampleRatio);
-		this.resampler = new Resampler(true, sampleRatio, sampleRatio);
-		this.resampleBuffer = new float[outputBufferSize];
-	}
-	
-	public void start() {
-		post("Start message received");
-		this.startMessageReceived = true;
-		stateChange();
-	}
-	
-	public void stop() {
-		post("Stop message received");
-		this.startMessageReceived = false;
-		stateChange();
-	}
-	
-	public void stateChange() {
-		boolean newState = startMessageReceived && dacRunning;
-		if(!processing && newState) {
-			startProcessing();
+	public void handle(DAQSample sample) {
+		if(!processing) {
+			return;
 		}
-		else if(processing && !newState) {
-			stopProcessing();
-		}
-	}
-	
-	@Override
-	protected void dspstate(boolean b) {
-		post("dspstate changed: " + b);
-		this.dacRunning = b;
-		stateChange();
-	}
-	
-	private void startProcessing() {
-		processing = true;
-		post("Start processing");
-		teensy = new TeensyConverter(teensySampleRate, port, channel, numberOfChannels, teensyBufferSize, 1);
-		teensy.start();
-		teensyStream = teensy.getAudioDispatcher(0);
-		teensyStream.addAudioProcessor(this);
-		teensyExecutor.execute(teensyStream);
-	}
-	
-	private void stopProcessing() {
-		processing = false;
-		post("Stop processing");
-		teensyStream.stop();
-		teensy.stopDataHandler();
-	}
-	
-	
-	@Override
-	public boolean process(AudioEvent audioEvent) {
-		post("Process called");
-		if(processing) {
-			buffer.offer(audioEvent.getFloatBuffer().clone());
-		}
-		return true;
-	}
-	
-	@Override
-	public void perform(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
-		try {
-			MSPSignal out = sigs_out[0];
-			if(processing) {
-				float[] buf = buffer.take();
-				resampler.process(sampleRatio, buf, 0, buf.length, false, resampleBuffer, 0, resampleBuffer.length);
-				System.arraycopy(resampleBuffer, 0, out.vec, 0, outputBufferSize);
+		for(int i = 0; i < numberOfChannels; i++) {
+			int channelIdx = startChannel + i;
+			double sampleData = sample.data[channelIdx];
+
+			double modifiedSampleData;
+			if(channelIdx == audioChannel) {
+				movingAverageWindow.addLast(sampleData);
+				currentAverageSum += sampleData;
+				if(movingAverageWindow.size() > movingAverageWindowSize){
+					currentAverageSum -= movingAverageWindow.removeFirst();
+				}
+				double movingAverage = (currentAverageSum/movingAverageWindow.size());
+				modifiedSampleData = sampleData - movingAverage;
 			}
 			else {
-				Arrays.fill(out.vec, 0.0f);
+				modifiedSampleData = (sampleData - 1.65);
 			}
-		} 
-		catch (InterruptedException e) {
-			e.printStackTrace();
+			double normalized = modifiedSampleData / (1.65);
+			buffers.get(i).add((float) normalized);
 		}
-	}
-
-	@Override
-	public void processingFinished() {
-		post("Processing finished called");
 	}
 	
 	@Override
 	protected void notifyDeleted() {
-		post("Notify deleted called");
-		if(processing) {
-			stopProcessing();
-		}
-		teensyExecutor.shutdown();
+		post("notifyDeleted called");
+		teensy.stop();
+	}
+
+	@Override
+	public void stopDataHandler() {
+		
 	}
 }
