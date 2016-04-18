@@ -1,6 +1,5 @@
 package be.signalsync.core;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import be.tarsos.dsp.AudioDispatcher;
  */
 public class StreamGroup {
 	private AudioDispatcher audioStream;
-	private List<InputStream> dataStreams;
+	private List<AudioDispatcher> dataStreams;
 	private String description;
 	
 	public StreamGroup() {
@@ -24,7 +23,7 @@ public class StreamGroup {
 		this.audioStream = audioStream;
 	}
 	
-	public void addDataStream(InputStream dataStream) {
+	public void addDataStream(AudioDispatcher dataStream) {
 		dataStreams.add(dataStream);
 	}
 
@@ -32,7 +31,7 @@ public class StreamGroup {
 		return audioStream;
 	}
 
-	public List<InputStream> getDataStreams() {
+	public List<AudioDispatcher> getDataStreams() {
 		return dataStreams;
 	}
 
@@ -42,5 +41,14 @@ public class StreamGroup {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public void stop() {
+		if(audioStream != null) {
+			audioStream.stop();
+		}
+		for(AudioDispatcher d : dataStreams) {
+			d.stop();
+		}
 	}
 }

@@ -3,7 +3,7 @@ package be.signalsync.app;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import be.signalsync.core.RealtimeStreamSync;
+import be.signalsync.core.RealtimeSignalSync;
 import be.signalsync.core.StreamGroup;
 import be.signalsync.core.StreamSet;
 import be.signalsync.core.StreamSetFactory;
@@ -13,11 +13,11 @@ import be.signalsync.core.SyncEventListener;
  * Main class for testing the current SignalSync implementation.
  * @author Ward
  */
-public class RealtimeStreamSyncTest {
+public class RealtimeSignalSyncTest {
 	public static void main(final String[] args) {
 		StreamSet streamSet = StreamSetFactory.createRecordedTeensyStreamSet();
 		
-		final RealtimeStreamSync syncer = new RealtimeStreamSync(streamSet);
+		final RealtimeSignalSync syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {
 			@Override
 			public void onSyncEvent(final Map<StreamGroup, Double> data) {

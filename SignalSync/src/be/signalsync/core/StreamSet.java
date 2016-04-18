@@ -37,50 +37,9 @@ public class StreamSet {
 		return streamGroups.size();
 	}
 	
-	/*protected List<AudioDispatcher> streams;
-	protected ExecutorService streamExecutor;
-	private ExecutorService stopExecutor;
-
-	public StreamSet() {
-		streams = new ArrayList<>();
-		stopExecutor = Executors.newCachedThreadPool();
-	}
-
-	protected ExecutorService getStreamExecutor() {
-		return streamExecutor;
-	}
-
-	public List<AudioDispatcher> getStreams() {
-		return streams;
-	}
-	
-	public int size() {
-		return streams.size();
-	}
-	
 	public void stop() {
-		for(AudioDispatcher d : streams) {
-			if(!d.isStopped()) {
-				stopExecutor.execute(new Runnable() {
-					@Override
-					public void run() {
-						d.stop();
-					}
-				});
-			}
+		for(StreamGroup group : streamGroups) {
+			group.stop();
 		}
-		stopExecutor.shutdown();
 	}
-
-
-	/**
-	 * Execute the streams (reference and other streams).
-	 */
-	/*@Override
-	public void run() {
-		for (final AudioDispatcher d : streams) {
-			streamExecutor.execute(d);
-		}
-		streamExecutor.shutdown();
-	}*/
 }
