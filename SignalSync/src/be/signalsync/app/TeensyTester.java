@@ -9,7 +9,7 @@ import be.tarsos.dsp.io.jvm.AudioPlayer;
 public class TeensyTester {
 	public static void main(String[] args) {
 		try {
-			TeensyConverter converter = new TeensyConverter(8000, "COM4", 0, 0, 2, 64, 1);
+			TeensyConverter converter = new TeensyConverter(11025, "COM5", 0, 0, 1, 512);
 			AudioDispatcher d = converter.getAudioDispatcher(0);
 			d.addAudioProcessor(new AudioPlayer(d.getFormat()));
 			d.addAudioProcessor(new AudioProcessor() {
@@ -25,12 +25,12 @@ public class TeensyTester {
 					return true;
 				}
 			});
-			converter.start();
 			Thread t = new Thread(d);
 			t.start();
+			converter.start();
 			Thread.sleep(15000);
 			d.stop();
-			converter.stop();
+			converter.stopDataHandler();
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

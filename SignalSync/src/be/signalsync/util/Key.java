@@ -79,11 +79,6 @@ public enum Key {
 	 * The number of Teensy channels.
 	 */
 	TEENSY_CHANNEL_COUNT(2),
-	
-	/**
-	 * The received Teensy audio is multiplicated with this value.
-	 */
-	TEENSY_GAIN(1), 
 
 	/**
 	 * The size of the circular buffer used in the low pass filter

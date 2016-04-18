@@ -14,8 +14,10 @@ import com.cycling74.msp.MSPSignal;
 
 import be.signalsync.teensy.DAQDataHandler;
 import be.signalsync.teensy.DAQSample;
+import be.signalsync.teensy.SerialPortReader;
 import be.signalsync.teensy.TeensyDAQ;
 import be.tarsos.dsp.resample.Resampler;
+import jssc.SerialPortException;
 
 public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	//General parameters
@@ -35,9 +37,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	//Max performing attributes
 	private int targetBufferSize;
 	private int targetSampleRate;
-	private boolean startMessageReceived;
 	private boolean processing;
-	private boolean dacRunning;
 	
 	//Resampling attributes
 	private double sampleRatio;
@@ -51,6 +51,10 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	
 	public TeensyReader(String port, int sampleRate, int startChannel, int audioChannel, int numberOfChannels) {
 		post("Constructor called");
+		if(!validPort(port)) {
+			bail("Teensy port is not open");
+			return;
+		}
 		//Constants
 		this.startChannel = startChannel;
 		this.numberOfChannels = numberOfChannels;
@@ -70,37 +74,36 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 		}
 		
 		//Setting up the max module
-		startMessageReceived = processing = dacRunning = false;
+		this.processing = false;
 		setInlets();
 		setOutlets();
 		setAssists();
 		
 		this.teensy = new TeensyDAQ(sampleRate, port, startChannel, numberOfChannels);
+		
+		try {
+			this.teensy.start();
+		} 
+		catch (SerialPortException e) {
+			post("Fatal error: " + e.getMessage());
+		}
 		this.teensy.addDataHandler(this);
-		this.teensy.start();
 	}
 	
-	public void start() {
-		post("Start message received");
-		startMessageReceived = true;
-		stateChange();
+	private boolean validPort(String port1) {
+		String[] serialPorts = SerialPortReader.getSerialPorts();
+		for(String port2 : serialPorts) {
+			if(port1.equals(port2)) {
+				return true;
+			}
+		}
+		return false;
 	}
-	
-	public void stop() {
-		post("Stop message received");
-		startMessageReceived = false;
-		stateChange();
-	}
-	
+
 	@Override
-	protected void dspstate(boolean b) {
-		post("dspstate changed: " + b);
-		this.dacRunning = b;
-		stateChange();
-	}
-	
-	public void stateChange() {
-		processing = startMessageReceived && dacRunning;
+	protected void dspstate(boolean running) {
+		post("dspstate changed: " + running);
+		processing = running;
 	}
 	
 	@Override
@@ -111,7 +114,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 		this.targetSampleRate = (int) sigs_out[0].sr;
 		this.targetBufferSize = sigs_out[0].n;
 
-		this.sampleRatio = targetSampleRate / teensySampleRate;
+		this.sampleRatio = ((double) targetSampleRate) / teensySampleRate;
 		this.teensyBufferSize = (int) Math.round(targetBufferSize / sampleRatio);
 		this.inputBuffer = new float[teensyBufferSize];
 		this.targetBuffer = new float[targetBufferSize];
@@ -126,23 +129,18 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 			for(int i = 0; i<numberOfChannels; i++) {
 				BlockingQueue<Float> buffer = buffers.get(i);
 				MSPSignal out = sigs_out[i];
-				if(processing) {
-					for(int j = 0; j<teensyBufferSize; j++) {
-						Float value = buffer.poll(2, TimeUnit.SECONDS);
-						if(value == null) {
-							post("Error: polled value is null");
-							break;
-						}
-						else {
-							inputBuffer[j] = value;
-						}
+				for(int j = 0; j<teensyBufferSize; j++) {
+					Float value = buffer.poll(2, TimeUnit.SECONDS);
+					if(value == null) {
+						post("(TeensyReader) No value available in buffer.");
+						break;
 					}
-					resamplers[i].process(sampleRatio, inputBuffer, 0, teensyBufferSize, false, targetBuffer, 0, targetBufferSize);
-					System.arraycopy(targetBuffer, 0, out.vec, 0, targetBufferSize);
+					else {
+						inputBuffer[j] = value;
+					}
 				}
-				else {
-					Arrays.fill(out.vec, 0);
-				}
+				resamplers[i].process(sampleRatio, inputBuffer, 0, teensyBufferSize, false, targetBuffer, 0, targetBufferSize);
+				System.arraycopy(targetBuffer, 0, out.vec, 0, targetBufferSize);
 			}
 		} 
 		catch (Exception e) {
@@ -198,7 +196,6 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	
 	@Override
 	protected void notifyDeleted() {
-		post("notifyDeleted called");
 		teensy.stop();
 	}
 

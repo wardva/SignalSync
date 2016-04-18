@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,33 +14,20 @@ import be.signalsync.datafilters.DataFilterFactory;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
-import be.tarsos.dsp.AudioDispatcher;
 
 /**
  * This class is used for starting and managing the realtime stream
  * synchronization algorithm.
  * @author Ward Vasn Assche
  */
-public class RealtimeStreamSync implements SliceListener<Map<StreamGroup, float[]>>, Runnable {
+public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[]>> {
 	private static Logger Log = Logger.getLogger("signalSync");
-
-	/**
-	 * This object contains the different streams. This object is a runnable and
-	 * will be executed on a different thread. When this object is executed the
-	 * available streams are executed as well.
-	 */
-	private final StreamSet streamSet;
 
 	/**
 	 * This set contains the objects interested in possible changes of the
 	 * latency between the different streams.
 	 */
 	private final Set<SyncEventListener> listeners;
-
-	/**
-	 * The threadpool used for executing the stream streamSet.
-	 */
-	private final ExecutorService streamExecutor;
 
 	private final StreamSetSlicer slicer;
 
@@ -55,13 +40,11 @@ public class RealtimeStreamSync implements SliceListener<Map<StreamGroup, float[
 	 * @param streamSet This object contains the different streams which must be synchronized.
 	 * @param slicer The slicer object which should be used to slice the
 	 */
-	public RealtimeStreamSync(final StreamSet streamSet) {
-		this.streamSet = streamSet;
+	public RealtimeSignalSync(final StreamSet streamSet) {
 		this.listeners = new HashSet<>();
 		this.syncer = SyncStrategy.createDefault();
 		this.latencyFilters = new HashMap<>(streamSet.size());
 		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
-		this.streamExecutor = Executors.newFixedThreadPool(streamSet.size());
 		this.slicer.addEventListener(this);
 		
 		for(StreamGroup streamGroup : streamSet.getStreamGroups()) {
@@ -132,14 +115,5 @@ public class RealtimeStreamSync implements SliceListener<Map<StreamGroup, float[
 	 */
 	public void removeEventListener(final SyncEventListener listener) {
 		listeners.remove(listener);
-	}
-
-	@Override
-	public void run() {
-		Log.log(Level.INFO, "Starting the synchronization.");
-		for(AudioDispatcher d : streamSet.getAudioStreams()) {
-			streamExecutor.execute(d);
-		}
-		streamExecutor.shutdown();
 	}
 }
