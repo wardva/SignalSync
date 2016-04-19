@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MovingMedianFilter extends BufferedFilter {
-	private int middle;
+	private final int middle;
 	
 	public MovingMedianFilter() {
 		super();

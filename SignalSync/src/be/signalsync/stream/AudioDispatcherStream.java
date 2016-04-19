@@ -37,8 +37,12 @@ public class AudioDispatcherStream implements Stream {
 		});
 	}
 
+	/**
+	 * Caution: this method adds the slicer as an AudioDispatcher to the
+	 * stream, so don't do it a second time.
+	 */
 	@Override
-	public StreamSlicer getSlicer(int sliceSize, int sliceStep) {
+	public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
 		StreamSlicer s = new StreamSlicer(sliceSize, sliceStep, getSampleRate());
 		this.addStreamProcessor(s);
 		return s;
@@ -77,6 +81,7 @@ public class AudioDispatcherStream implements Stream {
 
 	@Override
 	public double getSampleRate() {
-		return dispatcher.getFormat().getSampleRate();
+		double sr =  dispatcher.getFormat().getSampleRate();
+		return sr;
 	}
 }

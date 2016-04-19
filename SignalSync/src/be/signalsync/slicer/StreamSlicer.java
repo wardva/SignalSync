@@ -19,6 +19,9 @@ public class StreamSlicer extends Slicer<float[]> implements StreamProcessor {
 	private final double sampleRate;
 	
 	public StreamSlicer(int sliceSize, int sliceStep, double sampleRate) {
+		if(sliceStep <= 0 || sliceSize <= 0) {
+			throw new IllegalArgumentException("SliceStep and sliceSize have to be greater than zero.");
+		}
 		this.sliceSize = sliceSize;
 		this.sliceStep = sliceStep;
 		this.sampleRate = sampleRate;
@@ -31,7 +34,6 @@ public class StreamSlicer extends Slicer<float[]> implements StreamProcessor {
 			 Config.getInt(Key.SLICE_STEP_S), 
 			 Config.getInt(Key.SAMPLE_RATE));
 	}
-	
 	
 	@Override
 	public void process(StreamEvent streamEvent) {

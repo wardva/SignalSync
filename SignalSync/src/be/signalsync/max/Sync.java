@@ -171,7 +171,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		}
 
 		@Override
-		public StreamSlicer getSlicer(int sliceSize, int sliceStep) {
+		public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
 			//TODO: slicer constructie nog eens bekijken
 			StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, getSampleRate());
 			addStreamProcessor(slicer);

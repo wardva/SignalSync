@@ -2,11 +2,14 @@ package be.signalsync.syncstrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import be.signalsync.slicer.Sliceable;
+import be.signalsync.slicer.StreamSetSlicer;
 import be.signalsync.stream.Stream;
 import be.signalsync.stream.StreamGroup;
 
-public class StreamSet {
+public class StreamSet implements Sliceable<Map<StreamGroup, float[]>, StreamSetSlicer> {
 	
 	private List<StreamGroup> streamGroups;
 	
@@ -48,5 +51,9 @@ public class StreamSet {
 		for(StreamGroup group : streamGroups) {
 			group.stop();
 		}
+	}
+	
+	public StreamSetSlicer createSlicer(int sliceSize, int sliceStep) {
+		return new StreamSetSlicer(this, sliceSize, sliceStep);
 	}
 }

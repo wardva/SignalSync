@@ -62,9 +62,8 @@ public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implement
 		//Iterate over the streams.
 		for (StreamGroup group : this.streamSet.getStreamGroups()) {
 			Stream audioStream = group.getAudioStream();
-			final StreamSlicer slicer = audioStream.getSlicer(sliceSize, sliceStep);
+			final StreamSlicer slicer = audioStream.createSlicer(sliceSize, sliceStep);
 			slicer.addEventListener(this);
-			audioStream.addStreamProcessor(slicer);
 			sliceBuffers.put(slicer, new LinkedBlockingQueue<>());
 			slicers.put(slicer, group);
 		}
@@ -162,7 +161,7 @@ public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implement
 	 * @param slicer The slicer which has sent the slice event.
 	 */
 	@Override
-	public void onSliceEvent(SliceEvent<float[]> event) {
+	public void onSliceEvent(SliceEvent<float[]> event) {	
 		try {
 			//Put the slice into the blockingQueue of the slicer in the slicesMap.
 			sliceBuffers.get(event.getSlicer()).put(event.getSlices());
