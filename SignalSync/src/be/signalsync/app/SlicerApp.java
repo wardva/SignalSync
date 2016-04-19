@@ -2,10 +2,11 @@ package be.signalsync.app;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import be.signalsync.core.SliceEvent;
-import be.signalsync.core.SliceListener;
-import be.signalsync.core.Slicer;
-import be.signalsync.core.StreamSlicer;
+import be.signalsync.slicer.SliceEvent;
+import be.signalsync.slicer.SliceListener;
+import be.signalsync.slicer.Slicer;
+import be.signalsync.slicer.StreamSlicer;
+import be.signalsync.stream.AudioDispatcherStream;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
@@ -70,7 +71,8 @@ public class SlicerApp {
 		});
 
 		final AudioDispatcher d = AudioDispatcherFactory.fromPipe(directory + filename, sampleRate, bufferSize, 0);
-		d.addAudioProcessor(slicer);
+		AudioDispatcherStream stream = new AudioDispatcherStream(d);
+		stream.addStreamProcessor(slicer);
 		d.run();
 	}
 }

@@ -1,4 +1,4 @@
-package be.signalsync.core;
+package be.signalsync.slicer;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package be.signalsync.core;
+package be.signalsync.slicer;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -17,9 +17,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import be.signalsync.stream.Stream;
+import be.signalsync.stream.StreamGroup;
+import be.signalsync.syncstrategy.StreamSet;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
-import be.tarsos.dsp.AudioDispatcher;
 
 /**
  * This class is a Slicer which is used to take slices of different streams
@@ -59,13 +61,10 @@ public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implement
 		
 		//Iterate over the streams.
 		for (StreamGroup group : this.streamSet.getStreamGroups()) {
-			AudioDispatcher audioStream = group.getAudioStream();
-			//Create and attach a streamSlicer to the current stream.
-			final StreamSlicer slicer = new StreamSlicer();
+			Stream audioStream = group.getAudioStream();
+			final StreamSlicer slicer = audioStream.getSlicer(sliceSize, sliceStep);
 			slicer.addEventListener(this);
-			audioStream.addAudioProcessor(slicer);
-			//Put the streamslicer into the slicesmap, together with a blockingqueue 
-			//which will contain the slices received from this slicer.
+			audioStream.addStreamProcessor(slicer);
 			sliceBuffers.put(slicer, new LinkedBlockingQueue<>());
 			slicers.put(slicer, group);
 		}
@@ -169,7 +168,7 @@ public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implement
 			sliceBuffers.get(event.getSlicer()).put(event.getSlices());
 
 			timingLock.lock();
-			double delta = 0.01;
+			final double delta = 0.01;
 			if(timingInfo.isEmpty() || event.getBeginTime() - timingInfo.peek() > delta) {
 				timingInfo.push(event.getBeginTime());
 			}

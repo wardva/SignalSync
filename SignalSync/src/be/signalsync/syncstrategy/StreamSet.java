@@ -1,9 +1,10 @@
-package be.signalsync.core;
+package be.signalsync.syncstrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import be.tarsos.dsp.AudioDispatcher;
+import be.signalsync.stream.Stream;
+import be.signalsync.stream.StreamGroup;
 
 public class StreamSet {
 	
@@ -21,8 +22,8 @@ public class StreamSet {
 		return this.streamGroups;
 	}
 	
-	public List<AudioDispatcher> getAudioStreams() {
-		List<AudioDispatcher> audioStreams = new ArrayList<>();
+	public List<Stream> getAudioStreams() {
+		List<Stream> audioStreams = new ArrayList<>();
 		for(StreamGroup g : streamGroups) {
 			audioStreams.add(g.getAudioStream());
 		}
@@ -35,6 +36,12 @@ public class StreamSet {
 	
 	public int size() {
 		return streamGroups.size();
+	}
+	
+	public void start() {
+		for(StreamGroup group : streamGroups) {
+			group.start();
+		}
 	}
 	
 	public void stop() {

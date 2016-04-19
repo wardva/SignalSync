@@ -1,4 +1,4 @@
-package be.signalsync.core;
+package be.signalsync.slicer;
 
 /**
  * This interface has to be implemented when an instance is interested in slice

@@ -1,4 +1,4 @@
-package be.signalsync.core;
+package be.signalsync.stream;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import be.signalsync.teensy.TeensyConverter;
+import be.signalsync.syncstrategy.StreamSet;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
@@ -19,10 +19,11 @@ public class StreamSetFactory {
 			List<StreamGroup> streamGroups = new ArrayList<>();
 			for(String path : paths) {
 				File file = new File(path);
-				AudioDispatcher audioStream = AudioDispatcherFactory.fromFile(file, Config.getInt(Key.NFFT_BUFFER_SIZE), 0);
+				AudioDispatcher dispatcher = AudioDispatcherFactory.fromFile(file, Config.getInt(Key.NFFT_BUFFER_SIZE), 0);
+				Stream stream = new AudioDispatcherStream(dispatcher);
 				StreamGroup group = new StreamGroup();
 				group.setDescription(file.getName());
-				group.setAudioStream(audioStream);
+				group.setAudioStream(stream);
 				streamGroups.add(group);
 			}
 			StreamSet streamSet = new StreamSet(streamGroups);
@@ -54,15 +55,5 @@ public class StreamSetFactory {
 		return StreamSetFactory.createFromFiles(
 			"./testdata/TeensyRecorded/teensy test soundboard 3.wav",
 			"./testdata/TeensyRecorded/origineel test soundboard 3.wav");
-	}
-	
-	public static StreamSet createTestTeensyStreamSet() {
-		StreamSet streamSet = StreamSetFactory.createFromFiles("./testdata/Origineel/starpower11k.wav");
-		StreamGroup teensyStreamGroup = new StreamGroup();
-		teensyStreamGroup.setDescription("Live teensy stream");
-		TeensyConverter teensy = new TeensyConverter();
-		teensyStreamGroup.setAudioStream(teensy.getAudioDispatcher(0));
-		streamSet.addStreamGroup(teensyStreamGroup);
-		return streamSet;
 	}
 }

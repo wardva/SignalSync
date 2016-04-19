@@ -14,17 +14,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import be.signalsync.core.SliceEvent;
-import be.signalsync.core.SliceListener;
-import be.signalsync.core.Slicer;
-import be.signalsync.core.StreamSlicer;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.io.TarsosDSPAudioFormat;
+import be.signalsync.slicer.SliceEvent;
+import be.signalsync.slicer.SliceListener;
+import be.signalsync.slicer.Slicer;
+import be.signalsync.slicer.StreamSlicer;
+import be.signalsync.stream.StreamEvent;
 
 @RunWith(Parameterized.class)
 public class SteppedSlicerTest {
 	
-	private List<AudioEvent> audioEvents;
+	private List<StreamEvent> streamEvents;
 	private int sliceSize;
 	private int sliceStep;
 	private int limit;
@@ -54,9 +53,9 @@ public class SteppedSlicerTest {
 	
 	@Before
 	public void before() {
-		audioEvents = new ArrayList<>();
+		streamEvents = new ArrayList<>();
 		for(double i = 0; i<=100; i += 0.015) {
-			audioEvents.add(new DummyAudioEvent(i));
+			streamEvents.add(createDummyStreamEvent(i));
 		}
 	}
 	
@@ -79,10 +78,10 @@ public class SteppedSlicerTest {
 			}
 		};
 		
-		StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep);
+		StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, sampleRate);
 		slicer.addEventListener(listener);
 		
-		for(AudioEvent a : audioEvents) {
+		for(StreamEvent a : streamEvents) {
 			slicer.process(a);
 			if(a.getTimeStamp() >= limit) {
 				break;
@@ -92,17 +91,7 @@ public class SteppedSlicerTest {
 		slicer.processingFinished();
 	}
 	
-	private class DummyAudioEvent extends AudioEvent {
-		private double timestamp;
-		public DummyAudioEvent(double timestamp) {
-			super(new TarsosDSPAudioFormat(sampleRate, 0, 1, false, false));
-			this.timestamp = timestamp;
-			this.setFloatBuffer(new float[] { (float) Math.floor(timestamp) });
-		}
-		
-		@Override
-		public double getTimeStamp() {
-			return timestamp;
-		}
+	private StreamEvent createDummyStreamEvent(double timestamp) {
+		return new StreamEvent(new float[] { (float) Math.floor(timestamp) }, timestamp);
 	}
 }

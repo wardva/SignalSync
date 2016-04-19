@@ -1,4 +1,4 @@
-package be.signalsync.core;
+package be.signalsync.slicer;
 
 public class SliceEvent<T> {
 	private Slicer<T> slicer;

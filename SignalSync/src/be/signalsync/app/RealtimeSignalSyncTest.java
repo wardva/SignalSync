@@ -2,21 +2,20 @@ package be.signalsync.app;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
-import be.signalsync.core.RealtimeSignalSync;
-import be.signalsync.core.StreamGroup;
-import be.signalsync.core.StreamSet;
-import be.signalsync.core.StreamSetFactory;
-import be.signalsync.core.SyncEventListener;
+
+import be.signalsync.stream.StreamGroup;
+import be.signalsync.stream.StreamSetFactory;
+import be.signalsync.sync.RealtimeSignalSync;
+import be.signalsync.sync.SyncEventListener;
+import be.signalsync.syncstrategy.StreamSet;
 
 /**
- * Main class for testing the current SignalSync implementation.
- * @author Ward
+ * Application class for testing the current SignalSync implementation.
+ * @author Ward Van Assche
  */
 public class RealtimeSignalSyncTest {
 	public static void main(final String[] args) {
-		StreamSet streamSet = StreamSetFactory.createRecordedTeensyStreamSet();
-		
+		StreamSet streamSet = StreamSetFactory.createCleanStreamSet();
 		final RealtimeSignalSync syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {
 			@Override
@@ -29,15 +28,6 @@ public class RealtimeSignalSyncTest {
 				System.out.println("---------------------------------");
 			}
 		});
-
-		new Thread(new Runnable() {
-			private Scanner input = new Scanner(System.in);
-			@Override
-			public void run() {
-				while(!input.nextLine().trim().equalsIgnoreCase("stop"));
-				streamSet.getAudioStreams().forEach(d -> d.stop());
-			}
-		}).start();
-		syncer.run();
+		streamSet.start();
 	}
 }

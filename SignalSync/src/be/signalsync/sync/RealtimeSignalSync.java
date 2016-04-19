@@ -1,4 +1,4 @@
-package be.signalsync.core;
+package be.signalsync.sync;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,14 +11,20 @@ import java.util.logging.Logger;
 
 import be.signalsync.datafilters.DataFilter;
 import be.signalsync.datafilters.DataFilterFactory;
+import be.signalsync.slicer.SliceEvent;
+import be.signalsync.slicer.SliceListener;
+import be.signalsync.slicer.Slicer;
+import be.signalsync.slicer.StreamSetSlicer;
+import be.signalsync.stream.StreamGroup;
+import be.signalsync.syncstrategy.StreamSet;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 
 /**
- * This class is used for starting and managing the realtime stream
+ * This class is used for starting and managing the real time stream
  * synchronization algorithm.
- * @author Ward Vasn Assche
+ * @author Ward Van Assche
  */
 public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[]>> {
 	private static Logger Log = Logger.getLogger("signalSync");
@@ -54,7 +60,7 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 
 	/**
 	 * Add an interested listener. The listeners will be notified when new
-	 * synchronization data is available.
+	 * Synchronization data is available.
 	 * @param listener The listener to add.
 	 */
 	public void addEventListener(final SyncEventListener listener) {

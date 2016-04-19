@@ -11,5 +11,7 @@
 			<attribute name="javadoc_location" value="file:/C:/Program%20Files/Cycling%20&apos;74/Max%207/resources/packages/max-mxj/java-doc/api/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/TeensyDAQ"/>
+	<classpathentry kind="lib" path="D:/Documenten/School/Master/Masterproef/jSSC-2.7.0-Release/jssc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

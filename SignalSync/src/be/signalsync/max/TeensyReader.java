@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
 import com.cycling74.msp.MSPPerformer;
 import com.cycling74.msp.MSPSignal;
 
-import be.signalsync.teensy.DAQDataHandler;
-import be.signalsync.teensy.DAQSample;
-import be.signalsync.teensy.SerialPortReader;
-import be.signalsync.teensy.TeensyDAQ;
 import be.tarsos.dsp.resample.Resampler;
+import be.ugent.ipem.teensydaq.DAQDataHandler;
+import be.ugent.ipem.teensydaq.DAQSample;
+import be.ugent.ipem.teensydaq.TeensyDAQ;
+import be.ugent.ipem.teensydaq.util.SerialPortReader;
 import jssc.SerialPortException;
 
 public class TeensyReader extends MSPPerformer implements DAQDataHandler {
@@ -200,7 +200,5 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	}
 
 	@Override
-	public void stopDataHandler() {
-		
-	}
+	public void stopDataHandler() {}
 }

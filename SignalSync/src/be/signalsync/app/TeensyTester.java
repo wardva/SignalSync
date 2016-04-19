@@ -1,14 +1,8 @@
 package be.signalsync.app;
 
-import be.signalsync.teensy.TeensyConverter;
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.AudioProcessor;
-import be.tarsos.dsp.io.jvm.AudioPlayer;
-
 public class TeensyTester {
 	public static void main(String[] args) {
-		try {
+		/*try {
 			TeensyConverter converter = new TeensyConverter(11025, "COM5", 0, 0, 1, 512);
 			AudioDispatcher d = converter.getAudioDispatcher(0);
 			d.addAudioProcessor(new AudioPlayer(d.getFormat()));
@@ -34,6 +28,6 @@ public class TeensyTester {
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

@@ -1,37 +1,33 @@
-package be.signalsync.core;
+package be.signalsync.stream;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import be.tarsos.dsp.AudioDispatcher;
-
 /**
- * 
  * @author Ward Van Assche
- *
  */
 public class StreamGroup {
-	private AudioDispatcher audioStream;
-	private List<AudioDispatcher> dataStreams;
+	private Stream audioStream;
+	private List<Stream> dataStreams;
 	private String description;
 	
 	public StreamGroup() {
 		this.dataStreams = new ArrayList<>();
 	}
 	
-	public void setAudioStream(AudioDispatcher audioStream) {
+	public void setAudioStream(Stream audioStream) {
 		this.audioStream = audioStream;
 	}
 	
-	public void addDataStream(AudioDispatcher dataStream) {
+	public void addDataStream(Stream dataStream) {
 		dataStreams.add(dataStream);
 	}
 
-	public AudioDispatcher getAudioStream() {
+	public Stream getAudioStream() {
 		return audioStream;
 	}
 
-	public List<AudioDispatcher> getDataStreams() {
+	public List<Stream> getDataStreams() {
 		return dataStreams;
 	}
 
@@ -43,12 +39,17 @@ public class StreamGroup {
 		this.description = description;
 	}
 	
-	public void stop() {
-		if(audioStream != null) {
-			audioStream.stop();
+	public void start() {
+		audioStream.start();
+		for(Stream s : dataStreams) {
+			s.start();
 		}
-		for(AudioDispatcher d : dataStreams) {
-			d.stop();
+	}
+	
+	public void stop() {
+		audioStream.stop();
+		for(Stream s : dataStreams) {
+			s.stop();
 		}
 	}
 }
