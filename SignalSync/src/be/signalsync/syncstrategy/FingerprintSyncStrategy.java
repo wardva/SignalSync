@@ -101,7 +101,6 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		}
 		final double fftHopSizesS = stepSize / (double) sampleRate;
 		final List<Double> latencies = new ArrayList<>();
-		latencies.add(0.0);
 		for (final int[] timing : synchronize(slices)) {
 			if (timing.length > 0) {
 				// Calculating the time difference from the time index

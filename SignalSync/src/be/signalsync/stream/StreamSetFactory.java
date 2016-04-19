@@ -45,10 +45,10 @@ public class StreamSetFactory {
 	
 	public static StreamSet createCleanStreamSet() {
 		return StreamSetFactory.createFromFiles(
-			"./testdata/Clean/Sonic Youth - Star Power_90_0hz.wav", 
-			"./testdata/Clean/Sonic Youth - Star Power_0_0hz.wav",
+			"./testdata/Clean/Sonic Youth - Star Power_90_0hz.wav",
 			"./testdata/Clean/Sonic Youth - Star Power_2000_0hz.wav", 
-			"./testdata/Clean/Sonic Youth - Star Power_300_0hz.wav");
+			"./testdata/Clean/Sonic Youth - Star Power_300_0hz.wav",
+			"./testdata/Clean/Sonic Youth - Star Power_0_0hz.wav");
 	}
 	
 	public static StreamSet createRecordedTeensyStreamSet() {
