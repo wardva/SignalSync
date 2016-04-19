@@ -1,47 +1,35 @@
-package be.signalsync.max;
+package be.signalsync.msp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import com.cycling74.msp.MSPPerformer;
 import com.cycling74.msp.MSPSignal;
 
-import be.signalsync.slicer.StreamSlicer;
-import be.signalsync.stream.AudioDispatcherStream;
-import be.signalsync.stream.Stream;
-import be.signalsync.stream.StreamEvent;
+import be.signalsync.stream.MSPStream;
 import be.signalsync.stream.StreamGroup;
-import be.signalsync.stream.StreamProcessor;
 import be.signalsync.sync.RealtimeSignalSync;
 import be.signalsync.sync.SyncEventListener;
 import be.signalsync.syncstrategy.StreamSet;
-import be.signalsync.util.EventsToAudioDispatcher;
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioProcessor;
 
 public class Sync extends MSPPerformer implements SyncEventListener {
 	private final static Pattern streamConfigRegex = Pattern.compile("d*ad*(,d*ad*)*");
 	private double sampleRate;
-	private List<MaxStream> streams;
-	private List<StreamGroup> streamGroups;
+	private MSPStream[] streams;
+	private StreamGroup[] streamGroups;
 	private StreamSet streamSet;
 	private String[] streamConfig;
 	private int numberOfStreams;
 	
 	private RealtimeSignalSync syncer;
-	private ExecutorService syncExecutor;
 	
 	public Sync() {
 		bail("(Sync) Invalid method parameters.");
 	}
 	
-	/*
+	/**
 	 * Streamconfiguration
 	 * -------------------
 	 * Streamgroups: 	comma seperated string.
@@ -55,24 +43,11 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 			return;
 		}
 		this.streamConfig = configString.split(",");
-		this.numberOfStreams = 0;
 		for(String s : streamConfig) {
-			StreamGroup group = new StreamGroup();
-			for(char c : s.toCharArray()) {
-				MaxStream stream = new MaxStream();
-				switch(c) {
-				case 'a':
-					group.setAudioStream(stream);
-					break;
-				case 'd':
-					group.addDataStream(stream);
-					break;
-				}
-				streams.add(stream);
-			}
-			streamGroups.add(group);
+			numberOfStreams += s.length();
 		}
-		streamSet = new StreamSet(streamGroups);
+		this.streamGroups = new StreamGroup[streamConfig.length];
+		this.streams = new MSPStream[numberOfStreams];
 		setInlets();
 		setOutlets();
 		setAssists();
@@ -80,7 +55,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	
 	@Override
 	protected void dspstate(boolean running) {
-		//TODO
+		//Change state
 	}
 	
 	private void setInlets() {
@@ -99,9 +74,9 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		String[] inletAssists = new String[numberOfStreams];
 		String[] outletAssists = new String[numberOfStreams];
 		int k = 0;
-		for(int i = 0; i<streamConfig.length; i++) {
+		for(int i = 0; i<streamConfig.length; ++i) {
 			String group = streamConfig[i];
-			for(int j = 0; j<group.length(); j++) {
+			for(int j = 0; j<group.length(); ++j) {
 				char c = group.charAt(j);
 				if(c == 'a') {
 					inletAssists[k] = String.format("Stream %d (audio) of streamgroup %d used for synchronization.", j+1, i+1);
@@ -122,14 +97,36 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	@Override
 	public void perform(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
 		for(int i = 0; i<numberOfStreams; i++) {
-			MaxStream stream = streams.get(i);
-			stream.maxPerformed(sigs_in[i]);
+			MSPSignal signal = sigs_in[i];
+			streams[i].maxPerformed(signal);
 		}
 	}
 	
 	@Override
 	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
 		sampleRate = sigs_in[0].sr;
+		int ctr = 0;
+		for(int i = 0; i<streamConfig.length; i++) {
+			String s = streamConfig[i];
+			StreamGroup group = new StreamGroup();
+			for(int j = 0; j<s.length(); j++) {
+				char c = s.charAt(j);
+				MSPStream stream = new MSPStream(sampleRate);
+				switch(c) {
+				case 'a':
+					group.setAudioStream(stream);
+					break;
+				case 'd':
+					group.addDataStream(stream);
+					break;
+				}
+				streams[ctr++] = stream;
+			}
+			streamGroups[i] = group;
+		}
+		streamSet = new StreamSet(Arrays.asList(streamGroups));
+		syncer = new RealtimeSignalSync(streamSet);
+		syncer.addEventListener(this);
 	}
 	
 	@Override
@@ -142,50 +139,6 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	
 	@Override
 	protected void notifyDeleted() {
-		syncExecutor.shutdown();
-	}
-	
-	private class MaxStream implements Stream {
-		private List<StreamProcessor> processors;
-		
-		public MaxStream() {
-			processors = new ArrayList<>();
-		}
-		
-		public void maxPerformed(MSPSignal s) {
-			for(StreamProcessor p : processors) {
-				//TODO timestamp
-				StreamEvent event = new StreamEvent(s.vec, 0);
-				p.process(event);
-			}
-		}
-		
-		@Override
-		public void addStreamProcessor(StreamProcessor s) {
-			processors.add(s);
-		}
-
-		@Override
-		public double getSampleRate() {
-			return Sync.this.sampleRate;
-		}
-
-		@Override
-		public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
-			//TODO: slicer constructie nog eens bekijken
-			StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, getSampleRate());
-			addStreamProcessor(slicer);
-			return slicer;
-		}
-
-		@Override
-		public void start() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void stop() {
-			throw new UnsupportedOperationException();
-		}
+		//Cleanup
 	}
 }

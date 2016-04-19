@@ -1,4 +1,4 @@
-package be.signalsync.max;
+package be.signalsync.msp;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,5 +1,7 @@
 package be.signalsync.stream;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +12,7 @@ import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 
 public class AudioDispatcherStream implements Stream {
+	private Map<StreamProcessor, AudioProcessor> processorMap;
 	private AudioDispatcher dispatcher;
 	private ExecutorService executor;
 	private boolean started;
@@ -17,24 +20,27 @@ public class AudioDispatcherStream implements Stream {
 	public AudioDispatcherStream(AudioDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 		this.executor = Executors.newSingleThreadExecutor();
+		this.processorMap = new HashMap<>();
 		this.started = false;
 	}
 	
 	@Override
-	public void addStreamProcessor(StreamProcessor processor) {
-		dispatcher.addAudioProcessor(new AudioProcessor() {
+	public void addStreamProcessor(StreamProcessor streamProcessor) {
+		AudioProcessor audioProcessor = new AudioProcessor() {
 			@Override
 			public void processingFinished() {
-				processor.processingFinished();
+				streamProcessor.processingFinished();
 			}
 			
 			@Override
 			public boolean process(AudioEvent audioEvent) {
 				StreamEvent event = new StreamEvent(audioEvent.getFloatBuffer(), audioEvent.getTimeStamp());
-				processor.process(event);
+				streamProcessor.process(event);
 				return true;
 			}
-		});
+		};
+		processorMap.put(streamProcessor, audioProcessor);
+		dispatcher.addAudioProcessor(audioProcessor);
 	}
 
 	/**
@@ -81,7 +87,13 @@ public class AudioDispatcherStream implements Stream {
 
 	@Override
 	public double getSampleRate() {
-		double sr =  dispatcher.getFormat().getSampleRate();
-		return sr;
+		return dispatcher.getFormat().getSampleRate();
+	}
+
+	@Override
+	public void removeStreamProcessor(StreamProcessor s) {
+		AudioProcessor audioProcessor = processorMap.get(s);
+		dispatcher.removeAudioProcessor(audioProcessor);
+		processorMap.remove(s);
 	}
 }
