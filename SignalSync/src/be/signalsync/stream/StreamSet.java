@@ -1,4 +1,4 @@
-package be.signalsync.syncstrategy;
+package be.signalsync.stream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,6 @@ import java.util.Map;
 
 import be.signalsync.slicer.Sliceable;
 import be.signalsync.slicer.StreamSetSlicer;
-import be.signalsync.stream.Stream;
-import be.signalsync.stream.StreamGroup;
 
 public class StreamSet implements Sliceable<Map<StreamGroup, float[]>, StreamSetSlicer> {
 	

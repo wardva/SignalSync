@@ -4,10 +4,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import be.signalsync.stream.StreamGroup;
+import be.signalsync.stream.StreamSet;
 import be.signalsync.stream.StreamSetFactory;
 import be.signalsync.sync.RealtimeSignalSync;
 import be.signalsync.sync.SyncEventListener;
-import be.signalsync.syncstrategy.StreamSet;
 
 /**
  * Application class for testing the current SignalSync implementation.
@@ -15,7 +15,11 @@ import be.signalsync.syncstrategy.StreamSet;
  */
 public class RealtimeSignalSyncTest {
 	public static void main(final String[] args) {
-		StreamSet streamSet = StreamSetFactory.createCleanStreamSet();
+		//Creating a streamset from some audio files.
+		StreamSet streamSet = StreamSetFactory.createFromFiles(
+				"C:\\Users\\Ward\\Desktop\\absynthmindedslecht.wav", 
+				"C:\\Users\\Ward\\Desktop\\absynthmindedgoed.wav");
+		
 		final RealtimeSignalSync syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {
 			@Override

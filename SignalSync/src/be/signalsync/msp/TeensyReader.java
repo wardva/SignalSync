@@ -28,6 +28,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	private int teensyBufferSize;
 	
 	//Teensy processing attributes
+	private String port;
 	private TeensyDAQ teensy;
 	private Deque<Double> movingAverageWindow;
 	private List<BlockingQueue<Float>> buffers;
@@ -52,14 +53,15 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	public TeensyReader(String port, int sampleRate, int startChannel, int audioChannel, int numberOfChannels) {
 		post("Constructor called");
 		if(!validPort(port)) {
-			bail("Teensy port is not open");
-			return;
+			//bail("Teensy port is not open");
+			//return;
 		}
 		//Constants
 		this.startChannel = startChannel;
 		this.numberOfChannels = numberOfChannels;
 		this.audioChannel = audioChannel;
 		this.teensySampleRate = sampleRate;
+		this.port = port;
 		
 		//Teensy processing
 		this.movingAverageWindow = new LinkedList<>();
@@ -79,15 +81,15 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 		setOutlets();
 		setAssists();
 		
-		this.teensy = new TeensyDAQ(sampleRate, port, startChannel, numberOfChannels);
+		/*this.teensy = new TeensyDAQ(sampleRate, port, startChannel, numberOfChannels);
 		
 		try {
 			this.teensy.start();
 		} 
 		catch (SerialPortException e) {
-			post("Fatal error: " + e.getMessage());
+			post("Error while trying to start teensy from port  " + port + ": " + e.getMessage());
 		}
-		this.teensy.addDataHandler(this);
+		this.teensy.addDataHandler(this);*/
 	}
 	
 	private boolean validPort(String port1) {
@@ -143,9 +145,8 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 				System.arraycopy(targetBuffer, 0, out.vec, 0, targetBufferSize);
 			}
 		} 
-		catch (Exception e) {
-			post("Fatal error: ");
-			e.printStackTrace();
+		catch (InterruptedException e) {
+			post("Fatal error while performing teensy port " + port + ": " + e.getMessage());
 		}
 	}
 	
@@ -196,7 +197,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	
 	@Override
 	protected void notifyDeleted() {
-		teensy.stop();
+		//teensy.stop();
 	}
 
 	@Override

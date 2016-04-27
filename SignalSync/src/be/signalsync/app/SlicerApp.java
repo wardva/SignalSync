@@ -14,9 +14,8 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.io.jvm.WaveformWriter;
 
 /**
- * Class used for generating slices of testdata and saving them to disk.
+ * Class used for generating slices of clean testdata and saving them to disk.
  * @author Ward Van Assche
- *
  */
 public class SlicerApp {
 	public static void main(final String[] args) {

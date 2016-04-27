@@ -4,15 +4,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-
 import com.cycling74.msp.MSPPerformer;
 import com.cycling74.msp.MSPSignal;
-
 import be.signalsync.stream.MSPStream;
 import be.signalsync.stream.StreamGroup;
+import be.signalsync.stream.StreamSet;
 import be.signalsync.sync.RealtimeSignalSync;
 import be.signalsync.sync.SyncEventListener;
-import be.signalsync.syncstrategy.StreamSet;
 
 public class Sync extends MSPPerformer implements SyncEventListener {
 	private final static Pattern streamConfigRegex = Pattern.compile("d*ad*(,d*ad*)*");
@@ -96,9 +94,12 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		
 	@Override
 	public void perform(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
-		for(int i = 0; i<numberOfStreams; i++) {
-			MSPSignal signal = sigs_in[i];
-			streams[i].maxPerformed(signal);
+		for(int i = 0; i<numberOfStreams; ++i) {
+			MSPSignal input = sigs_in[i];
+			MSPSignal output = sigs_out[i];
+			streams[i].maxPerformed(input);
+			//input -> output without modifications or synchronization.
+			System.arraycopy(input.vec, 0, output.vec, 0, input.n);
 		}
 	}
 	
@@ -106,7 +107,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
 		sampleRate = sigs_in[0].sr;
 		int ctr = 0;
-		for(int i = 0; i<streamConfig.length; i++) {
+		for(int i = 0; i<streamConfig.length; ++i) {
 			String s = streamConfig[i];
 			StreamGroup group = new StreamGroup();
 			for(int j = 0; j<s.length(); j++) {

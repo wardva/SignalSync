@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 import be.signalsync.stream.Stream;
 import be.signalsync.stream.StreamGroup;
-import be.signalsync.syncstrategy.StreamSet;
+import be.signalsync.stream.StreamSet;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 

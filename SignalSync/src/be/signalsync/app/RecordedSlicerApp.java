@@ -1,7 +1,6 @@
 package be.signalsync.app;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-
 import be.signalsync.slicer.SliceEvent;
 import be.signalsync.slicer.SliceListener;
 import be.signalsync.slicer.Slicer;
@@ -14,9 +13,8 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.io.jvm.WaveformWriter;
 
 /**
- * Class used for generating slices of testdata and saving them to disk.
+ * Application used for generating slices of recorded data and saving them to disk.
  * @author Ward Van Assche
- *
  */
 public class RecordedSlicerApp {
 	public static void main(final String[] args) {
@@ -29,6 +27,7 @@ public class RecordedSlicerApp {
 			app.generateSlices(directory, filename + ".wav");
 		}
 	}
+	
 	
 	private void generateSlices(String directory, String filename) {
 		final int sampleRate = Config.getInt(Key.SAMPLE_RATE);

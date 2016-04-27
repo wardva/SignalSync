@@ -1,13 +1,9 @@
 package be.signalsync.stream;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import be.signalsync.syncstrategy.StreamSet;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
@@ -15,24 +11,17 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
 public class StreamSetFactory {
 	public static StreamSet createFromFiles(String... paths) {
-		try {
-			List<StreamGroup> streamGroups = new ArrayList<>();
-			for(String path : paths) {
-				File file = new File(path);
-				AudioDispatcher dispatcher = AudioDispatcherFactory.fromFile(file, Config.getInt(Key.NFFT_BUFFER_SIZE), 0);
-				Stream stream = new AudioDispatcherStream(dispatcher);
-				StreamGroup group = new StreamGroup();
-				group.setDescription(file.getName());
-				group.setAudioStream(stream);
-				streamGroups.add(group);
-			}
-			StreamSet streamSet = new StreamSet(streamGroups);
-			return streamSet;
-			
-		} 
-		catch (UnsupportedAudioFileException | IOException e) {
-			throw new IllegalArgumentException("Invalid path or file passed to the createFromFile method.");
+		List<StreamGroup> streamGroups = new ArrayList<>();
+		for(String path : paths) {
+			File file = new File(path);
+			AudioDispatcher dispatcher = AudioDispatcherFactory.fromPipe(path, Config.getInt(Key.SAMPLE_RATE), Config.getInt(Key.NFFT_BUFFER_SIZE), 0);			Stream stream = new AudioDispatcherStream(dispatcher);
+			StreamGroup group = new StreamGroup();
+			group.setDescription(file.getName());
+			group.setAudioStream(stream);
+			streamGroups.add(group);
 		}
+		StreamSet streamSet = new StreamSet(streamGroups);
+		return streamSet;
 	}
 	
 	public static StreamSet createRecordedStreamSet() {

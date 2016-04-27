@@ -16,7 +16,7 @@ import be.signalsync.slicer.SliceListener;
 import be.signalsync.slicer.Slicer;
 import be.signalsync.slicer.StreamSetSlicer;
 import be.signalsync.stream.StreamGroup;
-import be.signalsync.syncstrategy.StreamSet;
+import be.signalsync.stream.StreamSet;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;

@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+\begin{axis}[
+xmin = 0,
+xmax = 100,
+ymin = 0,
+ymax = 100,
+ticks=none,
+axis lines = left,
+xlabel = Tijd,
+ylabel = Frequentie,
+width = 10.8cm,
+height = 5.5cm
+]
+\addplot[thick,black] graphics[xmin=3,ymin=5,xmax=97,ymax=95] {talktalk.png};
+\addplot+[mark = none] coordinates {};
+\end{axis}
+\end{tikzpicture}
