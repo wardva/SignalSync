@@ -11,7 +11,7 @@ Zoals in de introductie al is beschreven maakt het accoustic fingerprinting algo
 
 \subsubsection{Features}
 
-Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van een betrouwbare \textit{feature} om de fingerprints op te baseren. Een feature is een kenmerk waarmee het mogelijk is om audiofragmenten van elkaar te onderscheiden. Een zeer goed bruikbare feature zijn de \textit{spectrale pieken} in het tijd-frequentie spectrum van de geluidsfragmenten. Deze feature bevat veel meer informatie dan wanneer er bijvoorbeeld enkel naar het ritme of volume zou worden gekeken. De kans op foutieve resultaten door \textit{collissions} wordt hierdoor kleiner.
+Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van een betrouwbare \textit{feature} om de fingerprints op te baseren. Een feature is een kenmerk waarmee het mogelijk is om audiofragmenten van elkaar te onderscheiden. Een zeer goed bruikbare feature zijn de \textit{spectrale pieken} in het tijd-frequentie spectrum van de geluidsfragmenten. Deze feature is compact op te slaan en bevat toch veel informatie over het opgenomen audiofragment waardoor de kans op foutieve resultaten door \textit{collissions} kleiner wordt.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -24,12 +24,12 @@ Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem i
 
 \subsubsection{Werking}
 
-Een fingerprinter gebaseerd op de extractie van spectrale pieken gaat in verschillende stappen te werk: 
+Een accoustic fingerprinting systeem gebaseerd op de extractie van spectrale pieken gaat in verschillende stappen te werk: 
 Eerst wordt het tijdsignaal (de typische golfvorm) van elk geluidsfragment omgezet tot een verzameling complexe functies in het frequentiedomein\footnote{Een veelgebruikt algoritme hiervoor is het Fast Fourrier Transformation algoritme (FFT). In artikel \cite{oppenheim1970speech}. wordt deze methode uitgebreid besproken.}. Deze verzameling functies kan gezien worden als het tijd-frequentiedomein van het audiofragment. De grafische voorstelling van deze verzameling functies wordt het spectrogram genoemd. Meestal wordt op de x-as de tijd weergegeven en op de y-as de frequentie. De intensiteit waarmee een bepaalde frequentie voorkomt kan worden aangeduid door gebruik te maken van verschillende kleuren of contrasten. 
 
 Na het omzetten van de te vergelijken geluidsfragmenten naar hun tijd-frequentie representatie kan er naar kandidaat-pieken worden gezocht. Dit zijn lokale maxima waarbij de hoeveelheid energie waarmee de frequentie voorkomt hoger is dan bij alle aanliggende tijd-frequentie punten\cite{six2014panako}. In het spectrogram kan elk donker vlekje gezien worden als een kandidaat-piek.
 
-Wanneer deze stap is afgerond kunnen de fingerprints bepaald worden. Een fingerprint zijn twee pieken die met elkaar verbonden zijn. Welke kandidaat-pieken gebruikt zullen worden in fingerprints hangt af van de implementatie van het algoritme en de ingestelde parameters. Enkele parameters die hier invloed op hebben zullen in sectie \ref{accoustic-fingerprinting-params} van deze scriptie besproken worden.
+Wanneer deze stap is afgerond kunnen de fingerprints bepaald worden. Een fingerprint is een de verbinding tussen twee spectrale pieken. Welke kandidaat-pieken gebruikt zullen worden in fingerprints hangt af van de implementatie van het algoritme en de ingestelde parameters. Enkele parameters die hier invloed op hebben zullen in sectie \ref{accoustic-fingerprinting-params} van deze scriptie besproken worden.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -52,14 +52,14 @@ Om dit mogelijk te maken moeten er van de fingerprints enkele parameters bepaald
 
 \begin{figure}[h]
 	\captionsetup{width=0.7\textwidth}
-	\caption[De anatomie van een fingerprint]{De anatomie van een fingerprint in het tijd-frequentie domein. De rode lijn stelt de fingerprint voor tussen twee (imaginaire) spectrale pieken. De typische parameters van de fingerprint zijn aangeduid op de assen. Met toestemming overgenomen uit artikel \cite{six2015multimodal}.}
+	\caption[De anatomie van een fingerprint]{De anatomie van een fingerprint in het tijd-frequentie domein. De rode lijn stelt de fingerprint voor tussen twee (niet afgebeelde) spectrale pieken. De typische parameters van de fingerprint zijn aangeduid op de assen. Met toestemming overgenomen uit artikel \cite{six2015multimodal}.}
 	\begin{center}
 		\advance\parskip0.3cm
 		\input{figuren/fingerprint_example_graph}
 	\end{center}
 \end{figure}
 
-Bij het zoeken naar matches kan er gesteund worden op enkele typische eigenschappen van de fingerprints: 
+Bij het zoeken naar matches kan er gesteund worden op enkele typische eigenschappen van fingerprints: 
 
 Ten eerste kan er van worden uitgegaan dat twee overeenkomende fingerprints uit twee geluidsfragmenten dezelfde frequenties  ($f1$ en $f2$) zullen hebben. Bijgevolg zal dus ook het verschil in frequentie ($\Delta f$) gelijk zijn. 
 
@@ -109,9 +109,9 @@ Stel twee audioblokken $ a $ en $ b $ bestaande uit een gelijk aantal samples (v
 \sum_{j=0}^{s} a_{j} \cdot b_{(i+j)\ mod\ s}
 \end{equation}
 
-De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden bepaalt men door dit resultaat te delen door de samplefrequentie.
+De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden kan bepaald worden door dit resultaat te delen door de samplefrequentie.
 
-De methode kan de latency tot op één sample nauwkeurig bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is ruim voldoende voor onze toepassing.
+De methode kan de latency tot op één sample nauwkeurig bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is ruim voldoende voor het huidige probleem.
 
 Een nadeel aan deze methode is de performantie. Het berekenen van de beste kruiscovariantie van twee audioblokken bestaande uit s samples kan gebeuren in  $O(s^{2})$. Het is dus belangrijk om bij deze berekening de grootte van de audioblokken te beperken.
 
@@ -143,7 +143,7 @@ Deze implementatie kan een wijziging van de latency in het beste geval na 5 seco
 
 \subsubsection{Sliding window}
 
-Een meer doordachte manier van bufferen maakt gebruik van een \textit{sliding window}. In onderstaande beschrijving zal ter illustratie ook gebruik gemaakt worden van een buffer met 10 seconden capaciteit. 
+Een meer doordachte manier van bufferen maakt gebruik van een \textit{sliding window}. In onderstaande beschrijving zal ter illustratie ook gebruik gemaakt worden van een buffer met 10 seconden capaciteit. In de voorbeelden zal een stapgrootte van 5 seconden gehanteerd worden. 
 
 Het verschil met de naïeve methode is dat de buffer niet pas na 10 seconden wordt opgeschoven. Door de buffer al na 5 seconden op te schuiven zal een wijziging van de latency sneller gedetecteerd kunnen worden; dit terwijl het algoritme toch nog steeds tien seconden audio kan analyseren. In figuur \ref{slidingwindow} wordt grafisch weergegeven hoe de buffer precies verschoven wordt.
 
@@ -163,7 +163,7 @@ Door de stapgrootte nog verder te verkleinen kan het slechtste geval nog verbete
 
 \subsubsection{Voorbeeld}
 
-Een praktisch voorbeeld moet bovenstaande beschrijving wat verduidelijken. In het voorbeeld worden twee audiostreams van 70 seconden geanalyseerd. Door het droppen van samples neemt de latency tussen de streams periodiek toe. Figuur \ref{latency} geeft in het zwart weer hoe de latency gedurende de verwerking evolueert. De opeenvolgende buffers van de twee besproken methode's worden in het rood aangeduid. 
+Een praktisch voorbeeld zal bovenstaande beschrijving wat verduidelijken. In het voorbeeld worden twee audiostreams van 70 seconden geanalyseerd. Door het droppen van samples neemt de latency tussen de streams periodiek toe. Figuur \ref{latency} geeft in het zwart weer hoe de latency gedurende de verwerking evolueert. De opeenvolgende buffers van de twee besproken methode's worden in het rood aangeduid. 
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}

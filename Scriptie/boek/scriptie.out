@@ -27,25 +27,29 @@
 \BOOKMARK [2][-]{subsection.3.1.6}{Audacity}{section.3.1}% 27
 \BOOKMARK [2][-]{subsection.3.1.7}{Max/MSP}{section.3.1}% 28
 \BOOKMARK [2][-]{subsection.3.1.8}{Teensy}{section.3.1}% 29
-\BOOKMARK [1][-]{section.3.2}{Algoritmen}{chapter.3}% 30
-\BOOKMARK [2][-]{subsection.3.2.1}{Accoustic fingerprinting}{section.3.2}% 31
-\BOOKMARK [2][-]{subsection.3.2.2}{Kruiscovariantie}{section.3.2}% 32
-\BOOKMARK [2][-]{subsection.3.2.3}{Structuur softwarebibliotheek}{section.3.2}% 33
-\BOOKMARK [2][-]{subsection.3.2.4}{Implementatie van een Max/MSP module}{section.3.2}% 34
-\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 35
-\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 36
-\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 37
-\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 38
-\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 39
-\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 40
-\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 41
-\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 42
-\BOOKMARK [0][-]{section*.29}{Appendices}{}% 43
-\BOOKMARK [0][-]{B"ylage.a.A}{Resultaten DTW experiment}{}% 44
-\BOOKMARK [0][-]{chapter*.30}{Referentielijst}{}% 45
-\BOOKMARK [0][-]{chapter*.31}{Lijst van figuren}{}% 46
-\BOOKMARK [0][-]{chapter*.31}{Lijst van figuren}{}% 47
-\BOOKMARK [0][-]{chapter*.32}{Lijst van tabellen}{}% 48
-\BOOKMARK [0][-]{chapter*.32}{Lijst van tabellen}{}% 49
-\BOOKMARK [0][-]{chapter*.33}{Lijst van codefragmenten}{}% 50
-\BOOKMARK [0][-]{chapter*.33}{Lijst van codefragmenten}{}% 51
+\BOOKMARK [1][-]{section.3.2}{Accoustic fingerprinting}{chapter.3}% 30
+\BOOKMARK [2][-]{subsection.3.2.1}{Optimalisaties}{section.3.2}% 31
+\BOOKMARK [2][-]{subsection.3.2.2}{Parameters en hun invloed op het algoritme}{section.3.2}% 32
+\BOOKMARK [2][-]{subsection.3.2.3}{Optimale instellingen}{section.3.2}% 33
+\BOOKMARK [1][-]{section.3.3}{Kruiscovariantie}{chapter.3}% 34
+\BOOKMARK [2][-]{subsection.3.3.1}{Optimalisaties}{section.3.3}% 35
+\BOOKMARK [2][-]{subsection.3.3.2}{Parameters en hun invloed op het algoritme}{section.3.3}% 36
+\BOOKMARK [1][-]{section.3.4}{Structuur softwarebibliotheek}{chapter.3}% 37
+\BOOKMARK [1][-]{section.3.5}{Implementatie van een Max/MSP module}{chapter.3}% 38
+\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 39
+\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 40
+\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 41
+\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 42
+\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 43
+\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 44
+\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 45
+\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 46
+\BOOKMARK [0][-]{section*.23}{Appendices}{}% 47
+\BOOKMARK [0][-]{B"ylage.a.A}{Resultaten DTW experiment}{}% 48
+\BOOKMARK [0][-]{chapter*.24}{Referentielijst}{}% 49
+\BOOKMARK [0][-]{chapter*.25}{Lijst van figuren}{}% 50
+\BOOKMARK [0][-]{chapter*.25}{Lijst van figuren}{}% 51
+\BOOKMARK [0][-]{chapter*.26}{Lijst van tabellen}{}% 52
+\BOOKMARK [0][-]{chapter*.26}{Lijst van tabellen}{}% 53
+\BOOKMARK [0][-]{chapter*.27}{Lijst van codefragmenten}{}% 54
+\BOOKMARK [0][-]{chapter*.27}{Lijst van codefragmenten}{}% 55

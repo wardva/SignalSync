@@ -23,7 +23,7 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 public class RecordedTest {
 	private final static int SAMPLE_RATE = 8000;
 	private final static int NFFT_BUFFER_SIZE = 512;
-	private final static int NFFT_STEP_SIZE = 256;
+	private final static int NFFT_STEP_SIZE = 128;
 	
 	private final static int NUMBER_OF_SLICES = 27;
 	private final static int NUMBER_OF_RECORDINGS = 3;
@@ -108,6 +108,6 @@ public class RecordedTest {
 		final List<Double> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, type: %s", latency, type), 
-				latency, latencies.get(0), 0.032);
+				latency, latencies.get(0), 0.016);
 	}
 }

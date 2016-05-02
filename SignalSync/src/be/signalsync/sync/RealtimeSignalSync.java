@@ -102,15 +102,9 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 			DataFilter filter = latencyFilters.get(streamGroup);
 			double rawLatency = rawLatencies.get(i);
 			double filteredLatency = filter.filter(rawLatency);
-			filteredLatencies.put(streamGroup, filteredLatency);
+			double timing = filteredLatency + event.getBeginTime();
+			filteredLatencies.put(streamGroup, timing);
 		}
-		
-		/*List<Float> timing = new ArrayList<>();
-		for(float latency : latencies) {
-			timing.add((float) (latency + event.getBeginTime()));
-		}
-		emitSyncEvent(timing);*/
-		
 		emitSyncEvent(filteredLatencies);
 	}
 

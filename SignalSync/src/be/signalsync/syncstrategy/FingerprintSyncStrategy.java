@@ -13,6 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.panako.strategy.nfft.NFFTEventPointProcessor;
 import be.panako.strategy.nfft.NFFTFingerprint;
+import be.panako.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
@@ -43,6 +44,9 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		this.minimumAlignedMatchesThreshold = minimumAlignedMatchesThreshold;
 		
 		//Changing the Panako configuration entries in the configuration entries from this project.
+		be.panako.util.Config.set(Key.NFFT_SAMPLE_RATE, Integer.toString(sampleRate));
+		be.panako.util.Config.set(Key.NFFT_SIZE, Integer.toString(bufferSize));
+		be.panako.util.Config.set(Key.NFFT_STEP_SIZE, Integer.toString(stepSize));
 		be.panako.util.Config.set(be.panako.util.Key.NFFT_EVENT_POINT_MIN_DISTANCE, Integer.toString(minDistance));
 		be.panako.util.Config.set(be.panako.util.Key.NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT, Integer.toString(maxFingerprints));
 	}
@@ -101,7 +105,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		}
 		final double fftHopSizesS = stepSize / (double) sampleRate;
 		final List<Double> latencies = new ArrayList<>();
-		for (final int[] timing : synchronize(slices)) {
+		for (final int[] timing : getResults(slices)) {
 			if (timing.length > 0) {
 				// Calculating the time difference from the time index
 				latencies.add(timing[0] * fftHopSizesS - timing[1] * fftHopSizesS);
@@ -203,7 +207,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		return fingerprintsToHash(filterPrints(extractFingerprints(dispatcher)));
 	}
 
-	public List<int[]> synchronize(final List<float[]> slices) {
+	public List<int[]> getResults(final List<float[]> slices) {
 		List<int[]> result = new ArrayList<>();
 		try {
 			List<AudioDispatcher> dispatchers = new ArrayList<>();

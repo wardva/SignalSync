@@ -67,7 +67,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		
 		List<Double> results = new ArrayList<>();
 		//Get the timing information using the fingerprinting algorithm.
-		List<int[]> fingerprintTimingData = fingerprinter.synchronize(slices);
+		List<int[]> fingerprintTimingData = fingerprinter.getResults(slices);
 
 		Iterator<int[]> timingDataIterator = fingerprintTimingData.iterator();
 		Iterator<float[]> othersIterator = others.iterator();
