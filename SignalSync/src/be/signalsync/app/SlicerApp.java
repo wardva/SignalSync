@@ -26,7 +26,7 @@ public class SlicerApp {
 		final String filenameTemplate = "Sonic Youth - Star Power_%d_%dhz";
 		
 		//trimmed latencies from the test files
-		final int[] latencies = {0, 20, 80, 90, 300, 2000}; 
+		final int[] latencies = {0, -20, -80, -90, -300, -2000}; 
 		
 		//Added latencies to the test files
 		final int[] frequencies = {0, 50, 100};

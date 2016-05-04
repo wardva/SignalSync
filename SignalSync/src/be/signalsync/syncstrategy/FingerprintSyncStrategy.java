@@ -108,7 +108,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		for (final int[] timing : getResults(slices)) {
 			if (timing.length > 0) {
 				// Calculating the time difference from the time index
-				latencies.add(timing[0] * fftHopSizesS - timing[1] * fftHopSizesS);
+				latencies.add(timing[1] * fftHopSizesS - timing[0] * fftHopSizesS);
 			} else {
 				latencies.add(Double.NaN);
 			}
@@ -207,17 +207,17 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		return fingerprintsToHash(filterPrints(extractFingerprints(dispatcher)));
 	}
 
-	public List<int[]> getResults(final List<float[]> slices) {
+	public List<int[]> getResults(List<float[]> slices) {
 		List<int[]> result = new ArrayList<>();
 		try {
 			List<AudioDispatcher> dispatchers = new ArrayList<>();
 			for(float[] f : slices) {
 				dispatchers.add(AudioDispatcherFactory.fromFloatArray(f, sampleRate, bufferSize, stepSize));
 			}
-			final HashMap<Integer, NFFTFingerprint> ref = getFingerprintData(dispatchers.remove(0));
-			for (final AudioDispatcher dispatcher : dispatchers) {
-				final HashMap<Integer, NFFTFingerprint> other = getFingerprintData(dispatcher);
-				final int timingData[] = fingerprintOffset(ref, other);
+			HashMap<Integer, NFFTFingerprint> ref = getFingerprintData(dispatchers.remove(0));
+			for (AudioDispatcher dispatcher : dispatchers) {
+				HashMap<Integer, NFFTFingerprint> other = getFingerprintData(dispatcher);
+				int timingData[] = fingerprintOffset(ref, other);
 				result.add(timingData);
 			}
 		} 

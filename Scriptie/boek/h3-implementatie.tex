@@ -151,12 +151,6 @@ Deze parameter bepaalt het maximum aantal fingerprints waaraan een event point (
 \item\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} \hfill \\
 Dit is de minimale afstand tussen twee event points op het spectrogram die samen een fingerprint kunnen vormen. 
 
-%Omdat deze parameter een afstand uitdrukt in het tijd-frequentie domein is de eenheid ervan cent-seconde. Seconde is de eenheid van de waarden op de tijdas. Cent\footnote{Cent is een relatieve logaritmische eenheid waarmee het verschil tussen twee frequenties wordt uitgedrukt. Een belangrijke eigenschap van deze eenheid is dat de waarden als muzikale intervallen benaderd kunnen. Ze kunnen zonder problemen bij elkaar worden opgeteld of van elkaar worden afgetrokken en behouden hierbij hun betekenis. Het frequentieverschil in cent kan men als volgt berekenen:\\ 
-%\begin{math}
-%c = 1200 \times \log_{2}(\frac{f_{1}}{f_{2}})
-%\end{math} \cite{pitchrepresentation}} 
-%is de eenheid van het verschil in frequentie tussen de twee event points. 
-
 \end{description}
 
 Verder maakt het algoritme nog gebruik van twee hardgecodeerde parameters die niet instelbaar zijn via het configuratiebestand: \texttt{MIN\_FREQUENCY} en \texttt{MAX\_FREQUENCY}. Deze parameters bepalen binnen welke frequentiebereik er naar fingerprints gezocht worden. De waarden waarop deze ingesteld staan bevinden zich op de rand van de frequenties die door muziek of stemgeluid geproduceerd worden.
@@ -203,7 +197,27 @@ De Panako bibliotheek bevatte bij aanvang van dit onderzoek ook al een implement
 
 Net zoals het accoustic fingerprinting algoritme is de code overgenomen in het project van dit onderzoek. De code is echter niet meer afhankelijk van de Panako bibliotheek.
 
+\subsection{Integratie met accoustic fingerprinting}
+\label{integratie-accoustic-fingerprinting}
+
+In sectie \ref{toepasbaarheid} is vermeld dat de latency initieel berekend wordt met accoustic fingerprinting. Dit resultaat wordt vervolgens verfijnd door de kruiscovariantie tussen de signalen te berekenen. Hoe dit precies in zijn werk gaat zal hier worden verduidelijkt.
+
+Onderstel twee geluidsopnames: de eerste opname wordt als referentie onderstelt, de tweede opname heeft een vertraging van $ 150 ms $ ten opzichte van de referentie. Het uitvoeren van het accoustic fingerprinting algoritme met standaard parameters (tot op $ 32 ms $ nauwkeurig) kan twee resultaten opleveren: $ 128 ms $ of $ 160 ms $\footnote{Mogelijke resultaten: $ 5 \cdot 32 ms = 160 ms$ of $ 4 \cdot 32 ms = 128 ms $. De absolute fout is  met een waarde van $ 10 ms $ bij een latency van $ 160 ms $ het kleinst in vergelijking met $ 22 ms $ bij een latency van $ 128 ms $.}. Bij het eerste resultaat wordt de werkelijke latency onderschat. De tweede latency overschat deze waarde. Na het berekenen van de kruiscovariantie is dit van belang om het resultaat correct te verfijnen.
+
+Na het uitvoeren van het accoustic fingerprinting algoritme wordt de resulterende latency bij één van de audiofragmenten weggeknipt. Na deze stap is de latency zeker minder dan de minimale nauwkeurigheid van het accoustic fingerprinting algoritme. Vervolgens wordt het begin van elk audiofragment opgeslagen in een buffer met als grootte een honderdtal samples. Daaropvolgend wordt de latency tussen deze twee buffers berekend met de kruiscovariantie methode. Deze latency is echter nog niet de latency waarnaar er uiteindelijk gezocht wordt. Er is nog een extra stap vereist waarbij de latency van het accoustic fingerprinting algoritme gecombineerd wordt met de latency van het kruiscovariantie algoritme.
+
+Intuïtief lijkt het logisch dat deze latencies enkel moeten worden opgeteld om de verfijnde latency te bekomen. Dit klopt echter niet helemaal. Wanneer het accoustic fingerprinting algoritme de werkelijke latency heeft onderschat levert deze optelling een correct resultaat, bij een overschatting is dit echter niet het geval. Om in een dergelijke situatie de verfijnde latency te bereken moet men de latency van het kruiscovariantie aftrekken van de lengte van de gebruikte buffer. De verfijnde latency bekomt men vervolgens door dit resultaat af te trekken van de latency van het fingerprinting algoritme.
+
+Vooraleer de berekening van de kruiscovariantie van start kan gaan moet de berekende latency van de tweede opname worden geknipt. Door het uitvoeren van deze stap bedraagt de latency nog maar $ \pm 10 ms $. Het teken is afhankelijk van welke opname op dit moment als referentie benaderd wordt.
+
+Na het wegknippen van de ruw bepaalde latency is de werkelijke latency gegarandeerd beperkt tot minder dan 32 ms (met de standaard parameters). Door het uitvoeren van deze stap wordt het mogelijk om de kruiscovariantie te berekenen tussen zeer kleine blokjes audio. Hoewel deze algoritmen niets met elkaar te maken hebben wordt meestal de grootte van een FFT buffer gehanteerd. Hierdoor is de buffer zeker groter dan de max. mogelijke fout op de latency bepaald door het accoustic fingerprinting.
+
+
 \subsection{Optimalisaties}
+
+\subsubsection{Bugfixes}
+
+Door de beperkte nauwkeurigheid van het accoustic fingerprinting algoritme zijn er twee situaties mogelijk: de werkelijke latency kan worden onderschat of overschat. Wanneer de werkelijke latency wordt onderschat dan kan de verfijnde latency berekend worden door de som te nemen van de fingerprinting latency en de latency berekend door het kruiscovariantie algoritme. 
 
 
 

@@ -32,7 +32,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private final int stepSize;
 	private final int overlap;
 	private final int nrOfTests;
-	private final int succesThreshold;
+	private final int successThreshold;
 	private final double FFTHopsize;
 
 	public CrossCovarianceSyncStrategy(FingerprintSyncStrategy fingerprinter, int sampleRate, int bufferSize, int stepSize, int nrOfTests, int succesThreshold) {
@@ -42,7 +42,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		this.stepSize = stepSize;
 		this.overlap = bufferSize - stepSize;
 		this.nrOfTests = nrOfTests;
-		this.succesThreshold = succesThreshold;
+		this.successThreshold = succesThreshold;
 		this.FFTHopsize = stepSize / (double) sampleRate;
 	}
 
@@ -91,7 +91,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 				}
 				else {
 					//No result found, getting the fingerprint offset and adding it to the resuls.
-					double offsetFromMatching = -fingerPrintLatency * FFTHopsize;
+					double offsetFromMatching = fingerPrintLatency * FFTHopsize;
 					results.add(offsetFromMatching);
 				}
 			}
@@ -145,16 +145,16 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		
 		//Test if the occurence of the best lag is above the required threshold. If not: return null,
 		//else: calculate the offset in seconds.
-		if(max > succesThreshold) {
+		if(max > successThreshold) {
 			// lag in seconds
 			double offsetLagInSeconds1 = (bufferSize - bestLag) / (float) sampleRate;
 			double offsetLagInSeconds2 = bestLag / (float) sampleRate;
 			
-			double offsetFromMatching = -fingerPrintLatency * FFTHopsize;
+			double offsetFromMatching = fingerPrintLatency * FFTHopsize;
 			
-			double offsetTotalInSeconds1 = offsetFromMatching + offsetLagInSeconds1;
+			double offsetTotalInSeconds1 = offsetFromMatching - offsetLagInSeconds1;
 			// Happens when the fingerprint algorithm overestimated the real latency
-			double offsetTotalInSeconds2 = offsetFromMatching - offsetLagInSeconds2;
+			double offsetTotalInSeconds2 = offsetFromMatching + offsetLagInSeconds2;
 
 			// Calculating the difference between the fingerprint match and the
 			// covariance results.
@@ -172,7 +172,6 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 			} 
 			System.err.println("Covariancelag is incorrect!");
 		}
-
 		else {
 			System.err.println("All lags under threshold!");
 		}

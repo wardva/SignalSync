@@ -52,24 +52,26 @@
 \contentsline {subsection}{\numberline {3.2.2}Parameters en hun invloed op het algoritme}{32}{subsection.3.2.2}
 \contentsline {subsection}{\numberline {3.2.3}Optimale instellingen}{34}{subsection.3.2.3}
 \contentsline {section}{\numberline {3.3}Kruiscovariantie}{36}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Optimalisaties}{36}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Parameters en hun invloed op het algoritme}{36}{subsection.3.3.2}
-\contentsline {section}{\numberline {3.4}Structuur softwarebibliotheek}{36}{section.3.4}
-\contentsline {section}{\numberline {3.5}Implementatie van een Max/MSP module}{36}{section.3.5}
-\contentsline {chapter}{\numberline {4}Evaluatie}{37}{chapter.4}
-\contentsline {section}{\numberline {4.1}Unit testen}{37}{section.4.1}
-\contentsline {section}{\numberline {4.2}Stresstesten}{37}{section.4.2}
-\contentsline {section}{\numberline {4.3}Test in de praktijk}{37}{section.4.3}
-\contentsline {section}{\numberline {4.4}Usability testen}{37}{section.4.4}
-\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{37}{section.4.5}
-\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{37}{section.4.6}
-\contentsline {chapter}{\numberline {5}Conclusie}{38}{chapter.5}
-\contentsline {chapter}{Appendices}{39}{section*.23}
-\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{40}{B"ylage.a.A}
-\contentsline {chapter}{Referentielijst}{42}{chapter*.24}
-\contentsline {chapter}{L"yst van figuren}{45}{chapter*.25}
-\contentsline {chapter}{Lijst van figuren}{45}{chapter*.25}
-\contentsline {chapter}{L"yst van tabellen}{46}{chapter*.26}
-\contentsline {chapter}{Lijst van tabellen}{46}{chapter*.26}
-\contentsline {chapter}{Lijst van codefragmenten}{47}{chapter*.27}
-\contentsline {chapter}{Lijst van codefragmenten}{47}{chapter*.27}
+\contentsline {subsection}{\numberline {3.3.1}Integratie met accoustic fingerprinting}{36}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Optimalisaties}{38}{subsection.3.3.2}
+\contentsline {subsubsection}{Bugfixes}{38}{section*.23}
+\contentsline {subsection}{\numberline {3.3.3}Parameters en hun invloed op het algoritme}{38}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}Structuur softwarebibliotheek}{38}{section.3.4}
+\contentsline {section}{\numberline {3.5}Implementatie van een Max/MSP module}{38}{section.3.5}
+\contentsline {chapter}{\numberline {4}Evaluatie}{39}{chapter.4}
+\contentsline {section}{\numberline {4.1}Unit testen}{39}{section.4.1}
+\contentsline {section}{\numberline {4.2}Stresstesten}{39}{section.4.2}
+\contentsline {section}{\numberline {4.3}Test in de praktijk}{39}{section.4.3}
+\contentsline {section}{\numberline {4.4}Usability testen}{39}{section.4.4}
+\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{39}{section.4.5}
+\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{39}{section.4.6}
+\contentsline {chapter}{\numberline {5}Conclusie}{40}{chapter.5}
+\contentsline {chapter}{Appendices}{41}{section*.24}
+\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{42}{B"ylage.a.A}
+\contentsline {chapter}{Referentielijst}{44}{chapter*.25}
+\contentsline {chapter}{L"yst van figuren}{47}{chapter*.26}
+\contentsline {chapter}{Lijst van figuren}{47}{chapter*.26}
+\contentsline {chapter}{L"yst van tabellen}{48}{chapter*.27}
+\contentsline {chapter}{Lijst van tabellen}{48}{chapter*.27}
+\contentsline {chapter}{Lijst van codefragmenten}{49}{chapter*.28}
+\contentsline {chapter}{Lijst van codefragmenten}{49}{chapter*.28}

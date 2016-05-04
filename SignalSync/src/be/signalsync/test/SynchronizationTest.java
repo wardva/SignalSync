@@ -28,7 +28,7 @@ public class SynchronizationTest {
 	private final static String OTHER_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_%d_%dhz.wav - slice - %d.wav";
 	private final static int NUMBER_OF_SLICES = 27;
 	
-	private final static int[] LATENCIES = {0, 20, 80, 90, 300, 2000 };
+	private final static int[] LATENCIES = {0, -20, -80, -90, -300, -2000 };
 	private final static int[] FREQUENCIES = {0, 50, 100 };
 	private final static double MILLIS_TO_SECONDS = 0.001;
 	private final List<float[]> streams;
