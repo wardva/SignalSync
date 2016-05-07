@@ -156,6 +156,7 @@ Dit is de minimale afstand tussen twee event points op het spectrogram die samen
 Verder maakt het algoritme nog gebruik van twee hardgecodeerde parameters die niet instelbaar zijn via het configuratiebestand: \texttt{MIN\_FREQUENCY} en \texttt{MAX\_FREQUENCY}. Deze parameters bepalen binnen welke frequentiebereik er naar fingerprints gezocht worden. De waarden waarop deze ingesteld staan bevinden zich op de rand van de frequenties die door muziek of stemgeluid geproduceerd worden.
 
 \subsection{Optimale instellingen}
+\label{optimal-accoustic-fingerprinting}
 
 Het bepalen van de optimale waarden voor de parameters is geen exacte wetenschap maar eerder een probleem dat proefondervindelijk moet worden aangepakt.
 
@@ -200,36 +201,99 @@ Net zoals het accoustic fingerprinting algoritme is de code overgenomen in het p
 \subsection{Integratie met accoustic fingerprinting}
 \label{integratie-accoustic-fingerprinting}
 
-In sectie \ref{toepasbaarheid} is vermeld dat de latency initieel berekend wordt met accoustic fingerprinting. Dit resultaat wordt vervolgens verfijnd door de kruiscovariantie tussen de signalen te berekenen. Hoe dit precies in zijn werk gaat zal hier worden verduidelijkt.
+In sectie \ref{toepasbaarheid} is vermeld dat de latency eerst ruw berekend wordt met accoustic fingerprinting. Dit resultaat wordt vervolgens verfijnd door de kruiscovariantie tussen de signalen te berekenen. De werking hiervan zal verduidelijkt worden met behulp van een voorbeeld.
 
-Onderstel twee geluidsopnames: de eerste opname wordt als referentie onderstelt, de tweede opname heeft een vertraging van $ 150 ms $ ten opzichte van de referentie. Het uitvoeren van het accoustic fingerprinting algoritme met standaard parameters (tot op $ 32 ms $ nauwkeurig) kan twee resultaten opleveren: $ 128 ms $ of $ 160 ms $\footnote{Mogelijke resultaten: $ 5 \cdot 32 ms = 160 ms$ of $ 4 \cdot 32 ms = 128 ms $. De absolute fout is  met een waarde van $ 10 ms $ bij een latency van $ 160 ms $ het kleinst in vergelijking met $ 22 ms $ bij een latency van $ 128 ms $.}. Bij het eerste resultaat wordt de werkelijke latency onderschat. De tweede latency overschat deze waarde. Na het berekenen van de kruiscovariantie is dit van belang om het resultaat correct te verfijnen.
+Onderstel twee geluidsopnames: de tweede opname heeft een vertraging van 90 ms ten opzichte van de eerste referentieopname. Het uitvoeren van het accoustic fingerprinting algoritme met standaard parameters (tot op $ 32 ms $ nauwkeurig) kan twee resultaten opleveren: $ 64 ms $ of $ 96 ms $.\footnote{Mogelijke resultaten: $ 2 \cdot 32 ms = 64 ms$ of $ 3 \cdot 32 ms = 96 ms $. De absolute fout is  met een waarde van $ 6 ms $ bij een latency van $ 96 ms $ het kleinst in vergelijking met $ 26 ms $ bij een latency van $ 64 ms $. Daarom is de kans het grootst dat $ 96 ms $ als resultaat zal worden teruggegeven.} Bij het eerste resultaat wordt de werkelijke latency onderschat. De tweede latency overschat deze waarde. Na het berekenen van de kruiscovariantie is dit van belang om het resultaat correct te verfijnen. In figuur \ref{crosscovariance1} worden de situatie visueel verduidelijkt.
 
-Na het uitvoeren van het accoustic fingerprinting algoritme wordt de resulterende latency bij één van de audiofragmenten weggeknipt. Na deze stap is de latency zeker minder dan de minimale nauwkeurigheid van het accoustic fingerprinting algoritme. Vervolgens wordt het begin van elk audiofragment opgeslagen in een buffer met als grootte een honderdtal samples. Daaropvolgend wordt de latency tussen deze twee buffers berekend met de kruiscovariantie methode. Deze latency is echter nog niet de latency waarnaar er uiteindelijk gezocht wordt. Er is nog een extra stap vereist waarbij de latency van het accoustic fingerprinting algoritme gecombineerd wordt met de latency van het kruiscovariantie algoritme.
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[Kruiscovariantie audiofragmenten]{Twee audiofragmenten: het tweede audiofragment heeft een latency van 90 milliseconden ten opzichte van het eerste.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/crosscovariance1}
+	\end{center}
+	\label{crosscovariance1}
+\end{figure}
 
-Intuïtief lijkt het logisch dat deze latencies enkel moeten worden opgeteld om de verfijnde latency te bekomen. Dit klopt echter niet helemaal. Wanneer het accoustic fingerprinting algoritme de werkelijke latency heeft onderschat levert deze optelling een correct resultaat, bij een overschatting is dit echter niet het geval. Om in een dergelijke situatie de verfijnde latency te bereken moet men de latency van het kruiscovariantie aftrekken van de lengte van de gebruikte buffer. De verfijnde latency bekomt men vervolgens door dit resultaat af te trekken van de latency van het fingerprinting algoritme.
+Na het uitvoeren van het accoustic fingerprinting algoritme wordt er van beide fragmenten een blokje audio weggeknipt afhankelijk van de ruw bepaalde latency. Na deze stap is de latency van het resterende audiofragment zeker minder dan de minimale nauwkeurigheid van het accoustic fingerprinting algoritme. Vervolgens wordt het begin van elk audiofragment gekopieerd naar een buffer van een honderdtal samples. Daaropvolgend wordt de latency tussen deze twee buffers berekend met de kruiscovariantie methode. Deze latency is echter nog niet de latency waarnaar er uiteindelijk gezocht wordt. Er is nog een extra stap vereist waarbij de latency van het accoustic fingerprinting algoritme gecombineerd wordt met de latency van het kruiscovariantie algoritme. Figuur \ref{crosscovariance2} toont de buffers waarop het algoritme kan worden uitgevoerd. Elke buffer bevat 512 samples ($ 64 ms $ bij een samplefrequentie van $ 8000 Hz $).
 
-Vooraleer de berekening van de kruiscovariantie van start kan gaan moet de berekende latency van de tweede opname worden geknipt. Door het uitvoeren van deze stap bedraagt de latency nog maar $ \pm 10 ms $. Het teken is afhankelijk van welke opname op dit moment als referentie benaderd wordt.
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[Kruiscovariantie buffers]{Kruiscovariantie buffers na het wegknippen van de $ 96 ms $ latency bepaald door het accoustic fingerprinting algoritme. Hier heeft de referentie audio $ 6 ms $ latency ten opzichte van het andere audiofragment.   }
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/crosscovariance2}
+	\end{center}
+	\label{crosscovariance2}
+\end{figure}
 
-Na het wegknippen van de ruw bepaalde latency is de werkelijke latency gegarandeerd beperkt tot minder dan 32 ms (met de standaard parameters). Door het uitvoeren van deze stap wordt het mogelijk om de kruiscovariantie te berekenen tussen zeer kleine blokjes audio. Hoewel deze algoritmen niets met elkaar te maken hebben wordt meestal de grootte van een FFT buffer gehanteerd. Hierdoor is de buffer zeker groter dan de max. mogelijke fout op de latency bepaald door het accoustic fingerprinting.
+Intuïtief lijkt het logisch dat deze latencies enkel bij elkaar moeten worden opgeteld om de verfijnde latency te bekomen. Toch is dit niet helemaal correct. Wanneer het accoustic fingerprinting algoritme de werkelijke latency heeft onderschat levert deze optelling een correct resultaat. Bij een overschatting is dit echter niet het geval. Dit probleem is duidelijk zichtbaar in figuur \ref{crosscovariance2}: na het wegknippen van de ruwe latency ($96 ms$) is de latency omgedraaid: de referentie audio heeft $ 6 ms $ latency ten opzichte van het andere audiofragment. 
+
+Aangezien het kruiscovariantie algoritme de latency zoekt van de andere buffer ten opzichte van de referentiebuffer zal het resultaat niet $6 ms$ maar $ 58 ms $ zijn. Dit komt doordat het algoritme de andere buffer cyclisch (maar in de verkeerde zin) verschuift. Een verschuiving van $ 58 ms $ is bijgevolg de meest optimale verschuiving.
+
+Om in een dergelijke situatie de verfijnde latency te berekenen moet men de latency verkregen door het kruiscovariantie algoritme ($ 58 ms$) aftrekken van de lengte van de gebruikte buffer ($ 64 ms $). De verfijnde latency bekomt men vervolgens door dit resultaat ($ 6 ms $) af te trekken van de latency van het fingerprinting  algoritme ($ 96 ms - 6 ms = 90 ms $).
 
 
 \subsection{Optimalisaties}
 
 \subsubsection{Bugfixes}
 
-Door de beperkte nauwkeurigheid van het accoustic fingerprinting algoritme zijn er twee situaties mogelijk: de werkelijke latency kan worden onderschat of overschat. Wanneer de werkelijke latency wordt onderschat dan kan de verfijnde latency berekend worden door de som te nemen van de fingerprinting latency en de latency berekend door het kruiscovariantie algoritme. 
+In de originele versie van het algoritme werd er geen rekening gehouden met het feit dat het accoustic fingerprinting algoritme het de werkelijke latency kan overschatten of onderschatten. De latency bepaalt door het kruiscovariantie algoritme werd telkens opgeteld bij de ruwe latency bepaald door het accoustic fingerprinting algoritme. In 50\% van de gevallen leidde dit probleem tot foutieve resultaten.
 
+\subsubsection{Meerdere malen uitvoeren van het algoritme}
 
+In tegenstelling tot accoustic fingerprinting is het bepalen van de latency met kruiscovariantie veel meer foutgevoelig. Bij opnames van slechte kwaliteit worden vaak foute resultaten teruggegeven. 
 
-%Bugfixes: onderschatten en overschatten van fingerprint maakt verschil
-%Verschillende keren per slice uitvoeren, threshold
-%Bandpass filtering die toch niet geïmplementeerd is.
+Hoewel bij accoustic fingerprinting mogelijk storende factoren (een zoemende toon, geruis,...) zichtbaar zijn in het spectrogram zullen er naar alle waarschijnlijkheid nog steeds voldoende fingerprints gegenereerd worden op basis van geluiden die wel in beide opnames voorkomen. 
 
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[Zoemtoon van $50 Hz$]{Twee gelijke audiofragmenten. Aan het tweede audiofragment is een achtergrondtoon van $50 Hz$ toegevoegd.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/zoemtoon}
+	\end{center}
+	\label{zoemtoon}
+\end{figure}
+
+Dergelijke storende elementen hebben veel meer invloed op het kruiscovariantie algoritme. Een ongewenste zoemende bastoon zorgt voor een grote verandering van de geluidsgolf van het audiofragment. Aangezien de kruiscovariantie rechtstreeks tussen twee geluidsgolven berekent wordt kan dit serieuze gevolgen hebben. In figuur \ref{zoemtoon} wordt dit probleem visueel verduidelijkt.
+
+De invloed van storende factoren zoals zoemende tonen en ruis is gemakkelijk te beperken. Aangezien het kruiscovariantie algoritme over een zéér klein deeltje van het audiofragment wordt uitgevoerd is het zeer eenvoudig om het algoritme tientallen keren, maar telkens op een andere plaats, uit te voeren. Na elke iteratie wordt de latency in het geheugen opgeslagen. Ten slotte wordt er gezocht naar de latency die het meeste voorkomt. Die latency wordt gebruikt om het resultaat van het accoustic fingerprinting algoritme te verfijnen.
 
 \subsection{Parameters en hun invloed op het algoritme}
 
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+De parameters van het kruiscovariantie algoritme zijn net zoals die van het accoustic fingerprinting algoritme instelbaar via het configuratiebestand.
+
+\begin{description}	
+	\item\texttt{NFFT\_BUFFER\_SIZE} \hfill \\
+	Hoewel het FFT algoritme eigenlijk niets te maken heeft met het berekenen van de kruiscovariantie speelt deze parameter bij dit algoritme toch een belangrijk rol. Deze parameter bepaalt namelijk de grootte van de buffers waartussen de kruiscovariantie berekent wordt. Om een goede werking van het kruiscovariantie algoritme te verzekeren is het een vereiste dat de gebruikte buffers groter zijn dan de minimale nauwkeurigheid van het accoustic fingerprinting algoritme (anders is het mogelijk dat na het knippen de audiofragmenten er geen gelijkenissen te vinden zijn tussen beide buffers). Aangezien deze nauwkeurigheid bepaald wordt de \texttt{NFFT\_STEP\_SIZE} parameter en de \texttt{NFFT\_BUFFER\_SIZE} hier altijd een veelvoud van is, is het gemakkelijk om deze parameter ook voor het kruiscovariantie algoritme te gebruiken.
+	
+	\item\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} \hfill \\
+	Deze parameter bepaalt het aantal keren dat het kruiscovariantie algoritme per buffer (hierbij worden de buffers bedoeld die werden besproken in \ref{streambuffers}) zal worden uitgevoerd. De meest voorkomende latency wordt als resultaat teruggegeven.
+	
+	\item\texttt{CROSS\_COVARIANCE\_THRESHOLD} \hfill \\
+	Deze parameter bepaalt het minimum aantal keer dat een latency moet voorkomen om als geldig beschouwt te mogen worden.	Stel dat het algoritme 50 keer wordt uitgevoerd maar elke keer een verschillend resultaat teruggeeft, dan zal er geen latency worden teruggegeven indien deze parameter staat ingesteld op een waarde groter dan 1.
+	
+\end{description}
+
+\subsection{Optimale instellingen}
+\begin{description}	
+	\item\texttt{NFFT\_BUFFER\_SIZE} \hfill \\
+	De optimale waarde van deze parameter werd in sectie \ref{optimal-accoustic-fingerprinting} besproken.
+	
+	\item\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} \hfill \\
+	Bij audiofragmenten van goede kwaliteit is het niet noodzakelijk om deze parameter een hoge waarde te geven. Als het algoritme 5 à 10 keer wordt uitgevoerd zal de correcte latency hoogst waarschijnlijk al verschillende malen gevonden zijn. 
+	
+	Bij audiofragmenten van slechte kwaliteit is het van belang om deze parameter zo hoog mogelijk in te stellen. Aangezien het kruiscovariantie algoritme vrij intensief is hangt de waarde wat af van de beschikbare rekenkracht. De praktijk heeft uitgewezen dat de waarde 50 een goed evenwicht biedt tussen correctheid en performantie.
+	
+	Dit aantal heeft als bovengrens ($ N_B $) het aantal keren dat een (kleine) kruiscovariantie buffer (bepaald door \texttt{NFFT\_BUFFER\_SIZE}) past in een (grote) buffer waarin de streams worden ingelezen (bepaald door \texttt{SLICE\_SIZE\_S}). Dit kan worden berekend met volgende formule:
+	\begin{equation}
+		N_B = \frac{\texttt{SLICE\_SIZE\_S}}{\texttt{NFFT\_BUFFER\_SIZE} \cdot \texttt{SAMPLE\_RATE}}
+	\end{equation}
+	
+	\item\texttt{CROSS\_COVARIANCE\_THRESHOLD} \hfill \\
+	Het hoog instellen van deze waarde heeft enkel nut als het van belang is dat het kruiscovariantie algoritme zeker een correct resultaat teruggeeft. In de huidige implementatie wordt het ruwe resultaat gebruikt als6 het aantal gelijke waarden niet boven deze drempel komt. Daarom wordt deze waarde meestal op 1 ingesteld. De best mogelijke verfijning van het resultaat wordt dan toegepast, ongeacht het aantal keer dat het resultaat voorkomt. 
+\end{description}
 
 \section{Structuur softwarebibliotheek}
 

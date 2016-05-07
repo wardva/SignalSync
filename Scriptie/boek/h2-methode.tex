@@ -7,11 +7,11 @@ In sectie \ref{bestaande-methoden} van deze scriptie zijn de voornaamste methode
 \subsection{Accoustic fingerprinting}
 \label{accoustic-fingerprinting}
 
-Zoals in de introductie al is beschreven maakt het accoustic fingerprinting algoritme gebruik van fingerprints geëxtraheerd uit audiofragmenten. Het op zoek gaan naar gelijkenissen gebeurt door deze fingerprints met elkaar te vergelijken. 
+Bij het accoustic fingerprinting algoritme worden fingerprints geëxtraheerd uit audiofragmenten. Het zoek van gelijkenissen gebeurt door de fingerprints met elkaar te vergelijken. 
 
 \subsubsection{Features}
 
-Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van een betrouwbare \textit{feature} om de fingerprints op te baseren. Een feature is een kenmerk waarmee het mogelijk is om audiofragmenten van elkaar te onderscheiden. Een zeer goed bruikbare feature zijn de \textit{spectrale pieken} in het tijd-frequentie spectrum van de geluidsfragmenten. Deze feature is compact op te slaan en bevat toch veel informatie over het opgenomen audiofragment waardoor de kans op foutieve resultaten door \textit{collissions} kleiner wordt.
+Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van een betrouwbare \textit{feature} om de fingerprints op te baseren. Een feature is een kenmerk waarmee het mogelijk is om audiofragmenten van elkaar te onderscheiden. Mogelijke features zijn bijvoorbeeld ritme of toonhoogte. Een andere zeer goed bruikbare feature zijn de \textit{spectrale pieken} in het tijd-frequentie spectrum van de geluidsfragmenten. Deze feature is compact op te slaan en bevat veel informatie over het opgenomen audiofragment. Hierdoor wordt de kans kleiner dat fingerprints gematcht kunnen worden zonder dat ze daadwerkelijk gebaseerd zijn op hetzelfde geluid.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -131,6 +131,7 @@ Het kruiscovariantie algoritme kan eveneens gebruikt worden om (gebufferde) audi
 De kenmerken van deze algoritmen zijn heel erg complementair. De gemakkelijkste manier om een robuust, snel én nauwkeurig systeem op te bouwen is door het beste van de twee werelden te combineren. Het accoustic fingerprinting algoritme kan zorgen voor de synchronisatie tot op enkele tientallen milliseconden nauwkeurig. Dit resultaat laat toe dat we het kruiscovariantie algoritme kunnen uitvoeren op zeer korte stukjes audio (een honderdtal milliseconden volstaat).
 
 \section{Bufferen van streams}
+\label{streambuffers}
 
 In deze scriptie is al ettelijke malen vermeld geweest dat het belangrijk is dat de streams gebufferd worden. Zonder het bufferen is het onmogelijk om de synchronisatiealgoritmen uit te voeren. 
 

@@ -1,0 +1,38 @@
+\begin{tikzpicture}[scale=1]
+\begin{axis}[
+xlabel={Tijd (milliseconden)},
+xmin=0,xmax=500,
+ymin=0,ymax=1,
+legend style={
+	cells={anchor=west},
+	legend pos=outer north east,
+},
+yticklabels={,,},
+xticklabel style={grid=major},
+extra x ticks ={64,90,96},
+extra x tick labels={,,,},
+extra tick style={grid=major, grid style={dotted}},
+hide y axis
+]
+
+\addplot[thick,black] graphics[xmin=0,ymin=0.5,xmax=500,ymax=0.8] {reference.png};
+
+\addplot[thick,black] graphics[xmin=0,ymin=0.0,xmax=500,ymax=0.3] {other.png};
+
+
+after end axis/.code={
+
+	
+	\draw[black,<->] (axis cs:0,0.42) -- (axis cs:96,0.42)	node [pos=0.5,above,font=\scriptsize] {$96ms$};
+	
+	\draw[black,<->] (axis cs:0,0.32) -- (axis cs:90,0.32)	node [pos=0.5,above,font=\scriptsize] {$90ms$};
+	
+	\draw[black,<->] (axis cs:0,0.22) -- (axis cs:64,0.22)	node [pos=0.5,above,font=\scriptsize] {$64ms$};
+}]
+
+\node at (axis cs:250,0.82) [] {Referentie};
+\node at (axis cs:250,0.35) [] {Andere};
+
+\end{axis}
+
+\end{tikzpicture}

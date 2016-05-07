@@ -1,0 +1,33 @@
+\begin{tikzpicture}[scale=1]
+\begin{axis}[
+xlabel={Tijd (milliseconden)},
+xmin=0,xmax=140,
+ymin=0,ymax=1,
+legend style={
+	cells={anchor=west},
+	legend pos=outer north east,
+},
+yticklabels={,,},
+xticklabel style={grid=none},
+extra x tick labels={,,,},
+extra tick style={grid=major, grid style={dotted}},
+hide y axis,
+width = 15cm,
+height = 6cm
+]
+
+\addplot[thick,black] graphics[xmin=0,ymin=0.6,xmax=140,ymax=0.9] {zoemtoon-origineel.png};
+
+\addplot[thick,black] graphics[xmin=0,ymin=0.1,xmax=140,ymax=0.4] {zoemtoon.png};
+
+
+after end axis/.code={
+%	\draw[black,<->] (axis cs:0,0.85) -- (axis cs:6,0.85)	node [pos=0.5,above,font=\scriptsize] {$6ms$};
+}]
+
+\node at (axis cs:70,0.88) [] {Origineel fragment};
+\node at (axis cs:70,0.40) [] {Fragment met $50 Hz$ toon};
+
+\end{axis}
+
+\end{tikzpicture}

@@ -35,22 +35,23 @@
 \BOOKMARK [2][-]{subsection.3.3.1}{Integratie met accoustic fingerprinting}{section.3.3}% 35
 \BOOKMARK [2][-]{subsection.3.3.2}{Optimalisaties}{section.3.3}% 36
 \BOOKMARK [2][-]{subsection.3.3.3}{Parameters en hun invloed op het algoritme}{section.3.3}% 37
-\BOOKMARK [1][-]{section.3.4}{Structuur softwarebibliotheek}{chapter.3}% 38
-\BOOKMARK [1][-]{section.3.5}{Implementatie van een Max/MSP module}{chapter.3}% 39
-\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 40
-\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 41
-\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 42
-\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 43
-\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 44
-\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 45
-\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 46
-\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 47
-\BOOKMARK [0][-]{section*.24}{Appendices}{}% 48
-\BOOKMARK [0][-]{B"ylage.a.A}{Resultaten DTW experiment}{}% 49
-\BOOKMARK [0][-]{chapter*.25}{Referentielijst}{}% 50
-\BOOKMARK [0][-]{chapter*.26}{Lijst van figuren}{}% 51
-\BOOKMARK [0][-]{chapter*.26}{Lijst van figuren}{}% 52
-\BOOKMARK [0][-]{chapter*.27}{Lijst van tabellen}{}% 53
-\BOOKMARK [0][-]{chapter*.27}{Lijst van tabellen}{}% 54
-\BOOKMARK [0][-]{chapter*.28}{Lijst van codefragmenten}{}% 55
-\BOOKMARK [0][-]{chapter*.28}{Lijst van codefragmenten}{}% 56
+\BOOKMARK [2][-]{subsection.3.3.4}{Optimale instellingen}{section.3.3}% 38
+\BOOKMARK [1][-]{section.3.4}{Structuur softwarebibliotheek}{chapter.3}% 39
+\BOOKMARK [1][-]{section.3.5}{Implementatie van een Max/MSP module}{chapter.3}% 40
+\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 41
+\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 42
+\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 43
+\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 44
+\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 45
+\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 46
+\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 47
+\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 48
+\BOOKMARK [0][-]{section*.25}{Appendices}{}% 49
+\BOOKMARK [0][-]{B"ylage.a.A}{Resultaten DTW experiment}{}% 50
+\BOOKMARK [0][-]{chapter*.26}{Referentielijst}{}% 51
+\BOOKMARK [0][-]{chapter*.27}{Lijst van figuren}{}% 52
+\BOOKMARK [0][-]{chapter*.27}{Lijst van figuren}{}% 53
+\BOOKMARK [0][-]{chapter*.28}{Lijst van tabellen}{}% 54
+\BOOKMARK [0][-]{chapter*.28}{Lijst van tabellen}{}% 55
+\BOOKMARK [0][-]{chapter*.29}{Lijst van codefragmenten}{}% 56
+\BOOKMARK [0][-]{chapter*.29}{Lijst van codefragmenten}{}% 57
