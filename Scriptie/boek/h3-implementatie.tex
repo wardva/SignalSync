@@ -2,11 +2,13 @@
 
 \section{Technologieën en software}
 
+\subsection{Java 7}
+
 \subsection{TarsosDSP}
 
 TarsosDSP is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid. Deze bibliotheek wordt beschreven in artikel \cite{six2014tarsosdsp}. 
 
-TarsosDSP is voornamelijk gebouwd rond het concept \textit{processing pipeline}. Dit is een abstractie van een audiostream die op een bepaalde manier verwerkt kan worden.  Een processing pipeline wordt voorgesteld als instantie van de klasse \texttt{AudioDispatcher}. Het aanmaken gebeurt met behulp van de klasse \texttt{AudioDispatcherFactory}. Deze bevat statische methodes om een \texttt{AudioDispatcher} aan te maken van een audiobestand, een array van floating-point getallen of een microfoon. Een processing pipeline kan bewerkt of verwerkt worden met behulp van één of meerdere \texttt{AudioProcessors}. Een \texttt{AudioProcessor} is een interface met de methodes \texttt{process} en \texttt{processingFinished}. De \texttt{process} methode heeft als enige parameter een \texttt{AudioEvent}. Dit object bevat een audio blok, voorgesteld als array van floating-point getallen met waarden tussen -1.0 en 1.0. De grootte van dit blokje audio, en de mate van overlapping tussen de opeenvolgende blokjes audio is instelbaar. Verder bevat dit object nog andere metadata zoals onder meer een \textit{timestamp}.
+TarsosDSP is voornamelijk gebouwd rond het concept \textit{processing pipeline}. Dit is een abstractie van een audiostream die via programmacode verwerkt kan worden.  Een processing pipeline wordt voorgesteld als instantie van de klasse \texttt{AudioDispatcher}. Het aanmaken gebeurt met behulp van de klasse \texttt{AudioDispatcherFactory}. Deze bevat statische methodes om een \texttt{AudioDispatcher} aan te maken van een audiobestand, een array van floating-point getallen of een microfoon. Een processing pipeline kan bewerkt of verwerkt worden met behulp van één of meerdere \texttt{AudioProcessors}. Een \texttt{AudioProcessor} is een interface met de methodes \texttt{process} en \texttt{processingFinished}. De \texttt{process} methode heeft als enige parameter een \texttt{AudioEvent}. Dit object bevat een audio blok, voorgesteld als array van floating-point getallen met waarden tussen -1.0 en 1.0. De grootte van dit blokje audio, en de mate van overlapping tussen de opeenvolgende blokjes audio is instelbaar. Verder bevat dit object nog andere metadata zoals onder meer een \textit{timestamp}.
 
 Afhankelijk van de implementatie van de \texttt{process} methode kan de audiostroom op een bepaalde manier verwerkt, geanalyseerd of gewijzigd worden.
 
@@ -19,14 +21,14 @@ Een greep uit de features van TarsosDSP:
 	\item Conversie tussen verschillende formaten
 	\item Toonhoogte detectie
 	\item Wijzigen van de samplefrequentie
-	\item FFT transformaties
+	\item FFT analyse
 \end{itemize}
 
 \subsection{Panako}
 
-Panako is net zoals TarsosDSP een Java bibliotheek, door de zelfde auteurs ontwikkeld aan het IPEM. Panako bevat buiten implementaties van algoritmen ook enkele applicaties die hiervan gebruik maken.  Deze bibliotheek wordt beschreven in artikel \cite{six2014panako}.
+Panako is net zoals TarsosDSP een Java bibliotheek (door de zelfde auteur) ontwikkeld aan het IPEM. Panako bevat een arsenaal aan algoritmen voor het matchen of synchroniseren van audiofragmenten of audiostreams.  Deze bibliotheek wordt uitgebreid beschreven in artikel \cite{six2014panako}.
 
-Panako bevat een open-source implementatie van het accoustic fingerprinting algoritme beschreven in de paper van Avery Li-Chun Wang\cite{Wang2003a}. Dit algoritme is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of audio die sneller of trager is afgespeeld, toch gedetecteerd kan worden.
+In dit onderzoek wordt vooral gebruik gemaakt van Panako's open-source implementatie van het accoustic fingerprinting algoritme. Dit algoritme wordt beschreven in de paper van Avery Li-Chun Wang\cite{Wang2003a}. Het algoritme uit de paper is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of audio die sneller of trager is afgespeeld, toch gedetecteerd kan worden.
 
 Buiten het eigenlijke algoritme bevat de bibliotheek ook verschillende toepassingen die hiervan gebruik maken. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters.
 
@@ -60,7 +62,7 @@ Sonic Visualiser is een gebruiksvriendelijke desktopapplicatie voor de analyse, 
 	\includegraphics[width=0.8\textwidth]{sonicvisualiser.png}
 \end{figure}
 
-Sonic visualiser werd in dit onderzoek vooral gebruikt om handmatig de latency tussen verschillende audiofragmenten te bepalen. Ook heeft de applicatie dienst gedaan als educatieve tool om verschillende audioverwerkingsalgoritmen visueel voor te stellen.
+Sonic Visualiser werd in dit onderzoek vooral gebruikt om handmatig de latency tussen verschillende audiofragmenten te bepalen. Ook heeft de applicatie dienst gedaan als educatieve tool om verschillende audioverwerkingsalgoritmen visueel voor te stellen.
 \vspace{0.5cm}
 
 \subsection{Audacity}
@@ -120,7 +122,7 @@ De Panako softwarebibliotheek bevat een zeer goede implementatie van het accoust
 
 \subsection{Optimalisaties}
 
-Aan dit algoritme is één vereenvoudiging aangebracht. Het originele algoritme bevatte namelijk de mogelijkheid om alle offsets boven een bepaalde drempelwaarde te verwerken. Deze feature laat toe dat er meerdere matches kunnen gevonden worden binnen één uitvoering van het algoritme. Om dit te ondersteunen moeten alle matches echter wel één voor één worden vergeleken met de drempelwaarde. Omdat we in onze toepassing enkel geïnteresseerd zijn in de beste offsetwaarde is dit overbodig. De beste offset en bijhorende fingerprints wordt apart bijgehouden. De naverwerking wordt hierdoor vermeden.
+Aan dit algoritme is één vereenvoudiging aangebracht. Het originele algoritme bevatte namelijk de mogelijkheid om alle offsets boven een bepaalde drempelwaarde te verwerken. Deze feature laat toe dat er meerdere matches kunnen gevonden worden binnen één uitvoering van het algoritme. Om dit te ondersteunen moeten alle matches echter wel één voor één worden vergeleken met de drempelwaarde. Omdat we in dit onderzoek enkel geïnteresseerd zijn in de beste offsetwaarde is dit overbodig. De beste offset en bijhorende fingerprints wordt apart bijgehouden. De naverwerking wordt hierdoor vermeden.
 
 \subsection{Parameters en hun invloed op het algoritme}
 \label{accoustic-fingerprinting-params}
@@ -143,7 +145,7 @@ Deze parameter bepaalt de standaard samplefrequentie die gebruikt wordt tijdens 
 \item\texttt{NFFT\_BUFFER\_SIZE}\footnote{De letter N in NFFT heeft geen noemenswaardige betekenis. De naam is overgenomen van de gelijknamige parameter uit de Panako bibliotheek.} \hfill \\
 Dit is de grootte van de verschuivende buffer die gebruikt wordt in het FFT algoritme. Deze parameter is cruciaal aangezien de frequentiesterktes op een bepaalde plaats op de tijd\-as worden berekend per buffer. Deze parameter wordt uitgedrukt in aantal samples.
 \item\texttt{NFFT\_STEP\_SIZE} \hfill \\
-Dit is het aantal samples elke verschuiving in het FFT algoritme. De stepsize beïnvloedt rechtstreeks de nauwkeurigheid van het accoustic fingerprinting algoritme. Wanneer deze parameter is ingesteld op 128 samples en de samplefrequentie 8000hz bedraagt dan is de maximale nauwkeurigheid $128/8000Hz = 0.016s = 16ms$.
+Dit is het aantal samples elke verschuiving in het FFT algoritme. De stepsize beïnvloedt rechtstreeks de nauwkeurigheid van het accoustic fingerprinting algoritme. Wanneer deze parameter is ingesteld op 128 samples en een samplefrequentie van 8000hz dan is de maximale nauwkeurigheid $128/8000Hz = 0.016s = 16ms$.
 \item\texttt{MIN\_ALIGNED\_MATCHES} \hfill \\
 Een match tussen twee audiofragmenten wordt pas als geldig beschouwd wanneer er een bepaald aantal fingerprint matches met dezelfde offset gevonden zijn. Dit aantal wordt ingesteld met deze parameter.
 \item\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} \hfill \\
@@ -167,11 +169,11 @@ Bij het accoustic fingerprinting algoritme is er een groot verschil tussen de me
 	\item\texttt{SAMPLE\_RATE} \hfill \\
 	Bij deze parameter is het van belang om een goede balans te vinden zodat de geluidskwaliteit aanvaardbaar blijft zonder een hypotheek te plaatsen op de performantie van het algoritme. De praktijk heeft uitgewezen dat bij een samplefrequentie van $ 8000Hz $ het algoritme goed presteert. Deze waarde wordt bevestigd in artikel \cite{six2015multimodal}.
 	\item\texttt{NFFT\_BUFFER\_SIZE} en \texttt{NFFT\_STEP\_SIZE} \hfill \\
-	De ingesteld waarden van de samplefrequentie, buffergrootte en stapgrootte zijn afhankelijk van elkaar. Om een goede werking van het FFT algoritme te garanderen bij een samplefrequentie van 8000Hz worden de buffergrootte en stapgrootte respectievelijk ingesteld op 512 en 128 (of 256) samples. Deze waarden worden eveneens vermeld in artikel \cite{six2015multimodal}.
+	De ingesteld waarden van de samplefrequentie, buffergrootte en stapgrootte zijn afhankelijk van elkaar. Om een goede werking van het FFT algoritme te garanderen bij een samplefrequentie van $ 8000Hz $ worden de buffergrootte en stapgrootte respectievelijk ingesteld op 512 en 128 (of 256) samples. Deze waarden worden eveneens vermeld in artikel \cite{six2015multimodal}.
 	\item\texttt{MIN\_ALIGNED\_MATCHES} \hfill \\
 	In een toepassing zoals het detecteren van liedjes ten opzichte van een database is het secuur instellen van deze parameter erg belangrijk. Deze parameter heeft namelijk een grote invloed op het voorkomen van \textit{false positives} of \textit{false negatives}. 
 	
-	Bij het synchroniseren van streams is de situatie echter helemaal anders. Het binnenkrijgen van een false positive (=foute latency) is veel minder erg dan het helemaal niet binnenkrijgen van (mogelijk correcte) resultaten. Aangezien het algoritme per buffer enkel het beste resultaat retourneert is de kans dat bij geluidsfragmenten van behoorlijke kwaliteit eenzelfde foute latency meer voorkomt dan de correcte latency zéér klein.
+	Bij het synchroniseren van streams is de situatie echter helemaal anders. Het binnenkrijgen van een false positive (=foute latency) is veel minder erg dan het helemaal niet binnenkrijgen van (mogelijk correcte) resultaten. Aangezien het algoritme per buffer enkel het beste resultaat teruggeeft is de kans dat bij geluidsfragmenten van behoorlijke kwaliteit eenzelfde foute latency meer voorkomt dan de correcte latency zéér klein.
 	
 	Bij geluidsfragmenten van mindere kwaliteit kan het gebeuren dat er toch foute resultaten door de mazen van het net glippen. Om dit te vermijden is het mogelijk om nog een extra filtering toe te passen. In deze extra stap worden eventuele uitschieters geëlimineerd.
 	
@@ -229,10 +231,11 @@ Na het uitvoeren van het accoustic fingerprinting algoritme wordt er van beide f
 
 Intuïtief lijkt het logisch dat deze latencies enkel bij elkaar moeten worden opgeteld om de verfijnde latency te bekomen. Toch is dit niet helemaal correct. Wanneer het accoustic fingerprinting algoritme de werkelijke latency heeft onderschat levert deze optelling een correct resultaat. Bij een overschatting is dit echter niet het geval. Dit probleem is duidelijk zichtbaar in figuur \ref{crosscovariance2}: na het wegknippen van de ruwe latency ($96 ms$) is de latency omgedraaid: de referentie audio heeft $ 6 ms $ latency ten opzichte van het andere audiofragment. 
 
-Aangezien het kruiscovariantie algoritme de latency zoekt van de andere buffer ten opzichte van de referentiebuffer zal het resultaat niet $6 ms$ maar $ 58 ms $ zijn. Dit komt doordat het algoritme de andere buffer cyclisch (maar in de verkeerde zin) verschuift. Een verschuiving van $ 58 ms $ is bijgevolg de meest optimale verschuiving.
+Aangezien het kruiscovariantie algoritme de latency zoekt van de ``andere'' buffer ten opzichte van de referentiebuffer zal het resultaat niet $6 ms$ maar $ 58 ms $ zijn. Dit komt doordat het algoritme de ``andere'' buffer cyclisch (maar in de verkeerde zin) verschuift. Een verschuiving van $ 58 ms $ is bijgevolg de meest optimale verschuiving.
 
 Om in een dergelijke situatie de verfijnde latency te berekenen moet men de latency verkregen door het kruiscovariantie algoritme ($ 58 ms$) aftrekken van de lengte van de gebruikte buffer ($ 64 ms $). De verfijnde latency bekomt men vervolgens door dit resultaat ($ 6 ms $) af te trekken van de latency van het fingerprinting  algoritme ($ 96 ms - 6 ms = 90 ms $).
 
+%Eventueel nog schrijven hoe bepaald wordt of het resultaat onderschat of overschat is.
 
 \subsection{Optimalisaties}
 
@@ -294,6 +297,94 @@ De parameters van het kruiscovariantie algoritme zijn net zoals die van het acco
 	\item\texttt{CROSS\_COVARIANCE\_THRESHOLD} \hfill \\
 	Het hoog instellen van deze waarde heeft enkel nut als het van belang is dat het kruiscovariantie algoritme zeker een correct resultaat teruggeeft. In de huidige implementatie wordt het ruwe resultaat gebruikt als6 het aantal gelijke waarden niet boven deze drempel komt. Daarom wordt deze waarde meestal op 1 ingesteld. De best mogelijke verfijning van het resultaat wordt dan toegepast, ongeacht het aantal keer dat het resultaat voorkomt. 
 \end{description}
+
+\section{Filteren van de resultaten}
+
+Het is moeilijk om met zekerheid te bepalen of een bepaalde latency correct is. Toch kan er een soort van statistische optimalisatie worden uitgevoerd op de opeenvolgende latencies. De kans is namelijk klein dat de werkelijke latency verandert en na een korte tijd terugkeert naar de originele waarde.\footnote{Theoretisch is een dergelijke situatie toch mogelijk: In dit voorbeeld wordt de latency bepaalt tussen de audiostreams ($ 8000 Hz$ samplefrequentie) van twee Teensy microcontrollers. Wanneer er 50 samples gedropt worden van de referentie audiostream zorgt dit voor een latencyverhoging van de andere audiostream van $6 ms$. Indien er enkele seconden later 50 samples gedropt worden van de andere audiostream dan leidt dit tot een vermindering van de latency van $ 6 ms $. Visueel is dit een piek in de opeenvolgende latencies.} Ook is de kans klein dat een foute latency toevallig verschillende malen na elkaar gedetecteerd wordt.
+
+Deze eigenschappen laten toe om toch een bepaalde vorm van ``foutherstelling'' te implementeren. Fouten kunnen namelijk weggefilterd worden door eventuele pieken in opeenvolgende latencies af te vlakken.
+
+\subsection{Werking}
+
+Het afvlakken van pieken kan in realtime geïmplementeerd worden door opnieuw gebruik te maken van verschillende \textit{sliding windows}. Per audiostream wordt een buffer bijgehouden met daarin de opeenvolgende latencies ten opzichte van de referentie audiostream. Wanneer een buffer haar maximumcapaciteit heeft bereikt gaat het toevoegen van een nieuwe latency gepaard met het verwijderen van de oudste latency.
+
+Het afvlakken van pieken wordt verwezenlijkt door in plaats van de meest recente latency het gemiddelde of de mediaan van de buffer te gebruiken. De mate waarin pieken worden afgevlakt hangt af van de grootte van de buffer en de gebruikte methode (gemiddelde of mediaan).
+
+\subsection{Voorbeelden}
+
+De effectiviteit van de verschillende parameters (buffergrootte en filtermethode) zal in dit gedeelte worden weergegeven aan de hand van enkele voorbeelden. Er zullen verschillende soorten filters worden toegepast op een verloop van 35 latencies. In het ongefilterde verloop (zie figuur \ref{latencydata}) komen twee grote en drie kleine pieken voor. Na het vijftiende resultaat doet er zich een blijvende verhoging van de latency voor.
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[Het ongefilterde verloop van de latency]{Grafische weergave van het ongefilterde verloop van de latency.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/latencydata}
+	\end{center}
+	\label{latencydata}
+\end{figure}
+
+\subsubsection{Moving average filter}
+
+De eerste twee voorbeelden tonen het verschil tussen de ongefilterde latencies en de latencies die gefilterd zijn door het gemiddelde van een buffer te nemen. Bij het eerste voorbeeld bevat de buffer maximum 3 latencies, bij het tweede voorbeeld kan de buffer maximum 5 latencies bevatten.
+
+\begin{figure}[!tbph]
+	\centering
+	\subfloat[Buffergrootte 3]{\input{figuren/avg3data}}
+	\hfill
+	\subfloat[Buffergrootte 5]{\input{figuren/avg5data}}
+	\captionsetup{width=0.7\textwidth}
+	\caption{Het verloop van de latencies na het toepassen van een moving average filter.}
+\end{figure}
+
+Ondanks het toepassen van de filter blijven de grootste pieken nog steeds zichtbaar. De oorzaak hiervan is dat deze pieken door hun grootte toch sterk doorwegen op het gemiddelde. Om er voor te zorgen dat grote pieken nog meer worden weggefilterd zou de maximumgrootte moeten worden verhoogd. In \ref{filter-gevolgen} zal duidelijk worden waarom dit toch geen goed idee is.
+
+In de gefilterde resultaten valt ook op dat de hellingshoek van de latencyverhoging vermindert naarmate een grotere buffer gehanteerd wordt. Dit is geen goede eigenschap: het duurt namelijk veel langer tot er na een wijziging terug een stabiele latency bereikt wordt.
+
+\subsubsection{Moving median filter}
+
+In de volgende voorbeelden zal de mediaan van elke buffer berekent worden. Om de resultaten goed met elkaar te kunnen vergelijken worden dezelfde buffergroottes gehanteerd. Het is aangeraden om een oneven getal als buffergrootte te nemen. In de huidige implementatie zal namelijk van het overblijvende paar resultaten het eerste element genomen worden in plaats van het gemiddelde ervan te berekenen.
+
+\begin{figure}[!tbph]
+	\centering
+	\subfloat[Buffergrootte 3]{\input{figuren/median3data}}
+	\hfill
+	\subfloat[Buffergrootte 5]{\input{figuren/median5data}}
+	\captionsetup{width=0.7\textwidth}
+	\caption{Het verloop van de latencies na het toepassen van een moving median filter.}
+\end{figure}
+
+De grafieken tonen een duidelijk verschil tussen de moving median filter en de moving average filter. De pieken veroorzaakt door 1 (eventueel) foute latency worden bij de moving median filter onmiddellijk weggefilterd. In de grafiek is er geen enkel spoor meer van te vinden. De piek veroorzaakt door 2 (eventueel) foute latencies wordt enkel volledig weggefilterd wanneer buffergrootte 5 gehanteerd wordt.
+
+De wijziging van de latency wordt niet afgevlakt zoals bij de moving average filter. De hellingsgraad blijft onaangetast.
+
+\subsection{Parameters}
+
+\begin{description}
+	\item\texttt{LATENCY\_FILTER\_TYPE} \hfill \\
+	Deze parameter bepaalt welke soort filter zal worden toegepast op de binnenkomende latencies. Mogelijke waarden zijn: \texttt{average}, \texttt{median} en \texttt{none}.
+	
+	\item\texttt{LATENCY\_FILTER\_BUFFER\_SIZE} \hfill \\
+	Dit is de grootte van de buffer waarin de meest recente latencies zullen worden opgeslagen. Zoals al is vermeld  is het aangeraden om als waarde een oneven getal te kiezen.
+
+\end{description}
+
+\subsection{Gevolgen}
+\label{filter-gevolgen}
+
+Het filteren van de latency heeft een negatief effect op de snelheid waarmee wijzigingen van de latency gedetecteerd kunnen worden. Zowel de grootte van de latency filter buffer als de grootte van de streambuffers (zie \ref{streambuffers}) hebben invloed op de snelheid waarmee nieuwe latencies gedetecteerd zullen worden. De grootte van de streambuffers (parameter \texttt{SLICE\_SIZE\_S}) bepaalt namelijk met welk interval nieuwe latencies binnenkomen. 
+
+Een verhoging van de latency zal bij de moving average filter een onmiddellijke maar beperkte invloed hebben op het gefilterde resultaat. De tijd die nodig is om tot een stabiel resultaat ($ T_a $) te komen kan berekent worden met volgende formule:
+
+\begin{equation}
+	T_a = (\texttt{SLICE\_SIZE\_S}) \cdot (\texttt{LATENCY\_FILTER\_BUFFER\_SIZE})
+\end{equation}
+
+Bij de moving median filter wordt een wijziging van de latency gedetecteerd wanneer meer dan de helft van de buffer de gewijzigde latency bevat. De tijd tot wanneer een detectie plaatsvindt ($ T_m $) kan met volgende formule bepaalt worden:
+
+\begin{equation}
+T_m = \frac{(\texttt{SLICE\_SIZE\_S}) \cdot (\texttt{LATENCY\_FILTER\_BUFFER\_SIZE})}{2}
+\end{equation}
 
 \section{Structuur softwarebibliotheek}
 

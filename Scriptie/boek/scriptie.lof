@@ -2,23 +2,30 @@
 \select@language {dutch}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Huidge werkwijze voor streamsynchronisatie}}{3}{figure.1.1}
-\contentsline {figure}{\numberline {1.2}{\ignorespaces Samplen van audio}}{4}{figure.1.2}
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Huidge werkwijze voor streamsynchronisatie}}{3}{figure.caption.5}
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Samplen van audio}}{4}{figure.caption.6}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Voorbeeld van een spectrogram}}{14}{figure.2.1}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Kandidaat-pieken en fingerprints}}{15}{figure.2.2}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces De anatomie van een fingerprint}}{16}{figure.2.3}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Schema synchronisatie met fingerprinting}}{18}{figure.2.4}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Schematische weergave van de buffer}}{22}{figure.2.5}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Voorbeeld buffering methodes}}{23}{figure.2.6}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Voorbeeld van een spectrogram}}{14}{figure.caption.16}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Kandidaat-pieken en fingerprints}}{16}{figure.caption.18}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces De anatomie van een fingerprint}}{17}{figure.caption.19}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Schema synchronisatie met fingerprinting}}{18}{figure.caption.21}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Schematische weergave van de buffer}}{22}{figure.caption.27}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Voorbeeld buffering methodes}}{23}{figure.caption.29}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Gebruikersinterface van Sonic Visualiser}}{28}{figure.3.1}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Gebruikersinterface van Audacity}}{29}{figure.3.2}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Gebruikersinterface van MAX/MSP}}{30}{figure.3.3}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Teensy microcontroller}}{31}{figure.3.4}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Kruiscovariantie audiofragmenten}}{37}{figure.3.5}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Kruiscovariantie buffers}}{38}{figure.3.6}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Zoemtoon van $50 Hz$}}{40}{figure.3.7}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Gebruikersinterface van Sonic Visualiser}}{28}{figure.caption.31}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Gebruikersinterface van Audacity}}{29}{figure.caption.32}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Gebruikersinterface van MAX/MSP}}{30}{figure.caption.33}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Teensy microcontroller}}{31}{figure.caption.34}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Kruiscovariantie audiofragmenten}}{37}{figure.caption.35}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Kruiscovariantie buffers}}{38}{figure.caption.36}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Zoemtoon van $50 Hz$}}{40}{figure.caption.39}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Het ongefilterde verloop van de latency}}{43}{figure.caption.40}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Het verloop van de latencies na het toepassen van een moving average filter.\relax }}{44}{figure.caption.42}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Buffergrootte 3}}}{44}{subfigure.9.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Buffergrootte 5}}}{44}{subfigure.9.2}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Het verloop van de latencies na het toepassen van een moving median filter.\relax }}{45}{figure.caption.44}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Buffergrootte 3}}}{45}{subfigure.10.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Buffergrootte 5}}}{45}{subfigure.10.2}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -20,12 +20,18 @@ Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem i
 		\advance\parskip0.3cm
 		\input{figuren/spectrogram}
 	\end{center}
+	\label{spectrogram}
 \end{figure}
 
 \subsubsection{Werking}
 
 Een accoustic fingerprinting systeem gebaseerd op de extractie van spectrale pieken gaat in verschillende stappen te werk: 
-Eerst wordt het tijdsignaal (de typische golfvorm) van elk geluidsfragment omgezet tot een verzameling complexe functies in het frequentiedomein\footnote{Een veelgebruikt algoritme hiervoor is het Fast Fourrier Transformation algoritme (FFT). In artikel \cite{oppenheim1970speech}. wordt deze methode uitgebreid besproken.}. Deze verzameling functies kan gezien worden als het tijd-frequentiedomein van het audiofragment. De grafische voorstelling van deze verzameling functies wordt het spectrogram genoemd. Meestal wordt op de x-as de tijd weergegeven en op de y-as de frequentie. De intensiteit waarmee een bepaalde frequentie voorkomt kan worden aangeduid door gebruik te maken van verschillende kleuren of contrasten. 
+Eerst wordt het tijdsignaal (de typische golfvorm) van elk geluidsfragment omgezet tot een verzameling functies in het frequentiedomein. Deze omzetting gebeurt met het \textit{Fast Fourrier Transformation} algoritme (FFT). Het tijdsignaal wordt in kleine stukjes onderverdeeld (standaardgrootte: 512 samples, zie \ref{accoustic-fingerprinting-params}). Elk klein stukje audio wordt opgeslaan in een \textit{FFT buffer}. Vervolgens wordt het FFT algoritme op elke FFT buffer uitgevoerd. De inhoudt van het FFT buffer kan gezien worden als een functie in het tijddomein. Het resultaat van het FFT algoritme is de fourier getransformeerde van deze functie: een functie in het frequentiedomein.
+De verzameling fourier getransformeerde functies stelt het audiofragment voor in het tijd-frequentie domein. 
+
+De grafische voorstelling van deze verzameling functies wordt het spectrogram genoemd. Een spectrogram is het duidelijkst wanneer op de x-as de tijd en op de y-as de frequentie wordt weergegeven. De intensiteit waarmee een bepaalde frequentie voorkomt kan worden aangeduid door gebruik te maken van verschillende kleuren of contrasten. Figuur \ref{spectrogram} toont een spectrogram waarbij frequentie met een hoge intensiteit donkerder zijn weergegeven.
+
+In artikel \cite{oppenheim1970speech} wordt het FFT algoritme uitgebreid besproken.
 
 Na het omzetten van de te vergelijken geluidsfragmenten naar hun tijd-frequentie representatie kan er naar kandidaat-pieken worden gezocht. Dit zijn lokale maxima waarbij de hoeveelheid energie waarmee de frequentie voorkomt hoger is dan bij alle aanliggende tijd-frequentie punten\cite{six2014panako}. In het spectrogram kan elk donker vlekje gezien worden als een kandidaat-piek.
 
@@ -41,7 +47,7 @@ Wanneer deze stap is afgerond kunnen de fingerprints bepaald worden. Een fingerp
 \end{figure}
 
 Na het bepalen van de fingerprints worden ze opgeslagen in een datastructuur waarin snel naar matches kan worden gezocht.
-Om dit mogelijk te maken moeten er van de fingerprints enkele parameters bepaald worden:
+Om dit mogelijk te maken moeten er van de fingerprints enkele typerende getallen bepaald worden:
 
 \begin{itemize}[noitemsep]
 	\item $ f1 $ en $ f2 $: de frequentie van de spectrale pieken van de fingerprint.
@@ -61,21 +67,23 @@ Om dit mogelijk te maken moeten er van de fingerprints enkele parameters bepaald
 
 Bij het zoeken naar matches kan er gesteund worden op enkele typische eigenschappen van fingerprints: 
 
-Ten eerste kan er van worden uitgegaan dat twee overeenkomende fingerprints uit twee geluidsfragmenten dezelfde frequenties  ($f1$ en $f2$) zullen hebben. Bijgevolg zal dus ook het verschil in frequentie ($\Delta f$) gelijk zijn. 
+Twee overeenkomende fingerprints uit twee geluidsfragmenten zullen dezelfde frequenties  ($f1$ en $f2$) hebben. Bijgevolg is ook het verschil in frequentie ($\Delta f$) gelijk. 
 
-In tegenstelling tot de frequenties is de kans zeer klein dat ook de tijd van de spectrale pieken ($t1$ en $t2$) van twee overeenkomende fingerprints zal overeenkomen. Bij Shazam is het bijvoorbeeld geen vereiste om een opname te maken vanaf het begin van een liedje. Het moment van de opname mag volledig willekeurig worden gekozen. Ook bij het synchroniseren van streams zal de latency er voor zorgen dat de begintijd van de fingerprints uit beide audiofragmenten verschillen.
+De tijd van de spectrale pieken ($t1$ en $t2$) komen meestal niet overeen. Bij Shazam is het bijvoorbeeld geen vereiste om een opname te maken vanaf het begin van een liedje. Het moment van de opname mag volledig willekeurig worden gekozen. Bij het synchroniseren van streams wordt gezocht naar het verschil tussen de begintijden ($\Delta t$) van de overeenkomstige fingerprints van de audiofragmenten. Dit tijdverschil is wel gelijk bij elk paar overeenkomende fingerprints.
 
 Hoewel de tijd ($t1$ en $t2$) van twee fingerprints meestal verschilt is dit niet het geval voor het verschil ervan ($\Delta t$). Bij twee overeenkomende fingerprints van twee audiofragmenten is het verschil in frequentie inherent gelijk.
 
 Uit voorgaande eigenschappen kan geconcludeerd worden dat fingerprints uit twee audiofragmenten matchen wanneer $ f1 $, $ \Delta f $ en $ \Delta t $ gelijk zijn. Om deze parameters snel met elkaar kunnen te vergelijken wordt er een berekening uitgevoerd die deze parameters omzet in één enkel getal. Dit getal wordt de hash van de fingerprint genoemd. Samen met deze hash wordt ook $ t1 $ en een identificatie van het geluidsfragment bijgehouden.
 
+Artikel \cite{six2014panako} geeft meer informatie over de omzetting van deze drie getallen tot een hash.
+
 Een fingerprint kan bijgevolg gezien worden als verzameling gegevens met de volgende structuur: $ ( id; t1; hash(f1; \Delta f; \Delta t) ) $. Het zoeken naar fingerprints met overeenkomstige hashwaarden is mogelijk in $O(1)$ door gebruik te maken van een hashtabel. De precieze werking hiervan valt buiten de scope van deze scriptie.
 
-Om te bepalen of twee audiofragmenten wel degelijk overeenkomen wordt er eerst gezocht naar alle fingerprints met een overeenkomende hashwaarde. Van elk paar overeenkomende fingerprints wordt het verschil tussen $ t1 $ berekend. Dit verschil wordt de offset genoemd. Het vinden van een groot aantal matches met dezelfde offset wijst op een sterke gelijkenis tussen de audiofragmenten. Wat de precieze waarde is van ``een groot aantal'' is een parameter van het algoritme.
+Om te bepalen of twee audiofragmenten wel degelijk overeenkomen wordt er gezocht naar alle fingerprints met een overeenkomende hashwaarde. Van elk paar overeenkomende fingerprints wordt het verschil tussen $ t1 $ berekend. Dit verschil wordt de offset genoemd. Het vinden van een groot aantal matches met dezelfde offset wijst op een sterke gelijkenis tussen de audiofragmenten. Wat de precieze waarde is van ``een groot aantal'' is een parameter van het algoritme.
 
 \subsubsection{Bepalen van de latency}
 
-Accoustic fingerprinting kan gebruikt worden om streams te synchroniseren door de ze eerst te bufferen. Wanneer een buffer volledig is opgevuld kan deze net zoals een kort audiofragment worden verwerkt door het algoritme. De latency tussen streams wordt bepaald door de overeenkomstige buffers met elkaar te matchen. Wanneer er een offset (het verschil tussen $ t1 $ van elke fingerprint) opvallend veel voorkomt (aantal ligt boven een drempelwaarde), dan kan er van worden uitgegaan dat de huidige latency tussen de streams gelijk is aan de offset. Dit is logisch aangezien het verschil tussen de $ t1 $ waarden de verschuiving tussen de geluidsfragmenten voorstelt.
+Accoustic fingerprinting kan gebruikt worden om streams te synchroniseren door de ze eerst te bufferen. Wanneer een buffer volledig is opgevuld kan deze net zoals een kort audiofragment worden verwerkt door het algoritme. De latency tussen streams wordt bepaald door de offset die in vorig paragraaf werd beschreven: het verschil tussen de $ t1 $ waarden stelt namelijk de verschuiving tussen de geluidsfragmenten voor.
 
 Een uitgebreidere beschrijving is te vinden in artikel \cite{Wang2003a}. De methode die in het artikel en deze scriptie besproken werd is beperkt tot het vergelijken van audiofragmenten die in tijd noch toonhoogte gewijzigd zijn. Aan het IPEM is een aangepaste methode ontwikkeld die dit wel toelaat \cite{six2014panako}.
 
@@ -103,17 +111,17 @@ Deze methode bepaalt de gelijkenis tussen twee audiofragmenten en resulteert in 
 
 \subsubsection{Werking}
 
-Stel twee audioblokken $ a $ en $ b $ bestaande uit een gelijk aantal samples (variabele $s$). Deze audioblokken worden telkens cyclisch één sample verschoven tot wanneer de kruiscovariantie waarde voor elke mogelijke verschuiving berekend werd. De variabele $ i $ stelt de huidige verschuiving voor en gaat van 0 tot $ s $. De kruiscovariantie waarde wordt berekend met volgende formule:
+Stel twee audioblokken $ a $ en $ b $ bestaande uit een gelijk aantal samples ($n$). Deze audioblokken worden telkens cyclisch één sample verschoven tot wanneer de kruiscovariantie waarde voor elke mogelijke verschuiving berekend werd. De variabele $ i $ stelt de huidige verschuiving voor en gaat van 0 tot $ n $. De kruiscovariantie wordt berekend met volgende formule:
 
 \begin{equation}
-\sum_{j=0}^{s} a_{j} \cdot b_{(i+j)\ mod\ s}
+\sum_{j=0}^{n} a_{j} \cdot b_{(i+j)\ mod\ n}
 \end{equation}
 
 De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden kan bepaald worden door dit resultaat te delen door de samplefrequentie.
 
 De methode kan de latency tot op één sample nauwkeurig bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is ruim voldoende voor het huidige probleem.
 
-Een nadeel aan deze methode is de performantie. Het berekenen van de beste kruiscovariantie van twee audioblokken bestaande uit s samples kan gebeuren in  $O(s^{2})$. Het is dus belangrijk om bij deze berekening de grootte van de audioblokken te beperken.
+Een nadeel aan deze methode is de performantie. Het berekenen van de beste kruiscovariantie van twee audioblokken bestaande uit $ n $ samples kan gebeuren in  $O(n^{2})$. Het is dus belangrijk om bij deze berekening de grootte van de audioblokken te beperken.
 
 In artikel \cite{six2015multimodal} wordt deze techniek meer in detail besproken.
 
@@ -135,19 +143,19 @@ De kenmerken van deze algoritmen zijn heel erg complementair. De gemakkelijkste 
 
 In deze scriptie is al ettelijke malen vermeld geweest dat het belangrijk is dat de streams gebufferd worden. Zonder het bufferen is het onmogelijk om de synchronisatiealgoritmen uit te voeren. 
 
-De grootte van de buffer heeft invloed op de kwaliteit van de geretourneerde resultaten. Het spreekt voor zich dat het algoritme beter kan presteren wanneer er 10 seconden in plaats van 1 seconde audio geanalyseerd wordt. Een nadeel is echter dat het langer duurt vooraleer een wijzing van de latency gedetecteerd kan worden. 
+De grootte van de buffer heeft invloed op de kwaliteit van de resultaten. Het spreekt voor zich dat het algoritme beter kan presteren wanneer er 10 seconden in plaats van 1 seconde audio geanalyseerd wordt. Een nadeel is echter dat het langer duurt vooraleer een wijzing van de latency gedetecteerd kan worden. 
 
 \subsubsection{Naïeve implementatie}
 
-Indien er buffers gebruikt worden die 10 seconden audio kunnen bevatten, dan zal het bij een naïeve implementatie in het slechtste geval pas mogelijk zijn om een wijziging van de latency na 15 seconden te detecteren. Een dergelijke wijziging kan gedetecteerd worden wanneer meer dan de helft van de buffer gevuld is met audio met de nieuwe latency. Wanneer er samples gedropt worden net na het moment dat de buffer voor de helft gevuld is, dan zal het algoritme uitgevoerd op de huidige buffer de wijziging niet kunnen detecteren. De volgende buffer zal wel gevuld zijn audio met de nieuwe latency, het duurt echter nog een bijkomende 10 seconden vooraleer deze buffer gevuld is. De detectietijd bedraagt bijgevolg in het slechtste geval net geen 15 seconden.
+Indien er buffers gebruikt worden die $ t $ aantal seconden audio kunnen bevatten, dan zal het bij een naïeve implementatie in het slechtste geval pas mogelijk zijn om een wijziging van de latency na $ \frac{3}{2} t $ seconden te detecteren. Dit is als volgt te verklaren: Een wijziging van de latency kan gedetecteerd worden wanneer meer dan de helft van de buffer gevuld is met audio met de nieuwe latency. Wanneer er samples gedropt worden net na het moment dat de buffer voor de helft gevuld is ($ \frac{1}{2} t $), dan zal het algoritme uitgevoerd op de huidige buffer de wijziging niet kunnen detecteren. De volgende buffer zal wel gevuld zijn audio met de nieuwe latency, het duurt echter nog een bijkomende $ t $ seconden vooraleer deze buffer gevuld is. De detectietijd bedraagt bijgevolg in het slechtste geval dus $ \frac{3}{2} t $ seconden.
 
-Deze implementatie kan een wijziging van de latency in het beste geval na 5 seconden detecteren. Wanneer er samples gedropt worden net voor het moment dat de buffer voor de helft gevuld is, dan kan het algoritme de nieuwe latency wel onmiddellijk detecteren.
+De naïeve implementatie kan een wijziging van de latency in het beste geval na $ \frac{1}{2} t $ seconden detecteren. Wanneer er samples gedropt worden net voor het moment dat de buffer voor de helft gevuld is, dan kan het algoritme de nieuwe latency wel onmiddellijk detecteren.
 
 \subsubsection{Sliding window}
 
-Een meer doordachte manier van bufferen maakt gebruik van een \textit{sliding window}. In onderstaande beschrijving zal ter illustratie ook gebruik gemaakt worden van een buffer met 10 seconden capaciteit. In de voorbeelden zal een stapgrootte van 5 seconden gehanteerd worden. 
+Een meer doordachte manier van bufferen maakt gebruik van een \textit{sliding window}. In onderstaande beschrijving wordt gebruik gemaakt van een buffer met $ t $ seconden capaciteit en een stapgrootte van $ s $ seconden, hierbij geldt dat $ s \leq t $. 
 
-Het verschil met de naïeve methode is dat de buffer niet pas na 10 seconden wordt opgeschoven. Door de buffer al na 5 seconden op te schuiven zal een wijziging van de latency sneller gedetecteerd kunnen worden; dit terwijl het algoritme toch nog steeds tien seconden audio kan analyseren. In figuur \ref{slidingwindow} wordt grafisch weergegeven hoe de buffer precies verschoven wordt.
+Het verschil met de naïeve methode is dat de buffer niet pas na $ t $ seconden wordt opgeschoven. Door de buffer al na $ s $ seconden op te schuiven zal een wijziging van de latency sneller gedetecteerd kunnen worden; dit terwijl het algoritme toch nog steeds $ s $ seconden audio kan analyseren. In figuur \ref{slidingwindow} wordt grafisch weergegeven hoe de buffer precies verschoven wordt met $ t = 10 $ en $ s = 5 $.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -159,13 +167,13 @@ Het verschil met de naïeve methode is dat de buffer niet pas na 10 seconden wor
 	\label{slidingwindow}
 \end{figure}
 
-Door de buffer al na 5 seconden (de helft van de buffergrootte) op te schuiven wordt het slechtste geval sterk verbeterd. In het slechte geval wordt een wijziging van de latency gedetecteerd na 10 seconden. Het beste geval blijft wel nog steeds 5 seconden.
+Door de buffer al na $ s $ seconden op te schuiven wordt het slechtste geval sterk verbeterd. In het slechtste geval wordt een wijziging van de latency gedetecteerd na $ \frac{t}{2} + s $ seconden. Het beste geval blijft wel nog steeds $ \frac{t}{2} $ seconden.
 
-Door de stapgrootte nog verder te verkleinen kan het slechtste geval nog verbeterd worden. Aangezien het algoritme per hoeveelheid audio veel frequenter moet worden uitgevoerd heeft dit een negatieve invloed op de performantie.
+Het verkleinen van de stapgrootte zorgt ervoor dat het algoritme per hoeveelheid audio frequenter moet worden uitgevoerd. Een te kleine stapgrootte heeft bijgevolg een negatieve invloed op de performantie.
 
 \subsubsection{Voorbeeld}
 
-Een praktisch voorbeeld zal bovenstaande beschrijving wat verduidelijken. In het voorbeeld worden twee audiostreams van 70 seconden geanalyseerd. Door het droppen van samples neemt de latency tussen de streams periodiek toe. Figuur \ref{latency} geeft in het zwart weer hoe de latency gedurende de verwerking evolueert. De opeenvolgende buffers van de twee besproken methode's worden in het rood aangeduid. 
+Een praktisch voorbeeld zal bovenstaande beschrijving wat verduidelijken. In het voorbeeld worden twee audiostreams van 40 seconden geanalyseerd. Door het droppen van samples neemt de latency tussen de streams stapsgewijs toe. Figuur \ref{latency} toont in het zwart hoe de latency gedurende de verwerking evolueert. De opeenvolgende buffers van de twee besproken methode's worden in het rood aangeduid. 
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -177,21 +185,20 @@ Een praktisch voorbeeld zal bovenstaande beschrijving wat verduidelijken. In het
 	\label{latency}
 \end{figure}
 
-De initiële latency van 3 milliseconden wordt zowel met de naïeve methode als met het sliding window gedetecteerd na de analyse van buffer A, 10 seconden na aanvang van de analyse. De eerste verhoging tot 7 milliseconden vindt te laat plaats om gedetecteerd te kunnen worden door buffer B van de sliding window methode. De nieuwe latency kan wel gedetecteerd worden na het vollopen buffer C van beide methode's. Deze detectie gebeurt dus 7 seconden na de wijziging. De verhoging naar 10 milliseconden vindt net zoals de vorige wijzing net te laat plaats om vroeger gedetecteerd te kunnen worden bij de sliding window methode. De wijziging wordt bij beide methodes na 9 seconden gedetecteerd in buffer E. De derde verhoging kan net niet in buffer G gedetecteerd worden maar wel in buffer H. De sliding window methode levert na 9 seconden een resultaat, dit is beduidend beter dan de 14 seconden van de naïeve methode. De laatste wijziging wordt door de sliding window methode na 6 seconden gedetecteerd en door de naïeve methode na 11 seconden.
+De initiële latency van 3 milliseconden wordt zowel met de naïeve methode als met het sliding window gedetecteerd na de analyse van de allereerste buffer (A of R) 10 seconden na aanvang van de analyse. De eerste verhoging tot 7 milliseconden vindt te laat plaats om gedetecteerd te kunnen worden door de eerste buffer van beide methodes. Bij deze verhoging van de latency wordt het verschil tussen beide methodes zichtbaar: bij  de sliding window methode vindt de detectie 6 seconden na de wijziging plaats. Bij de naïeve methode moet er echter gewacht worden tot wanneer buffer B is volgelopen 12 seconden na de wijziging. De tweede verhoging naar 10 seconden wordt zowel door de naïeve methode als door de sliding window methode gedetecteerd na 8 seconden (buffer C of W). De laatste wijziging naar 12 seconden kan door de naïeve methode pas gedetecteerd worden na 14 seconden (de buffer is niet meer zichtbaar op de grafiek). De sliding window methode zal deze wijziging na 6 seconden detecteren.
 
 \subsubsection{Conclusie}
 
-De detectiesnelheid van een latencywijziging hangt af van twee parameters: de bufferlengte ($b$) en de staplengte ($s$). Het beste geval ($ T_b $) heeft volgende ondergrens:
+De detectiesnelheid van een latencywijziging hangt af van twee parameters: de bufferlengte ($t$) en de staplengte ($s$). Het beste geval ($ T_b $) heeft volgende ondergrens:
 \begin{equation}
-T_b = b / 2
+T_b = \frac{t}{2}
 \end{equation}
 
-De beste mogelijke detectiesnelheid bij een buffer van 10 seconden is bijgevolg 5 seconden.
-
-Het slechtste geval ($ T_s $) is ook afhankelijk van de stapgrootte. De bovengrens wordt als volgt bepaalt:
+Bij het slechtste geval ($ T_s $) moet ook rekening gehouden worden met de stapgrootte. De bovengrens wordt als volgt bepaalt:
 \begin{equation}
-T_s = b / 2 + s
+T_s = \frac{t}{2} + s
 \end{equation}
-De slechts mogelijke detectiesnelheid bij de naïeve methode ($b = s = 10 $) is dus 15 seconden. Bij een stapgrootte van 5 seconden is de detectiesnelheid begrensd tot 10 seconden.
+
+Bij het toepassen van deze formules op het voorbeeld uit het vorige paragraaf kan er worden vastgesteld dat in het beste geval een latencywijziging gedetecteerd kan worden na 5 seconden. In het slechtste geval wordt een dergelijke wijziging bij de naïeve methode ($t = s = 10 $) pas gedetecteerd na 15 seconden. Bij de sliding window methode ($t = 10, s = 4 $) is deze wachttijd echter begrensd tot maximaal 9 seconden.
 
 %Evaluatiecriteria

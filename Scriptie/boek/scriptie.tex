@@ -4,8 +4,8 @@
 \usepackage{amsmath}                    % Uitgebreide wiskundige mogelijkheden
 \usepackage{amssymb}                    % Voor speciale symbolen zoals de verzameling Z, R...
 \usepackage{url}                        % Om url's te verwerken
-\usepackage{graphicx}                   % Om figuren te kunnen verwerken
-\usepackage[small,bf]{caption2}    % Om de captions wat te verbeteren
+\usepackage{graphicx}                  % Om figuren te kunnen verwerken
+\usepackage[small,bf]{caption}    % Om de captions wat te verbeteren
 \usepackage{xspace}                     % Magische spaties na een commando
 \usepackage[utf8]{inputenc}           	% Om niet ascii karakters rechtstreeks te kunnen typen
 \usepackage{float}                      % Om nieuwe float environments aan te maken. Ook optie H!
@@ -33,6 +33,8 @@
 \usepackage{authblk} 
 \usetikzlibrary{arrows}
 \usepackage{wrapfig}					%Figuren wrappen
+\usepackage{subfig}                     %Figuren naast elkaar floaten
+
 
 \interfootnotelinepenalty=10000
 
@@ -42,7 +44,7 @@
 \usepackage[a4paper,plainpages=false]{hyperref}    % Om hyperlinks te hebben in het pdfdocument.
 
 \newcommand{\command}[1]{\lstinline[basicstyle=\tt]{#1}\xspace} %Voor commando's
-\hyphenation{tijd-as} 							% Splitsing van woorden
+\hyphenation{tijd-as audio-stream} 							% Splitsing van woorden
 
 \renewcommand{\chaptermark}[1]{\markright{\MakeUppercase{#1}}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection~#1}}

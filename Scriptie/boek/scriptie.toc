@@ -5,12 +5,12 @@
 \contentsline {chapter}{\numberline {1}Introductie}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Probleemschets}{1}{section.1.1}
 \contentsline {section}{\numberline {1.2}Digitale audio}{3}{section.1.2}
-\contentsline {subsubsection}{Samplefrequentie}{4}{section*.5}
-\contentsline {subsubsection}{Bitdiepte}{5}{section*.6}
+\contentsline {subsubsection}{Samplefrequentie}{4}{section*.7}
+\contentsline {subsubsection}{Bitdiepte}{5}{section*.8}
 \contentsline {section}{\numberline {1.3}Evaluatiecriteria}{5}{section.1.3}
-\contentsline {subsubsection}{Realtime synchronisatie}{6}{section*.7}
-\contentsline {subsubsection}{Detecteren van gedropte samples}{6}{section*.8}
-\contentsline {subsubsection}{Detecteren van drift}{7}{section*.9}
+\contentsline {subsubsection}{Realtime synchronisatie}{6}{section*.9}
+\contentsline {subsubsection}{Detecteren van gedropte samples}{6}{section*.10}
+\contentsline {subsubsection}{Detecteren van drift}{7}{section*.11}
 \contentsline {section}{\numberline {1.4}Bestaande methoden}{7}{section.1.4}
 \contentsline {subsection}{\numberline {1.4.1}Event-gebaseerde synchronisatie}{7}{subsection.1.4.1}
 \contentsline {subsection}{\numberline {1.4.2}Synchronisatie met een kloksignaal}{8}{subsection.1.4.2}
@@ -18,35 +18,36 @@
 \contentsline {subsection}{\numberline {1.4.4}Accoustic fingerprinting}{10}{subsection.1.4.4}
 \contentsline {subsection}{\numberline {1.4.5}Kruiscovariantie}{11}{subsection.1.4.5}
 \contentsline {section}{\numberline {1.5}Doel van deze masterproef}{11}{section.1.5}
-\contentsline {subsubsection}{Selectie en optimalisatie van algoritmes}{11}{section*.10}
-\contentsline {subsubsection}{Ontwerp en implementatie van een softwarebibliotheek}{12}{section*.11}
-\contentsline {subsubsection}{Ontwerp en implementatie van een gebruiksvriendelijke interface}{12}{section*.12}
+\contentsline {subsubsection}{Selectie en optimalisatie van algoritmes}{11}{section*.12}
+\contentsline {subsubsection}{Ontwerp en implementatie van een softwarebibliotheek}{12}{section*.13}
+\contentsline {subsubsection}{Ontwerp en implementatie van een gebruiksvriendelijke interface}{12}{section*.14}
 \contentsline {chapter}{\numberline {2}Methode}{13}{chapter.2}
 \contentsline {section}{\numberline {2.1}Algoritmen}{13}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Accoustic fingerprinting}{13}{subsection.2.1.1}
-\contentsline {subsubsection}{Features}{14}{section*.13}
-\contentsline {subsubsection}{Werking}{14}{section*.14}
-\contentsline {subsubsection}{Bepalen van de latency}{17}{section*.15}
-\contentsline {subsubsection}{Nauwkeurigheid}{18}{section*.16}
+\contentsline {subsubsection}{Features}{14}{section*.15}
+\contentsline {subsubsection}{Werking}{14}{section*.17}
+\contentsline {subsubsection}{Bepalen van de latency}{18}{section*.20}
+\contentsline {subsubsection}{Nauwkeurigheid}{18}{section*.22}
 \contentsline {subsection}{\numberline {2.1.2}Kruiscovariantie}{19}{subsection.2.1.2}
-\contentsline {subsubsection}{Werking}{19}{section*.17}
-\contentsline {subsubsection}{Toepassing in realtime}{20}{section*.18}
+\contentsline {subsubsection}{Werking}{19}{section*.23}
+\contentsline {subsubsection}{Toepassing in realtime}{20}{section*.24}
 \contentsline {subsection}{\numberline {2.1.3}Toepasbaarheid}{20}{subsection.2.1.3}
 \contentsline {section}{\numberline {2.2}Bufferen van streams}{21}{section.2.2}
-\contentsline {subsubsection}{Na\IeC {\"\i }eve implementatie}{21}{section*.19}
-\contentsline {subsubsection}{Sliding window}{22}{section*.20}
-\contentsline {subsubsection}{Voorbeeld}{23}{section*.21}
-\contentsline {subsubsection}{Conclusie}{24}{section*.22}
+\contentsline {subsubsection}{Na\IeC {\"\i }eve implementatie}{21}{section*.25}
+\contentsline {subsubsection}{Sliding window}{22}{section*.26}
+\contentsline {subsubsection}{Voorbeeld}{23}{section*.28}
+\contentsline {subsubsection}{Conclusie}{24}{section*.30}
 \contentsline {chapter}{\numberline {3}Implementatie}{25}{chapter.3}
 \contentsline {section}{\numberline {3.1}Technologie\IeC {\"e}n en software}{25}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}TarsosDSP}{25}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Panako}{26}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}FFmpeg}{27}{subsection.3.1.3}
-\contentsline {subsection}{\numberline {3.1.4}SoX}{27}{subsection.3.1.4}
-\contentsline {subsection}{\numberline {3.1.5}Sonic Visualiser}{28}{subsection.3.1.5}
-\contentsline {subsection}{\numberline {3.1.6}Audacity}{29}{subsection.3.1.6}
-\contentsline {subsection}{\numberline {3.1.7}Max/MSP}{30}{subsection.3.1.7}
-\contentsline {subsection}{\numberline {3.1.8}Teensy}{30}{subsection.3.1.8}
+\contentsline {subsection}{\numberline {3.1.1}Java 7}{25}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}TarsosDSP}{25}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Panako}{26}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}FFmpeg}{27}{subsection.3.1.4}
+\contentsline {subsection}{\numberline {3.1.5}SoX}{27}{subsection.3.1.5}
+\contentsline {subsection}{\numberline {3.1.6}Sonic Visualiser}{28}{subsection.3.1.6}
+\contentsline {subsection}{\numberline {3.1.7}Audacity}{29}{subsection.3.1.7}
+\contentsline {subsection}{\numberline {3.1.8}Max/MSP}{30}{subsection.3.1.8}
+\contentsline {subsection}{\numberline {3.1.9}Teensy}{30}{subsection.3.1.9}
 \contentsline {section}{\numberline {3.2}Accoustic fingerprinting}{31}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Optimalisaties}{31}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Parameters en hun invloed op het algoritme}{32}{subsection.3.2.2}
@@ -54,26 +55,33 @@
 \contentsline {section}{\numberline {3.3}Kruiscovariantie}{36}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Integratie met accoustic fingerprinting}{36}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Optimalisaties}{39}{subsection.3.3.2}
-\contentsline {subsubsection}{Bugfixes}{39}{section*.23}
-\contentsline {subsubsection}{Meerdere malen uitvoeren van het algoritme}{39}{section*.24}
+\contentsline {subsubsection}{Bugfixes}{39}{section*.37}
+\contentsline {subsubsection}{Meerdere malen uitvoeren van het algoritme}{39}{section*.38}
 \contentsline {subsection}{\numberline {3.3.3}Parameters en hun invloed op het algoritme}{40}{subsection.3.3.3}
 \contentsline {subsection}{\numberline {3.3.4}Optimale instellingen}{41}{subsection.3.3.4}
-\contentsline {section}{\numberline {3.4}Structuur softwarebibliotheek}{42}{section.3.4}
-\contentsline {section}{\numberline {3.5}Implementatie van een Max/MSP module}{42}{section.3.5}
-\contentsline {chapter}{\numberline {4}Evaluatie}{43}{chapter.4}
-\contentsline {section}{\numberline {4.1}Unit testen}{43}{section.4.1}
-\contentsline {section}{\numberline {4.2}Stresstesten}{43}{section.4.2}
-\contentsline {section}{\numberline {4.3}Test in de praktijk}{43}{section.4.3}
-\contentsline {section}{\numberline {4.4}Usability testen}{43}{section.4.4}
-\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{43}{section.4.5}
-\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{43}{section.4.6}
-\contentsline {chapter}{\numberline {5}Conclusie}{44}{chapter.5}
-\contentsline {chapter}{Appendices}{45}{section*.25}
-\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{46}{B"ylage.a.A}
-\contentsline {chapter}{Referentielijst}{48}{chapter*.26}
-\contentsline {chapter}{L"yst van figuren}{51}{chapter*.27}
-\contentsline {chapter}{Lijst van figuren}{51}{chapter*.27}
-\contentsline {chapter}{L"yst van tabellen}{52}{chapter*.28}
-\contentsline {chapter}{Lijst van tabellen}{52}{chapter*.28}
-\contentsline {chapter}{Lijst van codefragmenten}{53}{chapter*.29}
-\contentsline {chapter}{Lijst van codefragmenten}{53}{chapter*.29}
+\contentsline {section}{\numberline {3.4}Filteren van de resultaten}{42}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Werking}{43}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Voorbeelden}{43}{subsection.3.4.2}
+\contentsline {subsubsection}{Moving average filter}{44}{section*.41}
+\contentsline {subsubsection}{Moving median filter}{44}{section*.43}
+\contentsline {subsection}{\numberline {3.4.3}Parameters}{45}{subsection.3.4.3}
+\contentsline {subsection}{\numberline {3.4.4}Gevolgen}{46}{subsection.3.4.4}
+\contentsline {section}{\numberline {3.5}Structuur softwarebibliotheek}{46}{section.3.5}
+\contentsline {section}{\numberline {3.6}Implementatie van een Max/MSP module}{46}{section.3.6}
+\contentsline {chapter}{\numberline {4}Evaluatie}{47}{chapter.4}
+\contentsline {section}{\numberline {4.1}Unit testen}{47}{section.4.1}
+\contentsline {section}{\numberline {4.2}Stresstesten}{47}{section.4.2}
+\contentsline {section}{\numberline {4.3}Test in de praktijk}{47}{section.4.3}
+\contentsline {section}{\numberline {4.4}Usability testen}{47}{section.4.4}
+\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{47}{section.4.5}
+\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{47}{section.4.6}
+\contentsline {chapter}{\numberline {5}Conclusie}{48}{chapter.5}
+\contentsline {chapter}{Appendices}{49}{section*.45}
+\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{50}{B"ylage.a.A}
+\contentsline {chapter}{Referentielijst}{52}{chapter*.46}
+\contentsline {chapter}{L"yst van figuren}{55}{chapter*.47}
+\contentsline {chapter}{Lijst van figuren}{55}{chapter*.47}
+\contentsline {chapter}{L"yst van tabellen}{56}{chapter*.48}
+\contentsline {chapter}{Lijst van tabellen}{56}{chapter*.48}
+\contentsline {chapter}{Lijst van codefragmenten}{57}{chapter*.49}
+\contentsline {chapter}{Lijst van codefragmenten}{57}{chapter*.49}
