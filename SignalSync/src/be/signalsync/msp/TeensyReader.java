@@ -27,6 +27,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	private int teensySampleRate;
 	private int teensyBufferSize;
 	
+	
 	//Teensy processing attributes
 	private String port;
 	private TeensyDAQ teensy;
@@ -53,8 +54,8 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 	public TeensyReader(String port, int sampleRate, int startChannel, int audioChannel, int numberOfChannels) {
 		post("Constructor called");
 		if(!validPort(port)) {
-			//bail("Teensy port is not open");
-			//return;
+			bail("Teensy port is not open");
+			return;
 		}
 		//Constants
 		this.startChannel = startChannel;

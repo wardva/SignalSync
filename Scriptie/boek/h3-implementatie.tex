@@ -4,6 +4,14 @@
 
 \subsection{Java 7}
 
+Er zijn verschillende redenen waarom er gekozen is om de synchronisatie bibliotheek in Java te implementeren. De belangrijkste reden is dat de bestaande audio bibliotheken (Panako en TarsosDSP) van het IPEM ook ontwikkeld zijn in Java. Deze kunnen enkel aangeroepen worden via andere Java applicaties.
+
+Het is ook de bedoeling is om de gebruikersinterface te ontwikkelen met behulp van Max/MSP modules. Het ontwikkelen van dergelijke modules is mogelijk in twee programmeertalen: C en Java. De eenvoud en hoge graad van abstractie gaf de doorslag om hierbij Java te gebruiken. De voordelen die C biedt op vlak van snelheid wegen (in deze toepassing) hier niet tegenop.
+
+Hoewel de laatste versie van Max/MSP (7) het toelaat om Java 8 te gebruiken wordt deze versie in dit project om compatibiliteitsredenen vermeden. 
+
+
+
 \subsection{TarsosDSP}
 
 TarsosDSP is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid. Deze bibliotheek wordt beschreven in artikel \cite{six2014tarsosdsp}. 
@@ -30,7 +38,16 @@ Panako is net zoals TarsosDSP een Java bibliotheek (door de zelfde auteur) ontwi
 
 In dit onderzoek wordt vooral gebruik gemaakt van Panako's open-source implementatie van het accoustic fingerprinting algoritme. Dit algoritme wordt beschreven in de paper van Avery Li-Chun Wang\cite{Wang2003a}. Het algoritme uit de paper is verder uitgebreid zodat audio waarbij de toonhoogte verhoogd of verlaagd is, of audio die sneller of trager is afgespeeld, toch gedetecteerd kan worden.
 
-Buiten het eigenlijke algoritme bevat de bibliotheek ook verschillende toepassingen die hiervan gebruik maken. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters.
+Buiten het eigenlijke algoritme bevat de bibliotheek ook verschillende toepassingen die hiervan gebruik maken. Zo is het mogelijk om de fingerprints van een geluidsfragment te bekijken, matches tussen verschillende geluidsfragmenten te visualiseren, en grafisch te experimenteren met de verschillende parameters. Figuur \ref{fingerprint_visualiser} toont een screenshot van deze toepassing.
+
+\begin{figure}[!h]
+	\captionsetup{width=0.8\textwidth}
+	\caption[Gebruikersinterface van Audacity]{De gebruikersinterface van Panako's NFFT Fingerprint Visualiser. Onderaan kunnen de parameters van het algoritme met behulp van sliders gewijzigd worden.}
+	\centering
+	\advance\parskip0.3cm
+	\includegraphics[width=0.8\textwidth]{fingerprint_visualiser.png}
+	\label{fingerprint_visualiser}
+\end{figure}
 
 Er is ook een applicatie beschikbaar om verschillende geluidsfragmenten te synchroniseren. Deze applicatie maakt behalve van het accoustic fingerprinting algoritme ook nog gebruik van het kruiscovariantie algoritme. 
 
@@ -53,7 +70,6 @@ In dit onderzoek wordt SoX ook gebruikt in scripts bij het manipuleren van de te
 
 Sonic Visualiser is een gebruiksvriendelijke desktopapplicatie voor de analyse, visualisatie van audiobestanden. Sonic Visualiser laat toe om audiobestanden vanuit verschillende perspectieven te analyseren, zo kan zowel de waveform als het spectrogram van een audiobestand gevisualiseerd worden. Sonic Visualiser is uitbreidbaar met plug-ins in het Vamp formaat. \cite{cannam2010sonic}
 
-\vspace{1cm}
 \begin{figure}[!h]
 	\captionsetup{width=0.8\textwidth}
 	\caption[Gebruikersinterface van Sonic Visualiser]{De gebruikersinterface van Sonic Visualiser}
@@ -69,35 +85,35 @@ Sonic Visualiser werd in dit onderzoek vooral gebruikt om handmatig de latency t
 
 Audacity is een open-source desktopapplicatie voor het bewerken, opnemen en converteren van audio. Met Audacity is het ook mogelijk om tal van effecten en filters aan audio toe te voegen.\cite{audacity2016}
 
-\vspace{1cm}
 \begin{figure}[!h]
 	\captionsetup{width=0.8\textwidth}
 	\caption[Gebruikersinterface van Audacity]{De gebruikersinterface van Audacity}
 	\centering
 	\advance\parskip0.3cm
 	\includegraphics[width=0.8\textwidth]{audacity.png}
+	\label{screenshot-audacity}
 \end{figure}
-\vspace{0.5cm}
 
-Alle opnames en handmatige bewerkingen op audiobestanden in dit onderzoek zijn uitgevoerd met behulp van Audacity.
-\vspace{2cm}
+Alle opnames en handmatige bewerkingen op audiobestanden in dit onderzoek zijn uitgevoerd met behulp van Audacity. 
+
+Figuur \ref{screenshot-audacity} toont de gebruikersinterface van dit programma.
 
 \subsection{Max/MSP}
 
 Max/MSP is een visuele programmeertaal voor muziek en multimedia. Het is een systeem waarbij modules met elkaar verbonden kunnen worden om zo complexere systemen op te bouwen. Max/MSP beschikt ook over een API waarmee in Java of C nieuwe modules ontwikkeld kunnen worden. \cite{cycling2016}
 
-\vspace{0.5cm}
 \begin{figure}[!h]
 	\captionsetup{width=0.8\textwidth}
 	\caption[Gebruikersinterface van MAX/MSP]{De gebruikersinterface van Max/MSP: een \textit{patch panel} met daarop enkele modules die samen een complexere toepassing vormen.}
 	\centering
 	\advance\parskip0.3cm
 	\includegraphics[width=0.8\textwidth]{maxmsp.png}
+	\label{screenshot-max}
 \end{figure}
-\vspace{0.5cm}
 
-Met Max/MSP is het mogelijk om realtime audio verwerken, daarom zal deze toepassing gebruikt worden voor het ontwikkelen van de gebruikersinterface.
-\vspace{1cm}
+Met Max/MSP is het mogelijk om realtime audio verwerken, daarom zal deze toepassing gebruikt worden voor het ontwikkelen van de gebruikersinterface. 
+
+Figuur \ref{screenshot-max} toont hoe een eenvoudige Max/MSP patch er grafisch uitziet.
 
 \subsection{Teensy}
 
@@ -112,13 +128,14 @@ Om de synchronisatiealgoritmes en het bijhorende systeem in een representatieve 
 	\centering
 	\advance\parskip0.3cm
 	\includegraphics[width=0.4\textwidth]{teensy.jpg}
+	\label{teensy-pic}
 \end{figure}
 
-In hoofdstuk \ref{evaluatie} wordt deze testopstelling meer in detail besproken.
+In hoofdstuk \ref{evaluatie} wordt de testen die met de Teensy microcontroller zijn uitgevoerd meer in detail besproken. Figuur \ref{teensy-pic} toont een typische testopstelling waarbij twee sensoren zijn aangesloten op de microcontroller.
 
 \section{Accoustic fingerprinting}
 
-De Panako softwarebibliotheek bevat een zeer goede implementatie van het accoustic fingerprinting algoritme. Om wijzigingen mogelijk te maken hebben is de code van het algoritme overgenomen in het project van dit onderzoek. De overgenomen code blijft wel nog steeds afhankelijk van enkele klassen uit het Panako project. 
+De Panako softwarebibliotheek bevat een implementatie van het accoustic fingerprinting algoritme. Om wijzigingen mogelijk te maken hebben is de code van het algoritme overgenomen in het project van dit onderzoek. De overgenomen code blijft wel nog steeds afhankelijk van enkele klassen uit het Panako project. 
 
 \subsection{Optimalisaties}
 
@@ -272,7 +289,7 @@ De parameters van het kruiscovariantie algoritme zijn net zoals die van het acco
 	Hoewel het FFT algoritme eigenlijk niets te maken heeft met het berekenen van de kruiscovariantie speelt deze parameter bij dit algoritme toch een belangrijk rol. Deze parameter bepaalt namelijk de grootte van de buffers waartussen de kruiscovariantie berekent wordt. Om een goede werking van het kruiscovariantie algoritme te verzekeren is het een vereiste dat de gebruikte buffers groter zijn dan de minimale nauwkeurigheid van het accoustic fingerprinting algoritme (anders is het mogelijk dat na het knippen de audiofragmenten er geen gelijkenissen te vinden zijn tussen beide buffers). Aangezien deze nauwkeurigheid bepaald wordt de \texttt{NFFT\_STEP\_SIZE} parameter en de \texttt{NFFT\_BUFFER\_SIZE} hier altijd een veelvoud van is, is het gemakkelijk om deze parameter ook voor het kruiscovariantie algoritme te gebruiken.
 	
 	\item\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} \hfill \\
-	Deze parameter bepaalt het aantal keren dat het kruiscovariantie algoritme per buffer (hierbij worden de buffers bedoeld die werden besproken in \ref{streambuffers}) zal worden uitgevoerd. De meest voorkomende latency wordt als resultaat teruggegeven.
+	Deze parameter bepaalt het aantal keren dat het kruiscovariantie algoritme per streambuffer (zie \ref{streambuffers}) zal worden uitgevoerd. De meest voorkomende latency wordt als resultaat teruggegeven.
 	
 	\item\texttt{CROSS\_COVARIANCE\_THRESHOLD} \hfill \\
 	Deze parameter bepaalt het minimum aantal keer dat een latency moet voorkomen om als geldig beschouwt te mogen worden.	Stel dat het algoritme 50 keer wordt uitgevoerd maar elke keer een verschillend resultaat teruggeeft, dan zal er geen latency worden teruggegeven indien deze parameter staat ingesteld op een waarde groter dan 1.
@@ -289,7 +306,7 @@ De parameters van het kruiscovariantie algoritme zijn net zoals die van het acco
 	
 	Bij audiofragmenten van slechte kwaliteit is het van belang om deze parameter zo hoog mogelijk in te stellen. Aangezien het kruiscovariantie algoritme vrij intensief is hangt de waarde wat af van de beschikbare rekenkracht. De praktijk heeft uitgewezen dat de waarde 50 een goed evenwicht biedt tussen correctheid en performantie.
 	
-	Dit aantal heeft als bovengrens ($ N_B $) het aantal keren dat een (kleine) kruiscovariantie buffer (bepaald door \texttt{NFFT\_BUFFER\_SIZE}) past in een (grote) buffer waarin de streams worden ingelezen (bepaald door \texttt{SLICE\_SIZE\_S}). Dit kan worden berekend met volgende formule:
+	Dit aantal heeft als bovengrens ($ N_B $) het aantal keren dat een kruiscovariantie buffer (bepaald door \texttt{NFFT\_BUFFER\_SIZE}) past in een streambuffer (zie \ref{streambuffers}) waarin de streams worden ingelezen (bepaald door \texttt{SLICE\_SIZE\_S}). Dit kan worden berekend met volgende formule:
 	\begin{equation}
 		N_B = \frac{\texttt{SLICE\_SIZE\_S}}{\texttt{NFFT\_BUFFER\_SIZE} \cdot \texttt{SAMPLE\_RATE}}
 	\end{equation}
@@ -299,6 +316,7 @@ De parameters van het kruiscovariantie algoritme zijn net zoals die van het acco
 \end{description}
 
 \section{Filteren van de resultaten}
+\label{filtering}
 
 Het is moeilijk om met zekerheid te bepalen of een bepaalde latency correct is. Toch kan er een soort van statistische optimalisatie worden uitgevoerd op de opeenvolgende latencies. De kans is namelijk klein dat de werkelijke latency verandert en na een korte tijd terugkeert naar de originele waarde.\footnote{Theoretisch is een dergelijke situatie toch mogelijk: In dit voorbeeld wordt de latency bepaalt tussen de audiostreams ($ 8000 Hz$ samplefrequentie) van twee Teensy microcontrollers. Wanneer er 50 samples gedropt worden van de referentie audiostream zorgt dit voor een latencyverhoging van de andere audiostream van $6 ms$. Indien er enkele seconden later 50 samples gedropt worden van de andere audiostream dan leidt dit tot een vermindering van de latency van $ 6 ms $. Visueel is dit een piek in de opeenvolgende latencies.} Ook is de kans klein dat een foute latency toevallig verschillende malen na elkaar gedetecteerd wordt.
 
@@ -380,17 +398,44 @@ Een verhoging van de latency zal bij de moving average filter een onmiddellijke 
 	T_a = (\texttt{SLICE\_SIZE\_S}) \cdot (\texttt{LATENCY\_FILTER\_BUFFER\_SIZE})
 \end{equation}
 
-Bij de moving median filter wordt een wijziging van de latency gedetecteerd wanneer meer dan de helft van de buffer de gewijzigde latency bevat. De tijd tot wanneer een detectie plaatsvindt ($ T_m $) kan met volgende formule bepaalt worden:
+Bij de moving median filter wordt een wijziging van de latency gedetecteerd wanneer meer dan de helft van de buffer de gewijzigde latency bevat. De tijd tot wanneer een detectie plaatsvindt ($ T_m $) kan met volgende formule berekent worden:
 
 \begin{equation}
 T_m = \frac{(\texttt{SLICE\_SIZE\_S}) \cdot (\texttt{LATENCY\_FILTER\_BUFFER\_SIZE})}{2}
 \end{equation}
 
-\section{Structuur softwarebibliotheek}
+\section{Ontwerp van de softwarebibliotheek}
 
-%De Java bibliotheek die verantwoordelijk is voor de realtime synchronisatie van de audiostromen heeft verschillende taken. Eerst en vooral moet de gestreamde data gebufferd worden, het is namelijk onmogelijk om de synchronisatiealgoritmes uit te voeren zonder dat er enkele seconden audio van elke stream zich in het geheugen bevind. Deze verantwoordelijkheid wordt afgehandeld in het \textit{slicer}-gedeelte van de bibliotheek. Wanneer de audio gebufferd is kan het synchronisatie-deel van de applicatie een synchronisatiealgoritme aanroepen en het geretourneerde resultaat teruggeven aan de gebruiker, of de aanroepende applicatie. Welk algoritme precies gebruikt wordt, en de specifieke parameters ervan, is configureerbaar met behulp van een configuratiebestand.
+De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillende onderdelen onderverdeeld in \texttt{packages}. De klassen uit eenzelfde package vervullen samen één taak. In volgende paragraaf zullen de verschillende packages kort toegelicht worden. Vervolgens zal het ontwerp van de applicatie meer in detail besproken worden.
 
-\section{Implementatie van een Max/MSP module}
+\begin{description}	
+	\item\texttt{be.signalsync.stream} \hfill \\
+	Deze package bevat klassen die verantwoordelijk zijn voor het abstract voorstellen en verwerken van streams. Streams kunnen namelijk via verschillende kanalen worden ingelezen. Met behulp van deze klassen wordt een abstractere verwerking mogelijk.
+	
+	\item\texttt{be.signalsync.slicer} \hfill \\
+	De klassen uit deze package zorgen voor het bufferen van de binnenkomende streams (zie sectie \ref{streambuffers}) zodat het bepalen van de latency in realtime mogelijk wordt. 
+
+	\item\texttt{be.signalsync.syncstrategy} \hfill \\
+	Deze package bevat de implementatie van de synchronisatiealgoritmen. Deze algoritmen worden aangeroepen van uit het \texttt{be.signalsync.sync} package. Welk algoritme precies gebruikt wordt kan worden ingesteld via het configuratiebestand.
+	
+	\item\texttt{be.signalsync.datafilters} \hfill \\
+	Deze package bevat de implementaties van de verschillende soorten filters besproken in sectie \ref{filtering}.
+	
+	\item\texttt{be.signalsync.sync} \hfill \\
+	Deze package roept klassen uit het \texttt{be.signalsync.slicer} aan om binnenkomende streams op te splitsen in buffers (alias slices). Vervolgens worden de algoritmes uit \texttt{be.signalsync.syncstrategy} gebruikt om de latency tussen de opeenvolgende buffers te bepalen. Met behulp van het package \texttt{be.signalsync.datafilters} worden eventuele pieken uit de resulterende latencies weggefilterd.
+
+	\item\texttt{be.signalsync.msp} \hfill \\
+	Deze package bevat de implementatie van enkele Max/MSP modules. Met behulp van deze modules is het mogelijk om de streams van microcontrollers in te lezen en de data ervan te synchroniseren.
+	
+\end{description}
+
+\subsection{Streams}
+
+\subsection{Slicen van streams}
+
+\subsection{Oproepen van de algoritmen}
+
+\section{Max/MSP modules}
 
 %Gans dit onderzoek heeft uiteindelijk de bedoeling te resulteren in het ontwerp en implementatie van een module in MAX/MSP\footnote{Cycling ‘74 Max/MSP is een softwarepakket en een visuele programmeertaal waarmee audio, video en multimedia kan worden verwerkt met behulp van onafhankelijke modules. Deze modules kunnen met elkaar worden verbonden om zo complexe zaken te bereiken. Buiten de standaard meegeleverde modules is het ook mogelijk om zelf modules te schrijven.\cite{maxmsp2016}} die realtime synchronisatie mogelijk moet maken via een interface die bruikbaar is voor musicologen/onderzoekers met een beperkte informatica achtergrond.
 

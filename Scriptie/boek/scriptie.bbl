@@ -1,20 +1,9 @@
-\begin{thebibliography}{24}
+\begin{thebibliography}{23}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
-
-\bibitem[ipe()]{ipem2016}
-Ipem - systematic musicology.
-\newblock
-  \url{https://www.ugent.be/lw/kunstwetenschappen/en/research-groups/musicology/ipem}.
-\newblock [Online; geraadpleegd 05-maart-2016].
-
-\bibitem[xip()]{xiph2016}
-{A Digital Media Primer for Geeks}.
-\newblock \url{https://xiph.org/video/vid1.shtml}.
-\newblock [Online; geraadpleegd 21-maart-2016].
 
 \bibitem[aud(2015)]{audacity2016}
 {Audacity}.
@@ -26,15 +15,22 @@ Ipem - systematic musicology.
 \newblock \url{https://cycling74.com/}, 2016.
 \newblock [Online; geraadpleegd 12-maart-2016].
 
-\bibitem[spe(2016)]{spectrogram_dict}
-Dictionary.com unabridged.
-\newblock Mar 2016.
-\newblock URL \url{http://www.dictionary.com/browse/sound-spectrogram}.
+\bibitem[ipe(2016)]{ipem2016}
+Ipem - systematic musicology.
+\newblock
+  \url{https://www.ugent.be/lw/kunstwetenschappen/en/research-groups/musicology/ipem},
+  2016.
+\newblock [Online; geraadpleegd 05-maart-2016].
 
 \bibitem[tee(2016)]{teensy2016}
 {Teensy USB Development Board}.
 \newblock \url{https://www.pjrc.com/teensy/}, 2016.
 \newblock [Online; geraadpleegd 19-maart-2016].
+
+\bibitem[xip(2016)]{xiph2016}
+{A Digital Media Primer for Geeks}.
+\newblock \url{https://xiph.org/video/vid1.shtml}, 2016.
+\newblock [Online; geraadpleegd 21-maart-2016].
 
 \bibitem[Bannach et~al.(2009)Bannach, Amft, and Lukowicz]{bannach2009automatic}
 David Bannach, Oliver Amft, and Paul Lukowicz.
@@ -46,6 +42,14 @@ David Bannach, Oliver Amft, and Paul Lukowicz.
 Benjamin Barras.
 \newblock Sox: Sound exchange.
 \newblock Technical report, 2012.
+
+\bibitem[Bello et~al.(2005)Bello, Daudet, Abdallah, Duxbury, Davies, and
+  Sandler]{bello2005tutorial}
+Juan~Pablo Bello, Laurent Daudet, Samer Abdallah, Chris Duxbury, Mike Davies,
+  and Mark~B Sandler.
+\newblock A tutorial on onset detection in music signals.
+\newblock \emph{Speech and Audio Processing, IEEE Transactions on}, 13\penalty0
+  (5):\penalty0 1035--1047, 2005.
 
 \bibitem[Cannam et~al.(2010)Cannam, Landone, and Sandler]{cannam2010sonic}
 Chris Cannam, Christian Landone, and Mark Sandler.
@@ -103,11 +107,6 @@ Stan Salvador and Philip Chan.
 \newblock Toward accurate dynamic time warping in linear time and space.
 \newblock \emph{Intelligent Data Analysis}, 11\penalty0 (5):\penalty0 561--580,
   2007.
-
-\bibitem[Six(2011)]{pitchrepresentation}
-Joren Six.
-\newblock Pitch, pitch interval and pitch ratio representation.
-\newblock Technical report, 2011.
 
 \bibitem[Six(2015)]{tarsosmanual2016}
 Joren Six.

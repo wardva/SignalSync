@@ -7,15 +7,15 @@ In sectie \ref{bestaande-methoden} van deze scriptie zijn de voornaamste methode
 \subsection{Accoustic fingerprinting}
 \label{accoustic-fingerprinting}
 
-Bij het accoustic fingerprinting algoritme worden fingerprints geëxtraheerd uit audiofragmenten. Het zoek van gelijkenissen gebeurt door de fingerprints met elkaar te vergelijken. 
+Bij het accoustic fingerprinting algoritme worden fingerprints geëxtraheerd uit audiofragmenten. Het zoek naar gelijkenissen gebeurt door de fingerprints met elkaar te vergelijken. 
 
 \subsubsection{Features}
 
-Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van een betrouwbare \textit{feature} om de fingerprints op te baseren. Een feature is een kenmerk waarmee het mogelijk is om audiofragmenten van elkaar te onderscheiden. Mogelijke features zijn bijvoorbeeld ritme of toonhoogte. Een andere zeer goed bruikbare feature zijn de \textit{spectrale pieken} in het tijd-frequentie spectrum van de geluidsfragmenten. Deze feature is compact op te slaan en bevat veel informatie over het opgenomen audiofragment. Hierdoor wordt de kans kleiner dat fingerprints gematcht kunnen worden zonder dat ze daadwerkelijk gebaseerd zijn op hetzelfde geluid.
+Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem is het bepalen van een betrouwbare \textit{feature} om de fingerprints op te baseren. Een feature is een kenmerk waarmee het mogelijk is om audiofragmenten van elkaar te onderscheiden. Mogelijke features zijn bijvoorbeeld \textit{onsets}\footnote{Een onset is een markering in de tijd die het begin van een piek aanduidt. In artikel \cite{bello2005tutorial} wordt de betekenis en detectie van onsets uitgebreid beproken.} of frequentie. Een andere zeer goed bruikbare feature zijn de \textit{spectrale pieken} in het tijd-frequentie spectrum van de geluidsfragmenten. Deze feature is compact op te slaan en bevat veel informatie over het opgenomen audiofragment. Hierdoor wordt de kans kleiner dat fingerprints gematcht kunnen worden zonder dat ze daadwerkelijk gebaseerd zijn op hetzelfde geluid.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
-	\caption[Voorbeeld van een spectrogram]{Spectrogram van \textit{Talk Talk - New Grass}. De donkere vlekken zijn pieken: frequenties die aan een relatief hoge energie voorkomen.}
+	\caption[Voorbeeld van een spectrogram]{Spectrogram van \textit{Talk Talk - New Grass}. De donkere vlekken zijn pieken zijn frequentie-intervallen die aan een relatief hoge energie voorkomen.}
 	\begin{center}
 		\advance\parskip0.3cm
 		\input{figuren/spectrogram}
@@ -26,16 +26,16 @@ Een cruciale stap bij de ontwikkeling van een accoustic fingerprinting systeem i
 \subsubsection{Werking}
 
 Een accoustic fingerprinting systeem gebaseerd op de extractie van spectrale pieken gaat in verschillende stappen te werk: 
-Eerst wordt het tijdsignaal (de typische golfvorm) van elk geluidsfragment omgezet tot een verzameling functies in het frequentiedomein. Deze omzetting gebeurt met het \textit{Fast Fourrier Transformation} algoritme (FFT). Het tijdsignaal wordt in kleine stukjes onderverdeeld (standaardgrootte: 512 samples, zie \ref{accoustic-fingerprinting-params}). Elk klein stukje audio wordt opgeslaan in een \textit{FFT buffer}. Vervolgens wordt het FFT algoritme op elke FFT buffer uitgevoerd. De inhoudt van het FFT buffer kan gezien worden als een functie in het tijddomein. Het resultaat van het FFT algoritme is de fourier getransformeerde van deze functie: een functie in het frequentiedomein.
-De verzameling fourier getransformeerde functies stelt het audiofragment voor in het tijd-frequentie domein. 
+
+Eerst wordt het tijdsignaal (de typische golfvorm) van elk geluidsfragment omgezet tot een verzameling functies in het frequentiedomein. Deze omzetting gebeurt met het \textit{Fast Fourier Transformation} algoritme (FFT). Het tijdsignaal wordt in kleine stukjes onderverdeeld (standaardgrootte: 512 samples, zie \ref{accoustic-fingerprinting-params}). Elk stukje audio wordt opgeslagen in een buffer waarop vervolgens het FFT algoritme op wordt uitgevoerd\footnote{Het uitvoeren van een FFT op zo'n klein stukje audio wordt ook wel de \textit{Short Time Fourier Transformation} of SFT genoemd}. De opeenvolgende buffers worden genummerd met een \textit{buffer index}. De inhoud van de buffer kan gezien worden als een signaal in het tijddomein. Het resultaat van het FFT algoritme is de fourier getransformeerde van dit signaal: een reeks van een eindig aantal frequentie-intervallen. Elke frequentie-interval is genummerd met een \textit{bin index}. De verzameling van alle fourier getransformeerden stelt het audiofragment voor in het tijd-frequentie domein. %Dit paragraaf nog eens laten nalezen
 
 De grafische voorstelling van deze verzameling functies wordt het spectrogram genoemd. Een spectrogram is het duidelijkst wanneer op de x-as de tijd en op de y-as de frequentie wordt weergegeven. De intensiteit waarmee een bepaalde frequentie voorkomt kan worden aangeduid door gebruik te maken van verschillende kleuren of contrasten. Figuur \ref{spectrogram} toont een spectrogram waarbij frequentie met een hoge intensiteit donkerder zijn weergegeven.
 
 In artikel \cite{oppenheim1970speech} wordt het FFT algoritme uitgebreid besproken.
 
-Na het omzetten van de te vergelijken geluidsfragmenten naar hun tijd-frequentie representatie kan er naar kandidaat-pieken worden gezocht. Dit zijn lokale maxima waarbij de hoeveelheid energie waarmee de frequentie voorkomt hoger is dan bij alle aanliggende tijd-frequentie punten\cite{six2014panako}. In het spectrogram kan elk donker vlekje gezien worden als een kandidaat-piek.
+Na het omzetten van de te vergelijken geluidsfragmenten naar hun tijd-frequentie representatie kan er naar kandidaat-pieken worden gezocht. Dit zijn lokale maxima waarbij de hoeveelheid energie waarmee de frequentie voorkomt hoger is dan bij zijn buren \cite{six2014panako}. In het spectrogram kan elk donker vlekje gezien worden als een kandidaat-piek.
 
-Wanneer deze stap is afgerond kunnen de fingerprints bepaald worden. Een fingerprint is een de verbinding tussen twee spectrale pieken. Welke kandidaat-pieken gebruikt zullen worden in fingerprints hangt af van de implementatie van het algoritme en de ingestelde parameters. Enkele parameters die hier invloed op hebben zullen in sectie \ref{accoustic-fingerprinting-params} van deze scriptie besproken worden.
+Wanneer deze stap is afgerond kunnen de fingerprints bepaald worden. Een fingerprint is een de verbinding tussen twee spectrale pieken. Welke kandidaat-pieken gebruikt zullen worden in fingerprints hangt af van de implementatie van het algoritme en de ingestelde parameters. Enkele parameters die hier invloed op hebben zullen in sectie \ref{accoustic-fingerprinting-params} van deze scriptie besproken worden. Figuur \ref{kandidaat-pieken} toont een spectrogram met waarop enkele kandidaat-pieken en fingerprints zijn aangeduid.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -44,10 +44,11 @@ Wanneer deze stap is afgerond kunnen de fingerprints bepaald worden. Een fingerp
 		\advance\parskip0.3cm
 		\input{figuren/fingerprints}
 	\end{center}
+	\label{kandidaat-pieken}
 \end{figure}
 
 Na het bepalen van de fingerprints worden ze opgeslagen in een datastructuur waarin snel naar matches kan worden gezocht.
-Om dit mogelijk te maken moeten er van de fingerprints enkele typerende getallen bepaald worden:
+Om dit mogelijk te maken moeten er van de fingerprints enkele typerende getallen bepaald worden.
 
 \begin{itemize}[noitemsep]
 	\item $ f1 $ en $ f2 $: de frequentie van de spectrale pieken van de fingerprint.
@@ -56,6 +57,8 @@ Om dit mogelijk te maken moeten er van de fingerprints enkele typerende getallen
 	\item $ \Delta t $: het verschil van de tijd van beide spectrale pieken van de fingerprint.
 \end{itemize}
 
+ Figuur \ref{schematische-fingerprint} toont een schematische voorstelling van een fingerprint waarop deze getallen zijn aangeduid.
+
 \begin{figure}[h]
 	\captionsetup{width=0.7\textwidth}
 	\caption[De anatomie van een fingerprint]{De anatomie van een fingerprint in het tijd-frequentie domein. De rode lijn stelt de fingerprint voor tussen twee (niet afgebeelde) spectrale pieken. De typische parameters van de fingerprint zijn aangeduid op de assen. Met toestemming overgenomen uit artikel \cite{six2015multimodal}.}
@@ -63,6 +66,7 @@ Om dit mogelijk te maken moeten er van de fingerprints enkele typerende getallen
 		\advance\parskip0.3cm
 		\input{figuren/fingerprint_example_graph}
 	\end{center}
+	\label{schematische-fingerprint}
 \end{figure}
 
 Bij het zoeken naar matches kan er gesteund worden op enkele typische eigenschappen van fingerprints: 
@@ -79,22 +83,26 @@ Artikel \cite{six2014panako} geeft meer informatie over de omzetting van deze dr
 
 Een fingerprint kan bijgevolg gezien worden als verzameling gegevens met de volgende structuur: $ ( id; t1; hash(f1; \Delta f; \Delta t) ) $. Het zoeken naar fingerprints met overeenkomstige hashwaarden is mogelijk in $O(1)$ door gebruik te maken van een hashtabel. De precieze werking hiervan valt buiten de scope van deze scriptie.
 
-Om te bepalen of twee audiofragmenten wel degelijk overeenkomen wordt er gezocht naar alle fingerprints met een overeenkomende hashwaarde. Van elk paar overeenkomende fingerprints wordt het verschil tussen $ t1 $ berekend. Dit verschil wordt de offset genoemd. Het vinden van een groot aantal matches met dezelfde offset wijst op een sterke gelijkenis tussen de audiofragmenten. Wat de precieze waarde is van ``een groot aantal'' is een parameter van het algoritme.
+Om te bepalen of twee audiofragmenten wel degelijk overeenkomen wordt er gezocht naar alle fingerprints met een overeenkomende hashwaarde. Van elk paar overeenkomende fingerprints wordt het verschil tussen $ t1 $ berekend. Dit verschil wordt de offset genoemd. Het vinden van een groot aantal matches met dezelfde offset wijst op een sterke gelijkenis tussen de audiofragmenten. De precieze waarde van ``een groot aantal'' wordt bepaald door een parameter van het algoritme.
 
 \subsubsection{Bepalen van de latency}
 
 Accoustic fingerprinting kan gebruikt worden om streams te synchroniseren door de ze eerst te bufferen. Wanneer een buffer volledig is opgevuld kan deze net zoals een kort audiofragment worden verwerkt door het algoritme. De latency tussen streams wordt bepaald door de offset die in vorig paragraaf werd beschreven: het verschil tussen de $ t1 $ waarden stelt namelijk de verschuiving tussen de geluidsfragmenten voor.
 
-Een uitgebreidere beschrijving is te vinden in artikel \cite{Wang2003a}. De methode die in het artikel en deze scriptie besproken werd is beperkt tot het vergelijken van audiofragmenten die in tijd noch toonhoogte gewijzigd zijn. Aan het IPEM is een aangepaste methode ontwikkeld die dit wel toelaat \cite{six2014panako}.
+Figuur \ref{schematische-synchronisatie} toont schematisch alle stappen die moeten worden doorlopen om met behulp van accoustic fingerprinting audiostreams te synchroniseren.
 
+\vspace{0.3cm}
 \begin{figure}[h]
 	\captionsetup{width=0.7\textwidth}
 	\caption[Schema synchronisatie met fingerprinting]{Schematische voorstelling van synchronisatie met behulp van een accoustic fingerprinting systeem.}
 	\advance\parskip0.5cm
 	\input{figuren/fingerprinting_flowchart.tikz}
 	\advance\parskip1cm
+	\label{schematische-synchronisatie}
 \end{figure}
 \vspace{2.5cm}
+
+Een uitgebreidere beschrijving is te vinden in artikel \cite{Wang2003a}. De methode die in het artikel en deze scriptie besproken werd is beperkt tot het vergelijken van audiofragmenten die in tijd noch toonhoogte gewijzigd zijn. Aan het IPEM is een aangepaste methode ontwikkeld die dit wel toelaat \cite{six2014panako}.
 
 \subsubsection{Nauwkeurigheid}
 
@@ -102,24 +110,24 @@ Zowel de snelheid waarmee wijzigingen van de latency bepaald kunnen worden als d
 
 De detectiesnelheid is vooral afhankelijk van de buffergrootte waarop het algoritme wordt uitgevoerd. Met deze instelling moet echter omzichtig worden omgegaan: een te kleine buffergrootte kan er toe leiden dat het algoritme niet meer in staat is om voldoende matches te vinden. Het kan helpen om andere parameters te wijzigen waardoor het vinden van een groot aantal matches gegarandeerd blijft. Deze parameters worden in sectie \ref{accoustic-fingerprinting-params} in detail besproken.
 
-De nauwkeurigheid van de latency van het algoritme hangt af van de parameters van het FFT algoritme. Een nauwkeurigheid van 16 ms of 32 ms is standaard. De precieze werking van het FFT algoritme is zéér interessant maar valt buiten de scope van deze scriptie.
+De nauwkeurigheid van de latency van het algoritme hangt af van de parameters van het FFT algoritme. Een nauwkeurigheid van 16 ms of 32 ms is standaard. De precieze werking van het FFT algoritme valt buiten de scope van deze scriptie.
 
 \subsection{Kruiscovariantie}
 \label{kruiscovariantie}
 
-Deze methode bepaalt de gelijkenis tussen twee audiofragmenten en resulteert in één getal. Dit getal is een soort van score die aangeeft in welke mate twee signalen overeenkomen. De latency tussen twee audiofragmenten kan bepaald worden door deze berekening uit te voeren voor elke mogelijke verschuiving. De verschuiving waarbij het resulterend getal het hoogst is bepaalt de latency.
+Deze methode bepaalt de gelijkenis tussen twee audiofragmenten en resulteert in één getal. Dit getal is een soort van score die aangeeft in welke mate twee signalen overeenkomen. De latency tussen twee audiofragmenten kan bepaald worden door deze berekening uit te voeren voor \textbf{elke mogelijke verschuiving}. De verschuiving waarbij het resulterend getal het hoogst is bepaalt de latency.
 
 \subsubsection{Werking}
 
-Stel twee audioblokken $ a $ en $ b $ bestaande uit een gelijk aantal samples ($n$). Deze audioblokken worden telkens cyclisch één sample verschoven tot wanneer de kruiscovariantie waarde voor elke mogelijke verschuiving berekend werd. De variabele $ i $ stelt de huidige verschuiving voor en gaat van 0 tot $ n $. De kruiscovariantie wordt berekend met volgende formule:
+Stel twee audioblokken $ a $ en $ b $ bestaande uit een gelijk aantal samples ($n$). Deze audioblokken worden telkens cyclisch één sample verschoven tot wanneer de kruiscovariantie waarde ($ k $) voor elke mogelijke verschuiving berekend werd. De variabele $ i $ stelt de huidige verschuiving voor en gaat van 0 tot $ n $. De kruiscovariantie wordt berekend met formule:
 
 \begin{equation}
-\sum_{j=0}^{n} a_{j} \cdot b_{(i+j)\ mod\ n}
+	k = \sum_{j=0}^{n} a_{j} \cdot b_{(i+j)\ mod\ n}
 \end{equation}
 
 De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden kan bepaald worden door dit resultaat te delen door de samplefrequentie.
 
-De methode kan de latency tot op één sample nauwkeurig bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is ruim voldoende voor het huidige probleem.
+De methode kan de latency \textbf{tot op één sample nauwkeurig} bepalen. De maximaal bereikbare nauwkeurigheid hangt dus af van de samplefrequentie van de audioblokken. Bij een samplefrequentie van $8000 Hz$ is dit $ 1/8000 Hz = 0.125 ms $. Dit is ruim voldoende voor het huidige probleem.
 
 Een nadeel aan deze methode is de performantie. Het berekenen van de beste kruiscovariantie van twee audioblokken bestaande uit $ n $ samples kan gebeuren in  $O(n^{2})$. Het is dus belangrijk om bij deze berekening de grootte van de audioblokken te beperken.
 
@@ -136,12 +144,14 @@ Het accoustic fingerprinting algoritme is zeer snel en robuust en kan gebruikt w
 
 Het kruiscovariantie algoritme kan eveneens gebruikt worden om (gebufferde) audiostreams te synchroniseren. De grootste troef van dit algoritme is haar nauwkeurigheid: in de beste omstandigheden kan het algoritme resultaten bekomen tot op één sample nauwkeurig. Het bereiken van een dergelijke nauwkeurigheid is onmogelijk met eender welk ander besproken algoritme. De keerzijde is de performantie van het algoritme. Bij het synchroniseren van grote audioblokken kan dit problematisch zijn.
 
-De kenmerken van deze algoritmen zijn heel erg complementair. De gemakkelijkste manier om een robuust, snel én nauwkeurig systeem op te bouwen is door het beste van de twee werelden te combineren. Het accoustic fingerprinting algoritme kan zorgen voor de synchronisatie tot op enkele tientallen milliseconden nauwkeurig. Dit resultaat laat toe dat we het kruiscovariantie algoritme kunnen uitvoeren op zeer korte stukjes audio (een honderdtal milliseconden volstaat).
+De kenmerken van deze algoritmen zijn complementair. De gemakkelijkste manier om een robuust, snel én nauwkeurig systeem op te bouwen is door het beste van de twee werelden te combineren. Het accoustic fingerprinting algoritme kan zorgen voor de synchronisatie tot op enkele tientallen milliseconden nauwkeurig. Dit resultaat laat toe dat we het kruiscovariantie algoritme kunnen uitvoeren op zeer korte stukjes audio (een honderdtal milliseconden volstaat).
 
 \section{Bufferen van streams}
 \label{streambuffers}
 
-In deze scriptie is al ettelijke malen vermeld geweest dat het belangrijk is dat de streams gebufferd worden. Zonder het bufferen is het onmogelijk om de synchronisatiealgoritmen uit te voeren. 
+Aangezien de algoritmes een bepaalde hoeveelheid audio nodig hebben vooraleer ze kunnen worden uitgevoerd is het noodzakelijk om de streams eerst te bufferen. Dit proces moet herhaald worden aangezien er mogelijk samples gedropt worden of drift kan ontstaan. In dit deel zal worden uitgelegd hoe het bufferen precies in zijn werk gaat. Om verwarring met andere soorten buffers te vermijden zal dit type buffer verder in deze scriptie een \textit{streambuffer} genoemd worden.
+
+\subsubsection{Buffergrootte}
 
 De grootte van de buffer heeft invloed op de kwaliteit van de resultaten. Het spreekt voor zich dat het algoritme beter kan presteren wanneer er 10 seconden in plaats van 1 seconde audio geanalyseerd wordt. Een nadeel is echter dat het langer duurt vooraleer een wijzing van de latency gedetecteerd kan worden. 
 
