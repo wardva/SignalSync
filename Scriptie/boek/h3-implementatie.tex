@@ -383,14 +383,14 @@ De wijziging van de latency wordt niet afgevlakt zoals bij de moving average fil
 	Deze parameter bepaalt welke soort filter zal worden toegepast op de binnenkomende latencies. Mogelijke waarden zijn: \texttt{average}, \texttt{median} en \texttt{none}.
 	
 	\item\texttt{LATENCY\_FILTER\_BUFFER\_SIZE} \hfill \\
-	Dit is de grootte van de buffer waarin de meest recente latencies zullen worden opgeslagen. Zoals al is vermeld  is het aangeraden om als waarde een oneven getal te kiezen.
+	Dit is de grootte van de buffer waarin de meest recente latencies zullen worden opgeslagen. Zoals al eerder is aangehaald is het aangeraden om als waarde een oneven getal te kiezen.
 
 \end{description}
 
 \subsection{Gevolgen}
 \label{filter-gevolgen}
 
-Het filteren van de latency heeft een negatief effect op de snelheid waarmee wijzigingen van de latency gedetecteerd kunnen worden. Zowel de grootte van de latency filter buffer als de grootte van de streambuffers (zie \ref{streambuffers}) hebben invloed op de snelheid waarmee nieuwe latencies gedetecteerd zullen worden. De grootte van de streambuffers (parameter \texttt{SLICE\_SIZE\_S}) bepaalt namelijk met welk interval nieuwe latencies binnenkomen. 
+Het filteren van de latency heeft een negatief effect op de snelheid waarmee wijzigingen van de latency gedetecteerd kunnen worden. Zowel de grootte van de latency filter buffer als de grootte van de streambuffers (zie sectie \ref{streambuffers}) hebben invloed op de snelheid waarmee nieuwe latencies gedetecteerd zullen worden. De grootte van de streambuffers (parameter \texttt{SLICE\_SIZE\_S}) bepaalt namelijk met welk interval nieuwe latencies binnenkomen. 
 
 Een verhoging van de latency zal bij de moving average filter een onmiddellijke maar beperkte invloed hebben op het gefilterde resultaat. De tijd die nodig is om tot een stabiel resultaat ($ T_a $) te komen kan berekent worden met volgende formule:
 
@@ -430,6 +430,8 @@ De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillend
 \end{description}
 
 \subsection{Streams}
+
+Streams kunnen verschillende manieren worden ingelezen. De data kan afkomstig zijn van een microfoon, een bestand of van een virtuele patchkabel uit Max/MSP. De TarsosDSP bibliotheek bevat de klasse \texttt{AudioDispatcher} die het inlezen van data afkomstig van een microfoon of bestand verzorgt en een abstracte interface aanbiedt voor verdere verwerking. Het inlezen van data uit Max/MSP gebeurt op een heel andere manier. Daarop wordt er nog een extra abstractie voorzien die toelaat om zowel \texttt{AudioDispatcher} als Max/MSP streams op dezelfde manier aan te spreken.
 
 \subsection{Slicen van streams}
 
