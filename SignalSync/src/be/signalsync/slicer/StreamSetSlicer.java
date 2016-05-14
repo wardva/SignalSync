@@ -164,7 +164,7 @@ public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implement
 	public void onSliceEvent(SliceEvent<float[]> event) {	
 		try {
 			//Put the slice into the blockingQueue of the slicer in the slicesMap.
-			sliceBuffers.get(event.getSlicer()).put(event.getSlices());
+			sliceBuffers.get(event.getSlicer()).put(event.getSlice());
 
 			timingLock.lock();
 			final double delta = 0.01;

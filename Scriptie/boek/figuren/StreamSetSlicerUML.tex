@@ -1,0 +1,34 @@
+\begin {tikzpicture}
+	\begin{package}[SlicerPackage]{be.signalsync.slicer}
+		
+		\begin{abstractclass}[template parameter=<Map<StreamGroup\,float\lbrack \rbrack>>, text width=7cm]{Slicer}{-4,0}
+		\end{abstractclass}
+		
+		\begin{interface}[template parameter=<float\lbrack \rbrack>, text width=5cm]{SliceListener}{3,-1}
+		\end{interface}
+		
+		\begin{class}[text width=7cm]{StreamSetSlicer}{0,-5}
+			\inherit{Slicer}
+			\implement{SliceListener}
+		\end{class}
+	
+		
+		%\begin {class}[text width=6cm]{StreamGroup}{0,-4}
+		%\attribute {- description : String}
+		%\operation {+ start() : void}
+		%\operation {+ stop() : void}
+		%\operation {//getters en setters}
+		%\end {class}
+		
+		%\begin {class}[text width=12cm]{StreamSet}{0,-10}
+		%\operation {+ start() : void}
+		%\operation {+ stop() : void}
+		%\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
+		%\operation {//getters en setters}
+		%\end {class}
+		
+		%\unidirectionalAssociation{[xshift=1cm]StreamGroup.north}{\hspace{2.4cm}dataStreams}{\hspace{1cm}0..*}{[xshift=1cm]Stream.south}
+		
+		%\unidirectionalAssociation{StreamSet}{\hspace{-2.7cm}streamGroups}{\hspace{-1cm}0..*}{StreamGroup}
+	\end{package}
+\end {tikzpicture}

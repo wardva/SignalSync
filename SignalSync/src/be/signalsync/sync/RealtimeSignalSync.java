@@ -90,8 +90,8 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 	 */
 	@Override
 	public void onSliceEvent(SliceEvent<Map<StreamGroup, float[]>> event) {
-		List<StreamGroup> streams = new ArrayList<>(event.getSlices().keySet());
-		List<float[]> slices = new ArrayList<>(event.getSlices().values());
+		List<StreamGroup> streams = new ArrayList<>(event.getSlice().keySet());
+		List<float[]> slices = new ArrayList<>(event.getSlice().values());
 
 		List<Double> rawLatencies = new ArrayList<>(streams.size());
 		rawLatencies.add(0.0D); //Reference stream latency

@@ -1,24 +1,24 @@
 package be.signalsync.stream;
 
+/**
+ * This class contains a timestamp and a small buffer of 
+ * floating point values from a stream. 
+ * 
+ * @author Ward Van Assche
+ */
 public class StreamEvent {
 	private float[] floatBuffer;
-	private double timeStamp;
+	private double timestamp;
 	
 	public StreamEvent(float[] floatBuffer, double timeStamp) {
 		this.floatBuffer = floatBuffer;
-		this.timeStamp = timeStamp;
+		this.timestamp = timeStamp;
 	}
 	public float[] getFloatBuffer() {
 		return floatBuffer;
 	}
-	public void setFloatBuffer(float[] data) {
-		this.floatBuffer = data;
-	}
 	public double getTimeStamp() {
-		return timeStamp;
-	}
-	public void setTimeStamp(double timeStamp) {
-		this.timeStamp = timeStamp;
+		return timestamp;
 	}
 	public int getBufferSize() {
 		return getFloatBuffer().length;

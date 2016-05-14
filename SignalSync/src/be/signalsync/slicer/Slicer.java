@@ -26,27 +26,7 @@ public abstract class Slicer<T> {
 	public void addEventListener(final SliceListener<T> listener) {
 		listeners.add(listener);
 	}
-
-	/**
-	 * Execute the done method of the interested listeners.
-	 */
-	public void emitDoneEvent() {
-		for (final SliceListener<T> l : listeners) {
-			l.done(this);
-		}
-	}
-
-	/**
-	 * Send a new slice result to the interested listeners
-	 * @param result The slice result.
-	 */
-	public void emitSliceEvent(final T result, double beginTime) {
-		SliceEvent<T> event = new SliceEvent<T>(this, result, beginTime);
-		for (final SliceListener<T> l : listeners) {
-			l.onSliceEvent(event);
-		}
-	}
-
+	
 	/**
 	 * Remove a listener from the interested set.
 	 * @param listener
@@ -54,4 +34,26 @@ public abstract class Slicer<T> {
 	public void removeEventListener(final SliceListener<T> listener) {
 		listeners.remove(listener);
 	}
+	
+	/**
+	 * Send a new slice result to the interested listeners
+	 * @param result The slice result.
+	 */
+	protected void emitSliceEvent(final T result, double beginTime) {
+		SliceEvent<T> event = new SliceEvent<T>(this, result, beginTime);
+		for (final SliceListener<T> l : listeners) {
+			l.onSliceEvent(event);
+		}
+	}
+
+	/**
+	 * Execute the done method of the interested listeners.
+	 */
+	protected void emitDoneEvent() {
+		for (final SliceListener<T> l : listeners) {
+			l.done(this);
+		}
+	}
+
+	
 }

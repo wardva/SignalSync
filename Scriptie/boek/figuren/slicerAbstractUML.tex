@@ -1,0 +1,47 @@
+\begin {tikzpicture}
+	\begin{package}[SlicerPackage]{be.signalsync.slicer}
+		
+		\begin{abstractclass}[template parameter=<T>, text width=10.5cm]{Slicer}{0,0}
+		
+			\operation {+ addEventListener(listener : SliceListener) : void}
+			\operation {+ removeEventListener(listener : SliceListener) : void}
+			
+			\operation {\# emitSliceEvent(result : T, beginTime : double) : void}
+			\operation {\# emitDoneEvent() : void}
+		\end{abstractclass}
+		
+		\begin{interface}[template parameter=<T>, text width=7.5cm]{SliceListener}{0,-7}
+			\operation {done(s : Slicer\textless T\textgreater) : void}
+			\operation {onSliceEvent(e : SliceEvent\textless T\textgreater) : void}
+		\end{interface}
+		
+		\unidirectionalAssociation{Slicer}{\hspace{1.7cm}listeners}{\hspace{1cm}0..*}{SliceListener}
+		
+		\begin{class}[template parameter=<T>, text width=12cm]{SliceEvent}{0,-11}
+			\attribute {- slice : T}
+			\attribute {- slicer : StreamSlicer\textless T\textgreater}
+			\attribute {- timestamp : double}
+			
+			\operation {+ SliceEvent(slicer : Slicer\textless T\textgreater, slices : T, beginTime : double)}
+			\operation {// getters}
+		\end{class}
+		
+		%\begin {class}[text width=6cm]{StreamGroup}{0,-4}
+		%\attribute {- description : String}
+		%\operation {+ start() : void}
+		%\operation {+ stop() : void}
+		%\operation {//getters en setters}
+		%\end {class}
+		
+		%\begin {class}[text width=12cm]{StreamSet}{0,-10}
+		%\operation {+ start() : void}
+		%\operation {+ stop() : void}
+		%\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
+		%\operation {//getters en setters}
+		%\end {class}
+		
+		%\unidirectionalAssociation{[xshift=1cm]StreamGroup.north}{\hspace{2.4cm}dataStreams}{\hspace{1cm}0..*}{[xshift=1cm]Stream.south}
+		
+		%\unidirectionalAssociation{StreamSet}{\hspace{-2.7cm}streamGroups}{\hspace{-1cm}0..*}{StreamGroup}
+	\end{package}
+\end {tikzpicture}

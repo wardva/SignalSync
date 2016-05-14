@@ -41,18 +41,19 @@
 \contentsline {chapter}{\numberline {3}Implementatie}{26}{chapter.3}
 \contentsline {section}{\numberline {3.1}Technologie\IeC {\"e}n en software}{26}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}Java 7}{26}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}TarsosDSP}{27}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}Panako}{28}{subsection.3.1.3}
-\contentsline {subsection}{\numberline {3.1.4}FFmpeg}{29}{subsection.3.1.4}
-\contentsline {subsection}{\numberline {3.1.5}SoX}{29}{subsection.3.1.5}
-\contentsline {subsection}{\numberline {3.1.6}Sonic Visualiser}{30}{subsection.3.1.6}
-\contentsline {subsection}{\numberline {3.1.7}Audacity}{31}{subsection.3.1.7}
-\contentsline {subsection}{\numberline {3.1.8}Max/MSP}{31}{subsection.3.1.8}
-\contentsline {subsection}{\numberline {3.1.9}Teensy}{32}{subsection.3.1.9}
+\contentsline {subsection}{\numberline {3.1.2}JUnit}{27}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}TarsosDSP}{27}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}Panako}{28}{subsection.3.1.4}
+\contentsline {subsection}{\numberline {3.1.5}FFmpeg}{29}{subsection.3.1.5}
+\contentsline {subsection}{\numberline {3.1.6}SoX}{30}{subsection.3.1.6}
+\contentsline {subsection}{\numberline {3.1.7}Sonic Visualiser}{30}{subsection.3.1.7}
+\contentsline {subsection}{\numberline {3.1.8}Audacity}{31}{subsection.3.1.8}
+\contentsline {subsection}{\numberline {3.1.9}Max/MSP}{32}{subsection.3.1.9}
+\contentsline {subsection}{\numberline {3.1.10}Teensy}{32}{subsection.3.1.10}
 \contentsline {section}{\numberline {3.2}Accoustic fingerprinting}{33}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Optimalisaties}{33}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Parameters en hun invloed op het algoritme}{34}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}Optimale instellingen}{35}{subsection.3.2.3}
+\contentsline {subsection}{\numberline {3.2.3}Optimale instellingen}{36}{subsection.3.2.3}
 \contentsline {section}{\numberline {3.3}Kruiscovariantie}{38}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Integratie met accoustic fingerprinting}{38}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Optimalisaties}{41}{subsection.3.3.2}
@@ -69,23 +70,32 @@
 \contentsline {subsection}{\numberline {3.4.4}Gevolgen}{48}{subsection.3.4.4}
 \contentsline {section}{\numberline {3.5}Ontwerp van de softwarebibliotheek}{48}{section.3.5}
 \contentsline {subsection}{\numberline {3.5.1}Streams}{50}{subsection.3.5.1}
-\contentsline {subsection}{\numberline {3.5.2}Slicen van streams}{50}{subsection.3.5.2}
-\contentsline {subsection}{\numberline {3.5.3}Oproepen van de algoritmen}{50}{subsection.3.5.3}
-\contentsline {section}{\numberline {3.6}Max/MSP modules}{50}{section.3.6}
-\contentsline {chapter}{\numberline {4}Evaluatie}{51}{chapter.4}
-\contentsline {section}{\numberline {4.1}Unit testen}{51}{section.4.1}
-\contentsline {section}{\numberline {4.2}Stresstesten}{51}{section.4.2}
-\contentsline {section}{\numberline {4.3}Test in de praktijk}{51}{section.4.3}
-\contentsline {section}{\numberline {4.4}Usability testen}{51}{section.4.4}
-\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{51}{section.4.5}
-\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{51}{section.4.6}
-\contentsline {chapter}{\numberline {5}Conclusie}{52}{chapter.5}
-\contentsline {chapter}{Appendices}{53}{section*.47}
-\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{54}{B"ylage.a.A}
-\contentsline {chapter}{Referentielijst}{56}{chapter*.48}
-\contentsline {chapter}{L"yst van figuren}{59}{chapter*.49}
-\contentsline {chapter}{Lijst van figuren}{59}{chapter*.49}
-\contentsline {chapter}{L"yst van tabellen}{60}{chapter*.50}
-\contentsline {chapter}{Lijst van tabellen}{60}{chapter*.50}
-\contentsline {chapter}{Lijst van codefragmenten}{61}{chapter*.51}
-\contentsline {chapter}{Lijst van codefragmenten}{61}{chapter*.51}
+\contentsline {subsubsection}{AudioDispatcherStream}{50}{section*.48}
+\contentsline {subsubsection}{MSPStream}{50}{section*.49}
+\contentsline {subsubsection}{Het verwerken van streams}{52}{section*.50}
+\contentsline {subsubsection}{Het bijhouden van streams}{53}{section*.52}
+\contentsline {subsection}{\numberline {3.5.2}Bufferen van streams}{54}{subsection.3.5.2}
+\contentsline {subsubsection}{De abstracte klasse Slicer}{55}{section*.54}
+\contentsline {subsubsection}{StreamSlicer}{56}{section*.56}
+\contentsline {subsubsection}{StreamSetSlicer}{57}{section*.58}
+\contentsline {subsection}{\numberline {3.5.3}Oproepen van de algoritmen}{58}{subsection.3.5.3}
+\contentsline {subsection}{\numberline {3.5.4}Bepalen van de latency}{58}{subsection.3.5.4}
+\contentsline {subsection}{\numberline {3.5.5}Filteren van de resultaten}{58}{subsection.3.5.5}
+\contentsline {section}{\numberline {3.6}Max/MSP modules}{58}{section.3.6}
+\contentsline {chapter}{\numberline {4}Evaluatie}{59}{chapter.4}
+\contentsline {section}{\numberline {4.1}Unit testen}{59}{section.4.1}
+\contentsline {section}{\numberline {4.2}Stresstesten}{59}{section.4.2}
+\contentsline {section}{\numberline {4.3}Test in de praktijk}{59}{section.4.3}
+\contentsline {section}{\numberline {4.4}Usability testen}{59}{section.4.4}
+\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{59}{section.4.5}
+\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{59}{section.4.6}
+\contentsline {chapter}{\numberline {5}Conclusie}{60}{chapter.5}
+\contentsline {chapter}{Bijlagen}{61}{section*.60}
+\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{62}{Bijlage.a.A}
+\contentsline {chapter}{Referentielijst}{64}{chapter*.61}
+\contentsline {chapter}{L"yst van figuren}{67}{chapter*.62}
+\contentsline {chapter}{Lijst van figuren}{68}{chapter*.62}
+\contentsline {chapter}{L"yst van tabellen}{69}{chapter*.63}
+\contentsline {chapter}{Lijst van tabellen}{69}{chapter*.63}
+\contentsline {chapter}{Lijst van codefragmenten}{70}{chapter*.64}
+\contentsline {chapter}{Lijst van codefragmenten}{70}{chapter*.64}

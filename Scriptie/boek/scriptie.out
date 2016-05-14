@@ -20,47 +20,50 @@
 \BOOKMARK [0][-]{chapter.3}{Implementatie}{}% 20
 \BOOKMARK [1][-]{section.3.1}{Technologie\353n en software}{chapter.3}% 21
 \BOOKMARK [2][-]{subsection.3.1.1}{Java 7}{section.3.1}% 22
-\BOOKMARK [2][-]{subsection.3.1.2}{TarsosDSP}{section.3.1}% 23
-\BOOKMARK [2][-]{subsection.3.1.3}{Panako}{section.3.1}% 24
-\BOOKMARK [2][-]{subsection.3.1.4}{FFmpeg}{section.3.1}% 25
-\BOOKMARK [2][-]{subsection.3.1.5}{SoX}{section.3.1}% 26
-\BOOKMARK [2][-]{subsection.3.1.6}{Sonic Visualiser}{section.3.1}% 27
-\BOOKMARK [2][-]{subsection.3.1.7}{Audacity}{section.3.1}% 28
-\BOOKMARK [2][-]{subsection.3.1.8}{Max/MSP}{section.3.1}% 29
-\BOOKMARK [2][-]{subsection.3.1.9}{Teensy}{section.3.1}% 30
-\BOOKMARK [1][-]{section.3.2}{Accoustic fingerprinting}{chapter.3}% 31
-\BOOKMARK [2][-]{subsection.3.2.1}{Optimalisaties}{section.3.2}% 32
-\BOOKMARK [2][-]{subsection.3.2.2}{Parameters en hun invloed op het algoritme}{section.3.2}% 33
-\BOOKMARK [2][-]{subsection.3.2.3}{Optimale instellingen}{section.3.2}% 34
-\BOOKMARK [1][-]{section.3.3}{Kruiscovariantie}{chapter.3}% 35
-\BOOKMARK [2][-]{subsection.3.3.1}{Integratie met accoustic fingerprinting}{section.3.3}% 36
-\BOOKMARK [2][-]{subsection.3.3.2}{Optimalisaties}{section.3.3}% 37
-\BOOKMARK [2][-]{subsection.3.3.3}{Parameters en hun invloed op het algoritme}{section.3.3}% 38
-\BOOKMARK [2][-]{subsection.3.3.4}{Optimale instellingen}{section.3.3}% 39
-\BOOKMARK [1][-]{section.3.4}{Filteren van de resultaten}{chapter.3}% 40
-\BOOKMARK [2][-]{subsection.3.4.1}{Werking}{section.3.4}% 41
-\BOOKMARK [2][-]{subsection.3.4.2}{Voorbeelden}{section.3.4}% 42
-\BOOKMARK [2][-]{subsection.3.4.3}{Parameters}{section.3.4}% 43
-\BOOKMARK [2][-]{subsection.3.4.4}{Gevolgen}{section.3.4}% 44
-\BOOKMARK [1][-]{section.3.5}{Ontwerp van de softwarebibliotheek}{chapter.3}% 45
-\BOOKMARK [2][-]{subsection.3.5.1}{Streams}{section.3.5}% 46
-\BOOKMARK [2][-]{subsection.3.5.2}{Slicen van streams}{section.3.5}% 47
-\BOOKMARK [2][-]{subsection.3.5.3}{Oproepen van de algoritmen}{section.3.5}% 48
-\BOOKMARK [1][-]{section.3.6}{Max/MSP modules}{chapter.3}% 49
-\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 50
-\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 51
-\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 52
-\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 53
-\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 54
-\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 55
-\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 56
-\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 57
-\BOOKMARK [0][-]{section*.47}{Appendices}{}% 58
-\BOOKMARK [0][-]{B"ylage.a.A}{Resultaten DTW experiment}{}% 59
-\BOOKMARK [0][-]{chapter*.48}{Referentielijst}{}% 60
-\BOOKMARK [0][-]{chapter*.49}{Lijst van figuren}{}% 61
-\BOOKMARK [0][-]{chapter*.49}{Lijst van figuren}{}% 62
-\BOOKMARK [0][-]{chapter*.50}{Lijst van tabellen}{}% 63
-\BOOKMARK [0][-]{chapter*.50}{Lijst van tabellen}{}% 64
-\BOOKMARK [0][-]{chapter*.51}{Lijst van codefragmenten}{}% 65
-\BOOKMARK [0][-]{chapter*.51}{Lijst van codefragmenten}{}% 66
+\BOOKMARK [2][-]{subsection.3.1.2}{JUnit}{section.3.1}% 23
+\BOOKMARK [2][-]{subsection.3.1.3}{TarsosDSP}{section.3.1}% 24
+\BOOKMARK [2][-]{subsection.3.1.4}{Panako}{section.3.1}% 25
+\BOOKMARK [2][-]{subsection.3.1.5}{FFmpeg}{section.3.1}% 26
+\BOOKMARK [2][-]{subsection.3.1.6}{SoX}{section.3.1}% 27
+\BOOKMARK [2][-]{subsection.3.1.7}{Sonic Visualiser}{section.3.1}% 28
+\BOOKMARK [2][-]{subsection.3.1.8}{Audacity}{section.3.1}% 29
+\BOOKMARK [2][-]{subsection.3.1.9}{Max/MSP}{section.3.1}% 30
+\BOOKMARK [2][-]{subsection.3.1.10}{Teensy}{section.3.1}% 31
+\BOOKMARK [1][-]{section.3.2}{Accoustic fingerprinting}{chapter.3}% 32
+\BOOKMARK [2][-]{subsection.3.2.1}{Optimalisaties}{section.3.2}% 33
+\BOOKMARK [2][-]{subsection.3.2.2}{Parameters en hun invloed op het algoritme}{section.3.2}% 34
+\BOOKMARK [2][-]{subsection.3.2.3}{Optimale instellingen}{section.3.2}% 35
+\BOOKMARK [1][-]{section.3.3}{Kruiscovariantie}{chapter.3}% 36
+\BOOKMARK [2][-]{subsection.3.3.1}{Integratie met accoustic fingerprinting}{section.3.3}% 37
+\BOOKMARK [2][-]{subsection.3.3.2}{Optimalisaties}{section.3.3}% 38
+\BOOKMARK [2][-]{subsection.3.3.3}{Parameters en hun invloed op het algoritme}{section.3.3}% 39
+\BOOKMARK [2][-]{subsection.3.3.4}{Optimale instellingen}{section.3.3}% 40
+\BOOKMARK [1][-]{section.3.4}{Filteren van de resultaten}{chapter.3}% 41
+\BOOKMARK [2][-]{subsection.3.4.1}{Werking}{section.3.4}% 42
+\BOOKMARK [2][-]{subsection.3.4.2}{Voorbeelden}{section.3.4}% 43
+\BOOKMARK [2][-]{subsection.3.4.3}{Parameters}{section.3.4}% 44
+\BOOKMARK [2][-]{subsection.3.4.4}{Gevolgen}{section.3.4}% 45
+\BOOKMARK [1][-]{section.3.5}{Ontwerp van de softwarebibliotheek}{chapter.3}% 46
+\BOOKMARK [2][-]{subsection.3.5.1}{Streams}{section.3.5}% 47
+\BOOKMARK [2][-]{subsection.3.5.2}{Bufferen van streams}{section.3.5}% 48
+\BOOKMARK [2][-]{subsection.3.5.3}{Oproepen van de algoritmen}{section.3.5}% 49
+\BOOKMARK [2][-]{subsection.3.5.4}{Bepalen van de latency}{section.3.5}% 50
+\BOOKMARK [2][-]{subsection.3.5.5}{Filteren van de resultaten}{section.3.5}% 51
+\BOOKMARK [1][-]{section.3.6}{Max/MSP modules}{chapter.3}% 52
+\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 53
+\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 54
+\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 55
+\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 56
+\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 57
+\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 58
+\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 59
+\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 60
+\BOOKMARK [0][-]{section*.60}{Bijlagen}{}% 61
+\BOOKMARK [0][-]{Bijlage.a.A}{Resultaten DTW experiment}{}% 62
+\BOOKMARK [0][-]{chapter*.61}{Referentielijst}{}% 63
+\BOOKMARK [0][-]{chapter*.62}{Lijst van figuren}{}% 64
+\BOOKMARK [0][-]{chapter*.62}{Lijst van figuren}{}% 65
+\BOOKMARK [0][-]{chapter*.63}{Lijst van tabellen}{}% 66
+\BOOKMARK [0][-]{chapter*.63}{Lijst van tabellen}{}% 67
+\BOOKMARK [0][-]{chapter*.64}{Lijst van codefragmenten}{}% 68
+\BOOKMARK [0][-]{chapter*.64}{Lijst van codefragmenten}{}% 69

@@ -57,7 +57,7 @@ public class SlicerApp {
 			@Override
 			public void onSliceEvent(SliceEvent<float[]> event) {
 				try {
-					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(event.getSlices(), sampleRate, bufferSize, overlap);
+					final AudioDispatcher writer = AudioDispatcherFactory.fromFloatArray(event.getSlice(), sampleRate, bufferSize, overlap);
 					final String newname = "./Slices/Clean/" + filename + " - slice - " + i++ + ".wav";
 					writer.addAudioProcessor(new WaveformWriter(writer.getFormat(), newname));
 					writer.run();

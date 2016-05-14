@@ -34,7 +34,8 @@
 \usetikzlibrary{arrows}
 \usepackage{wrapfig}					%Figuren wrappen
 \usepackage{subfig}                     %Figuren naast elkaar floaten
-
+\usepackage[simplified]{pgf-umlcd}					%Uml diagrammen maken
+\include{pgf-umlcd-extensions}
 
 \interfootnotelinepenalty=10000
 
@@ -89,7 +90,12 @@
 %Titels wijzigen in correcte Nederlandse term
 \renewcommand\lstlistlistingname{Lijst van codefragmenten}
 \renewcommand\lstlistingname{Codefragment}
-\addto{\captionsdutch}{\renewcommand{\bibname}{Referentielijst}}
+\addto{\captionsdutch}{
+	\renewcommand{\bibname}{Referentielijst}
+	\renewcommand\appendixname{Bijlage}
+	\renewcommand\appendixpagename{Bijlagen}
+	\renewcommand\appendixtocname{Bijlagen}
+}
 
 \begin{document}
 \selectlanguage{dutch}

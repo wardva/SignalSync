@@ -11,6 +11,11 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 
+/**
+ * Adapter class for converting an AudioDispatcher into an 
+ * implementation of the Stream interface.
+ * @author Ward Van Assche
+ */
 public class AudioDispatcherStream implements Stream {
 	private Map<StreamProcessor, AudioProcessor> processorMap;
 	private AudioDispatcher dispatcher;
@@ -44,8 +49,9 @@ public class AudioDispatcherStream implements Stream {
 	}
 
 	/**
+	 * Create a StreamSlicer instance of this stream.
 	 * Caution: this method adds the slicer as an AudioDispatcher to the
-	 * stream, so don't do it a second time.
+	 * stream, don't do it a second time yourself.
 	 */
 	@Override
 	public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
@@ -54,6 +60,9 @@ public class AudioDispatcherStream implements Stream {
 		return s;
 	}
 	
+	/**
+	 * Starts the AudioDispatcher.
+	 */
 	@Override
 	public void start() {
 		if(executor.isShutdown()) {
@@ -67,6 +76,9 @@ public class AudioDispatcherStream implements Stream {
 		executor.shutdown();
 	}
 	
+	/**
+	 * Stops the AudioDispatcher.
+	 */
 	@Override
 	public void stop() {
 		if(!dispatcher.isStopped()) {

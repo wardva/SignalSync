@@ -10,9 +10,11 @@ Het is ook de bedoeling is om de gebruikersinterface te ontwikkelen met behulp v
 
 Hoewel de laatste versie van Max/MSP (7) het toelaat om Java 8 te gebruiken wordt deze versie in dit project om compatibiliteitsredenen vermeden. 
 
-
+\subsection{JUnit}
+JUnit is een unit testing framework voor Java. JUnit heeft in dit onderzoek een belangrijke rol gespeeld bij het bepalen van de optimale parameters van de verschillende algoritmen. JUnit maakte het mogelijk om de algoritmes herhaald maar met verschillende parameters op een dataset los te laten. JUnit liet toe om in één oogopslag te zien hoe het algoritme heeft gepresteerd.
 
 \subsection{TarsosDSP}
+\label{tarsos}
 
 TarsosDSP is een Java bibliotheek voor realtime audio analyse en verwerking ontwikkeld aan het IPEM. De bibliotheek bevat een groot aantal algoritmes voor audioverwerking en kan nog verder worden uitgebreid. Deze bibliotheek wordt beschreven in artikel \cite{six2014tarsosdsp}. 
 
@@ -431,11 +433,117 @@ De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillend
 
 \subsection{Streams}
 
-Streams kunnen verschillende manieren worden ingelezen. De data kan afkomstig zijn van een microfoon, een bestand of van een virtuele patchkabel uit Max/MSP. De TarsosDSP bibliotheek bevat de klasse \texttt{AudioDispatcher} die het inlezen van data afkomstig van een microfoon of bestand verzorgt en een abstracte interface aanbiedt voor verdere verwerking. Het inlezen van data uit Max/MSP gebeurt op een heel andere manier. Daarop wordt er nog een extra abstractie voorzien die toelaat om zowel \texttt{AudioDispatcher} als Max/MSP streams op dezelfde manier aan te spreken.
+Streams kunnen van verschillende bronnen afkomstig zijn: van een microfoon, van een bestand of van een virtuele patchkabel uit Max/MSP,... Streams afkomstig van een microfoon of bestand kunnen met behulp van de klasse \texttt{AudioDispatcher} worden ingelezen (besproken in sectie \ref{tarsos}). Deze klasse laat op eenvoudige wijze verdere verwerking toe. Het inlezen van data uit Max/MSP gebeurt op een fundamenteel andere manier die niet door de klasse \texttt{AudioDispatcher} ondersteund wordt. Daarom wordt er nog een extra abstractielaag voorzien waarmee het mogelijk wordt om zowel \texttt{AudioDispatchers} als Max/MSP streams op dezelfde manier aan te spreken en te verwerken. Figuur \ref{StreamUml} toont de \texttt{Stream} interface en de klassen die deze interface implementeren. De methode's van de interface worden in de concrete klassen niet herhaald maar zijn uiteraard wel aanwezig.
 
-\subsection{Slicen van streams}
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[UML diagram van streams]{UML diagram: de \texttt{Stream} interface en haar implementaties.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/streamsUML}
+	\end{center}
+	\label{StreamUml}
+\end{figure}
+
+\subsubsection{AudioDispatcherStream}
+De klasse \texttt{AudioDispatcherStream} is een typisch voorbeeld van het \textit{Adapter} ontwerppatroon (meer informatie hierover: \cite{vlissides1995design}). Een bestaande klasse (\texttt{AudioDispatcher}) wordt namelijk verbonden met een nieuwe interface (\texttt{Stream}) met behulp van een adapter of \textit{wrapper} (\texttt{AudioDispatcherStream}). In de adapterklasse wordt er geen echte logica toegevoegd. De enige logica die de klasse bevat heeft als doel het mappen van de methode's van de \texttt{Stream} interface naar de klasse \texttt{AudioDispatcher}. Het attribuut \texttt{processormap} is bijvoorbeeld een \texttt{HashMap} die gebruikt wordt voor het mappen van \texttt{StreamProcessors} (eigen implementatie) naar AudioProcessors (TarsosDSP implementatie). De werking van \texttt{StreamProcessors} wordt verderop in sectie \ref{streamprocessing} besproken.
+
+\subsubsection{MSPStream}
+
+Een \texttt{MSPStream} is geen typische implementatie meer van het adapter pattern. Deze klasse voorziet namelijk een extra methode: \texttt{maxPerformed} met als parameter een \texttt{MSPSignal}. Dit is een belangrijk object in Max/MSP modules geschreven in Java. Een \texttt{MSPSignal} bevat een buffer van samples die via een virtuele Max/MSP patchkabel binnenkomen of buitengaan. Elke keer wanneer een Max/MSP module zo'n object binnenkrijgt moet het worden gedelegeerd aan de corresponderende \texttt{MSPStream}. Dit delegeren gebeurt met behulp van de \texttt{MaxPerformed} methode. Als alle \texttt{MSPSignal} objecten correct gedelegeerd worden dan kan het \texttt{Stream} object op exact dezelfde manier verwerkt worden als een stream afkomstig van een bestand of microfoon.
+
+\subsubsection{Het verwerken van streams}
+\label{streamprocessing}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[UML diagram van de stream verwerkingsklassen]{UML diagram van de klassen en interfaces die een rol spelen bij het verwerken van streams.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/streamProcessingUML}
+	\end{center}
+	\label{StreamProcessing}
+\end{figure}
+
+Streams kunnen door één of meerdere klassen worden verwerkt door de methode's van de interface \texttt{StreamProcessor} te implementeren. Na het inlezen van een bepaalde hoeveelheid data wordt \texttt{process} opgeroepen met als parameter een \texttt{StreamEvent} object. Dit object bevat metadata en een buffer van samplewaarden. Figuur \ref{StreamProcessing} toont een UML diagram van de klassen die met dit proces te maken hebben.
+
+\subsubsection{Het bijhouden van streams}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[UML diagram dat toont hoe streams worden opgeslagen]{UML klassendiagram waarop wordt verduidelijkt hoe de verschillende streams worden bijgehouden alvorens ze gesynchroniseerd kunnen worden. }
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/streamStructureUML}
+	\end{center}
+	\label{streamStorage}
+\end{figure}
+
+In dit onderzoek is er altijd een onderscheid gemaakt tussen datastreams en audiostreams. Datastreams zijn streams afkomstig van sensoren of videocamera's, audiostreams zijn de opnames van het omgevingsgeluid waaraan de datastreams ``gekoppeld'' zijn. Puur softwarematig wordt er echter geen verschil gemaakt tussen deze verschillende soorten streams. Of een digitaal signaal nu afkomstig is van een microfoon of van een sensor, in beide gevallen is het niet meer dan een opeenvolging van samples.
+
+Om de synchronisatiealgoritmes correct aan te roepen moet er toch een onderscheid gemaakt worden tussen de audiostreams en datastreams. Daarom is de klasse \texttt{StreamGroup} in het leven geroepen. Deze klasse bevat één audiostream en nul of meer gekoppelde datastreams. Meestal zijn dit streams die vanuit dezelfde microcontroller zijn ingelezen (zie sectie \ref{probleemschets}).
+
+Een verzameling van \texttt{StreamGroups} wordt een \texttt{StreamSet} genoemd. Een \texttt{StreamSet} is een soort van wrapper voor een lijst van \texttt{StreamGroups}. Om verschillende \texttt{StreamGroups} met elkaar te synchroniseren is het noodzakelijk dat er een \texttt{StreamSet} object van wordt aangemaakt. Vervolgens kan het worden doorgegeven aan de  \texttt{RealtimeSignalSync} klasse, dit is de klasse die verantwoordelijk is voor het bepalen van de latency tussen de verschillende audiostreams. 
+
+Figuur \ref{streamStorage} toont een klassendiagram van hoe de streams intern worden bijgehouden.
+
+\subsection{Bufferen van streams}
+
+Alle klassen die te maken hebben met het bufferen van streams (het opsplitsen in zogenaamde \textit{slices}) bevinden zich in het package \texttt{be.signalsync.slicer}. Het hoe en waarom van deze verwerking werd al uitgebreid behandeld in sectie \ref{streambuffers}.
+
+\subsubsection{De abstracte klasse Slicer}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption{UML diagram de observer logica van de klasse \texttt{Slicer}}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/slicerAbstractUML}
+	\end{center}
+	\label{slicerObserver}
+\end{figure}
+
+Een \texttt{Slicer} is een abstracte klasse die een stream of verzameling van streams inleest, in stukjes knipt en vervolgens deze stukjes teruggeeft aan elke geïnteresseerd object. Hoe en wat er precies in stukjes geknipt wordt hangt af van het subtype van \texttt{Slicer}. De klasse \texttt{Slicer} is enkel verantwoordelijk voor het registreren, bijhouden en verwittigen van objecten die geïnteresseerd zijn in slices. Dit proces wordt verwezenlijk met behulp van het \textit{observer} ontwerppatroon (uitgebreid besproken in boek \cite{vlissides1995design}). 
+
+Figuur \ref{slicerObserver} toont de drie klassen die een rol spelen het observer mechanisme. Elke klasse is generiek en maakt gebruik van type parameter \texttt{T}. Dit is het type van hoe een slice wordt voorgesteld. Bij een slice van een stream is dit type bijvoorbeeld een array van \texttt{float} waarden.
+
+Zoals in de figuur te zien is bevat \texttt{Slicer} een verzameling van geïnteresseerde objecten. De klasse van een geïnteresseerd object moet de interface \texttt{SliceListener} implementeren. Wanneer een object geregistreerd is kan het \texttt{SliceEvent} objecten ontvangen. Dit object bevat de laatste nieuwe slice, de \texttt{Slicer} vanwaar de slice afkomstig is en een timestamp. Wanneer er geen slices meer verzameld kunnen worden kan de methode \texttt{done} van elke geïnteresseerd object worden opgeroepen.
+
+\subsubsection{StreamSlicer}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption{UML diagram van de klasse \texttt{StreamSlicer} en haar supertypes.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/streamSlicerUML}
+	\end{center}
+	\label{streamSlicer}
+\end{figure}
+
+Een \texttt{StreamSlicer} is een subklasse van \texttt{Slicer} die de data afkomstig van een stream opdeelt in \texttt{float} arrays van een welbepaalde lengte. Om toegang te krijgen tot de data van een \texttt{Stream} implementeert de \texttt{StreamSlicer} de interface \texttt{StreamProcessor}. Via \texttt{process} krijgt deze klasse opeenvolgende \texttt{float} arrays met samples binnen die worden opgeslagen in buffers. Wanneer er een slice gereed is worden de buffers samengevoegd tot één float array en wordt \texttt{emitSliceEvent} van de superklasse \texttt{Slicer} opgeroepen. Wanneer \texttt{processingFinished} wordt opgeroepen en de stream dus geen data meer beschikbaar heeft, dan wordt \texttt{emitDoneEvent} zodat alle \texttt{StreamListeners} hiervan op de hoogte zijn.
+
+Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en interfaces. Sommige low-level methoden en attributen zijn hierbij weggelaten. 
+
+\subsubsection{StreamSetSlicer}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption{UML diagram van de klasse \texttt{StreamSetSlicer} en haar supertypes.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/streamSetSlicerUML}
+	\end{center}
+	\label{streamSetSlicer}
+\end{figure}
+
+Een \texttt{StreamSetSlicer} is een subtype van de klasse \texttt{Slicer} die verantwoordelijk is voor het slicen van alle \textbf{audiostreams} van een \texttt{StreamSet}. Per \texttt{StreamGroup} wordt er dus maar één stream in stukjes verdeeld. Dit is logisch aangezien de synchronisatiealgoritmen voor het bepalen van de latency enkel worden uitgevoerd op slices van de audiostream.
 
 \subsection{Oproepen van de algoritmen}
+
+\subsection{Bepalen van de latency}
+
+\subsection{Filteren van de resultaten}
 
 \section{Max/MSP modules}
 

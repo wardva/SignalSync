@@ -9,6 +9,12 @@ import be.signalsync.util.Key;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 
+/**
+ * This class provides some methods to simplify the creation
+ * of different kinds of StreamSets.
+ * @author Ward Van Assche
+ *
+ */
 public class StreamSetFactory {
 	public static StreamSet createFromFiles(String... paths) {
 		List<StreamGroup> streamGroups = new ArrayList<>();

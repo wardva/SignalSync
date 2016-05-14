@@ -5,6 +5,12 @@ import java.util.List;
 import com.cycling74.msp.MSPSignal;
 import be.signalsync.slicer.StreamSlicer;
 
+/**
+ * This class makes it possible to use a sequence of MSPSignal object
+ * as a Stream. This only works if the maxPerformed method is called
+ * correctly. 
+ * @author Ward Van Assche
+ */
 public class MSPStream implements Stream {
 	private List<StreamProcessor> processors;
 	private double sampleRate;
@@ -16,6 +22,10 @@ public class MSPStream implements Stream {
 		this.sampleCtr = 0;
 	}
 	
+	/**
+	 * This method should be called for each MSPSignal object
+	 * received from Max/MSP.
+	 */
 	public void maxPerformed(MSPSignal s) {
 		sampleCtr += s.n;
 		double timestamp = (double) sampleCtr / sampleRate;
@@ -42,7 +52,6 @@ public class MSPStream implements Stream {
 
 	@Override
 	public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
-		//TODO: slicer constructie nog eens bekijken
 		StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, getSampleRate());
 		addStreamProcessor(slicer);
 		return slicer;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class represents 1 audiostream used for synchronisation
+ * and any number of datastreams with the same latency.
  * @author Ward Van Assche
  */
 public class StreamGroup {

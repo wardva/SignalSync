@@ -1,0 +1,25 @@
+\begin {tikzpicture}% [ show background grid ]
+	\begin{package}[StreamPackage]{be.signalsync.stream}
+		\begin {interface}[text width=11cm]{Stream}{0,0}
+		\operation [0]{addStreamProcessor(s : StreamProcessor) : void}
+		\operation [0]{removeStreamProcessor(s : StreamProcessor) : void}
+		\operation [0]{getSampleRate() : double }
+		\operation [0]{createSlicer(sliceSize : int, sliceStep : int) : StreamSlicer }
+		\operation [0]{start() : void}
+		\operation [0]{stop() : void}
+		\end {interface}
+		
+		\begin {class}[text width=11cm]{AudioDispatcherStream}{-2,-7}
+		\implement{Stream}
+		\attribute {- processorMap : Map\textless StreamProcessor, AudioProcessor\textgreater}
+		\operation {+ AudioDispatcherStream(d : AudioDispatcher)}
+		\end {class}
+		
+		\begin {class}[text width=7.5cm]{MSPStream}{2,-10}
+		\implement{Stream}
+		\attribute {- processors : List\textless StreamProcessor\textgreater}
+		\operation {+ MSPStream(sampleRate : double)}
+		\operation {+ maxPerformed(s : MSPSignal) : void}
+		\end {class}
+	\end{package}
+\end {tikzpicture}

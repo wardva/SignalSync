@@ -27,6 +27,12 @@
 \contentsline {figure}{\numberline {3.11}{\ignorespaces Het verloop van de latencies na het toepassen van een moving median filter.\relax }}{47}{figure.caption.46}
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Buffergrootte 3}}}{47}{subfigure.11.1}
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Buffergrootte 5}}}{47}{subfigure.11.2}
+\contentsline {figure}{\numberline {3.12}{\ignorespaces UML diagram van streams}}{51}{figure.caption.47}
+\contentsline {figure}{\numberline {3.13}{\ignorespaces UML diagram van de stream verwerkingsklassen}}{52}{figure.caption.51}
+\contentsline {figure}{\numberline {3.14}{\ignorespaces UML diagram dat toont hoe streams worden opgeslagen}}{53}{figure.caption.53}
+\contentsline {figure}{\numberline {3.15}{\ignorespaces UML diagram de observer logica van de klasse \texttt {Slicer}\relax }}{55}{figure.caption.55}
+\contentsline {figure}{\numberline {3.16}{\ignorespaces UML diagram van de klasse \texttt {StreamSlicer} en haar supertypes.\relax }}{57}{figure.caption.57}
+\contentsline {figure}{\numberline {3.17}{\ignorespaces UML diagram van de klasse \texttt {StreamSetSlicer} en haar supertypes.\relax }}{58}{figure.caption.59}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

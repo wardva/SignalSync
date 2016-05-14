@@ -19,7 +19,7 @@ public class SlicerTest {
 		slicer.addEventListener(new SliceListener<float[]>() {
 			@Override
 			public void onSliceEvent(SliceEvent<float[]> event) {
-				System.out.println("slices length: " + event.getSlices().length);
+				System.out.println("slices length: " + event.getSlice().length);
 			}
 			
 			@Override

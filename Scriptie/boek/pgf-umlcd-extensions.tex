@@ -1,0 +1,24 @@
+\renewcommand{\umldrawcolor}{black}		%Uml border color
+
+%Allow a different display name for packages, so it's possible to use dots.
+\renewenvironment{package}[2][\umlcdPackageTitle]{
+	\edef\umlcdPackageTitle{#2}
+	\def\umlcdPackageFit{}
+	\def\umlcdPackageName{#1}
+}{
+\begin{pgfonlayer}{background}
+	\node[umlcd style, draw, inner sep=0.5cm, fit = \umlcdPackageFit] (\umlcdPackageName) {};
+	\node[umlcd style, draw, outer ysep=-0.5, anchor=south west] (\umlcdPackageName caption) at
+	(\umlcdPackageName.north west) {\umlcdPackageTitle};
+\end{pgfonlayer}
+}
+
+\tikzset{
+	template parameter/.style={
+		append after command={
+			node [draw, densely dashed, umlcolor, font=\ttfamily]
+			at (\tikzlastnode.north east)
+			{#1}
+		}
+	}
+}

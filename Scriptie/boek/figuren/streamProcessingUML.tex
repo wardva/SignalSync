@@ -1,0 +1,26 @@
+\begin {tikzpicture}% [ show background grid ]
+	\begin{package}[StreamPackage]{be.signalsync.stream}
+		
+		\begin {interface}[text width=10cm]{Stream}{0,-4.5}
+		\operation [0]{addStreamProcessor(s : StreamProcessor) : void}
+		\operation [0]{removeStreamProcessor(s : StreamProcessor) : void}
+		\operation { //andere methode's}
+		\end {interface}
+		
+		%StreamProcessor interface
+		\begin {interface}[text width=6cm]{StreamProcessor}{0,0}
+		\operation [0]{process(e : StreamEvent) : void}
+		\operation [0]{processingFinished() : void}
+		\end {interface}
+		
+		\unidirectionalAssociation{Stream}{}{\hspace{1cm} 0..*}{StreamProcessor}
+		
+		%StreamEvent class
+		\begin {class}[text width=10.5cm]{StreamEvent}{0,-9}
+		\attribute {- floatBuffer : float[]}
+		\attribute {- timestamp : double}
+		\operation {+ StreamEvent(floatBuffer : float[], timestamp : double)}
+		\operation { //getters}
+		\end {class}
+	\end{package}
+\end {tikzpicture}

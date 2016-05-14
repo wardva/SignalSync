@@ -66,8 +66,8 @@ public class SteppedSlicerTest {
 			
 			@Override
 			public void onSliceEvent(SliceEvent<float[]> event) {
-				Assert.assertEquals(expectedSliceLengths[eventNr], event.getSlices().length, 1);
-				DoubleStream ds = IntStream.range(0, event.getSlices().length).mapToDouble(i -> event.getSlices()[i]);
+				Assert.assertEquals(expectedSliceLengths[eventNr], event.getSlice().length, 1);
+				DoubleStream ds = IntStream.range(0, event.getSlice().length).mapToDouble(i -> event.getSlice()[i]);
 				Assert.assertTrue(ds.allMatch(x -> x >= eventNr * sliceStep && x < eventNr * sliceStep + sliceSize));
 				++eventNr;
 			}
