@@ -1,7 +1,8 @@
-\begin {tikzpicture}
+\begin {tikzpicture}[scale=0.7]
+\tikzstyle{every node}=[font=\scriptsize]
 	\begin{package}[SlicerPackage]{be.signalsync.slicer}
 		
-		\begin{abstractclass}[template parameter=<T>, text width=10.5cm]{Slicer}{0,0}
+		\begin{abstractclass}[template parameter=<T>, text width=7.5cm]{Slicer}{0,0}
 		
 			\operation {+ addEventListener(listener : SliceListener) : void}
 			\operation {+ removeEventListener(listener : SliceListener) : void}
@@ -10,14 +11,14 @@
 			\operation {\# emitDoneEvent() : void}
 		\end{abstractclass}
 		
-		\begin{interface}[template parameter=<T>, text width=7.5cm]{SliceListener}{0,-7}
+		\begin{interface}[template parameter=<T>, text width=5.5cm]{SliceListener}{0,-7}
 			\operation {done(s : Slicer\textless T\textgreater) : void}
 			\operation {onSliceEvent(e : SliceEvent\textless T\textgreater) : void}
 		\end{interface}
 		
 		\unidirectionalAssociation{Slicer}{\hspace{1.7cm}listeners}{\hspace{1cm}0..*}{SliceListener}
 		
-		\begin{class}[template parameter=<T>, text width=12cm]{SliceEvent}{0,-11}
+		\begin{class}[template parameter=<T>, text width=8.5cm]{SliceEvent}{0,-11}
 			\attribute {- slice : T}
 			\attribute {- slicer : StreamSlicer\textless T\textgreater}
 			\attribute {- timestamp : double}

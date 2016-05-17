@@ -1,13 +1,14 @@
-\begin {tikzpicture}
+\begin {tikzpicture}[scale=0.7]
+\tikzstyle{every node}=[font=\scriptsize]
 	\begin{package}[SlicerPackage]{be.signalsync.slicer}
 		
-		\begin{abstractclass}[template parameter=<T>, text width=7cm]{Slicer}{-4,0}
+		\begin{abstractclass}[template parameter=<T>, text width=4cm]{Slicer}{-5,0}
 		\end{abstractclass}
 		
-		\begin{interface}[template parameter=<T>, text width=5cm]{SliceListener}{3,-1}
+		\begin{interface}[template parameter=<T>, text width=4cm]{SliceListener}{3,-1}
 		\end{interface}
 		
-		\begin{class}[text width=9.5cm]{StreamSetSlicer}{0,-5}
+		\begin{class}[text width=7cm]{StreamSetSlicer}{0,-6.5}
 			\inherit{Slicer}
 			\implement{SliceListener}
 			\attribute{- streamSet : StreamSet}
@@ -17,8 +18,8 @@
 			\operation{- collectSliceSets() : void}
 		\end{class}
 		
-		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ Map\textless StreamGroup,float\lbrack \rbrack\textgreater}] (D) at (-5,-4);
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ Map\textless StreamGroup,float\lbrack \rbrack\textgreater}] (D) at (-5.3,-6.2);
 		
-		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ float\lbrack \rbrack}] (D) at (3,-4);
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ float\lbrack \rbrack}] (D) at (3.5,-4);
 	\end{package}
 \end {tikzpicture}

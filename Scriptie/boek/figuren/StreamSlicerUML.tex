@@ -1,13 +1,14 @@
-\begin {tikzpicture}
+\begin {tikzpicture}[scale=0.7]
+\tikzstyle{every node}=[font=\scriptsize]
 	\begin{package}[SlicerPackage]{be.signalsync.slicer}
 		
-		\begin{abstractclass}[template parameter=<T>, text width=5cm]{Slicer}{-4,0}
+		\begin{abstractclass}[template parameter=<T>, text width=3cm]{Slicer}{-4,0}
 		\end{abstractclass}
 		
-		\begin{interface}[text width=5cm]{StreamProcessor}{4,0}
+		\begin{interface}[text width=3cm]{StreamProcessor}{4,0}
 		\end{interface}
 		
-		\begin{class}[text width=13cm]{StreamSlicer}{0,-5}
+		\begin{class}[text width=9cm]{StreamSlicer}{0,-5}
 			\inherit{Slicer}
 			\implement{StreamProcessor}
 			\attribute{//buffers, tellers,...}

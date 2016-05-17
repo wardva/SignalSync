@@ -2,8 +2,6 @@ package be.signalsync.datafilters;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import be.signalsync.util.Config;
-import be.signalsync.util.Key;
 
 public abstract class BufferedFilter implements DataFilter {
 	protected Queue<Double> buffer;

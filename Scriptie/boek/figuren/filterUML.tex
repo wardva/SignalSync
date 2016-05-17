@@ -1,15 +1,16 @@
-\begin {tikzpicture}% [ show background grid ]
+\begin {tikzpicture}[scale=0.7]
+\tikzstyle{every node}=[font=\scriptsize]
 \begin{package}[StreamPackage]{be.signalsync.sync}
-	\begin{interface}[text width=12cm]{DataFilter}{0,0}
+	\begin{interface}[text width=7cm]{DataFilter}{0,0}
 		\operation[0]{filter(rawValue : double) : double}
 	\end{interface}
 	
-	\begin{class}[text width=7cm]{NoFilter}{4,-3}
+	\begin{class}[text width=5cm]{NoFilter}{4,-3}
 		\implement{DataFilter}
 		\operation{\# filter(double rawValue) : double}
 	\end{class}
 	
-	\begin{abstractclass}[text width=8cm]{BufferedFilter}{0,-5}
+	\begin{abstractclass}[text width=6cm]{BufferedFilter}{0,-5}
 		\implement{DataFilter}
 		\attribute{\# buffer : Queue\textless Double\textgreater}
 		\attribute{\# bufferSize : int}
@@ -20,12 +21,12 @@
 		\operation[0]{\# calculateNext(double rawValue) : double}
 	\end{abstractclass}
 	
-	\begin{class}[text width=8cm]{MovingAverageFilter}{-2,-13}
+	\begin{class}[text width=6cm]{MovingAverageFilter}{-2,-13}
 		\inherit{BufferedFilter}
 		\operation{\# calculateNext(double rawValue) : double}
 	\end{class}
 	
-	\begin{class}[text width=8cm]{MovingMedianFilter}{2,-15}
+	\begin{class}[text width=6cm]{MovingMedianFilter}{2,-15}
 		\inherit{BufferedFilter}
 		\operation{\# calculateNext(double rawValue) : double}
 	\end{class}		

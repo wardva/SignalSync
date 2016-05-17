@@ -7,6 +7,11 @@ import java.util.List;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 
+/**
+ * An implementation of a buffered filter.
+ * The filtered value is the median of the buffer values.
+ * @author Ward Van Assche
+ */
 public class MovingMedianFilter extends BufferedFilter {
 	private final int middle;
 	

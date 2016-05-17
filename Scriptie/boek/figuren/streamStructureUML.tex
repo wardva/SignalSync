@@ -1,17 +1,18 @@
-\begin {tikzpicture}% [ show background grid ]
+\begin {tikzpicture}[scale=0.7]
+\tikzstyle{every node}=[font=\scriptsize]
 	\begin{package}[StreamPackage]{be.signalsync.stream}
 		
-		\begin{interface}[text width=3cm]{Stream}{0,0}
+		\begin{interface}[text width=2cm]{Stream}{0,0}
 		\end{interface}
 		
-		\begin{class}[text width=6cm]{StreamGroup}{0,-4}
+		\begin{class}[text width=4cm]{StreamGroup}{0,-4}
 			\attribute {- description : String}
 			\operation {+ start() : void}
 			\operation {+ stop() : void}
 			\operation {//getters en setters}
 		\end{class}
 		
-		\begin{class}[text width=12cm]{StreamSet}{0,-10}
+		\begin{class}[text width=9cm]{StreamSet}{0,-11}
 			\operation {+ start() : void}
 			\operation {+ stop() : void}
 			\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
