@@ -13,6 +13,7 @@
 \usepackage{listings}                   % Voor het weergeven van letterlijke text en codelistings
 \usepackage{marvosym}                   % Om het euro symbool te krijgen
 \usepackage{textcomp}                   % Voor onder andere graden celsius
+\newcommand{\textapprox}{\raisebox{0.5ex}{\texttildelow}}
 \usepackage{fancyhdr}                   % Voor fancy headers en footers.
 \usepackage{graphics}					% Om figuren te verwerken.
 \usepackage[nottoc]{tocbibind} 			% Bibliografie in ToC; zie tocbibind.dvi
@@ -36,6 +37,8 @@
 \usepackage{subfig}                     %Figuren naast elkaar floaten
 \usepackage[simplified]{pgf-umlcd}					%Uml diagrammen maken
 \include{pgf-umlcd-extensions}
+%Better underlining
+\usepackage{soul}
 
 \interfootnotelinepenalty=10000
 

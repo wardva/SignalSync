@@ -1,34 +1,24 @@
 \begin {tikzpicture}
 	\begin{package}[SlicerPackage]{be.signalsync.slicer}
 		
-		\begin{abstractclass}[template parameter=<Map<StreamGroup\,float\lbrack \rbrack>>, text width=7cm]{Slicer}{-4,0}
+		\begin{abstractclass}[template parameter=<T>, text width=7cm]{Slicer}{-4,0}
 		\end{abstractclass}
 		
-		\begin{interface}[template parameter=<float\lbrack \rbrack>, text width=5cm]{SliceListener}{3,-1}
+		\begin{interface}[template parameter=<T>, text width=5cm]{SliceListener}{3,-1}
 		\end{interface}
 		
-		\begin{class}[text width=7cm]{StreamSetSlicer}{0,-5}
+		\begin{class}[text width=9.5cm]{StreamSetSlicer}{0,-5}
 			\inherit{Slicer}
 			\implement{SliceListener}
+			\attribute{- streamSet : StreamSet}
+			\attribute{//buffers, threadpools, low-level stuff,...}
+			\operation{+ onSliceEvent(event : SliceEvent\textless float[]): void}
+			\operation{+ done(slicer : Slicer\textless float[]\textgreater ) : void}
+			\operation{- collectSliceSets() : void}
 		\end{class}
-	
 		
-		%\begin {class}[text width=6cm]{StreamGroup}{0,-4}
-		%\attribute {- description : String}
-		%\operation {+ start() : void}
-		%\operation {+ stop() : void}
-		%\operation {//getters en setters}
-		%\end {class}
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ Map\textless StreamGroup,float\lbrack \rbrack\textgreater}] (D) at (-5,-4);
 		
-		%\begin {class}[text width=12cm]{StreamSet}{0,-10}
-		%\operation {+ start() : void}
-		%\operation {+ stop() : void}
-		%\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
-		%\operation {//getters en setters}
-		%\end {class}
-		
-		%\unidirectionalAssociation{[xshift=1cm]StreamGroup.north}{\hspace{2.4cm}dataStreams}{\hspace{1cm}0..*}{[xshift=1cm]Stream.south}
-		
-		%\unidirectionalAssociation{StreamSet}{\hspace{-2.7cm}streamGroups}{\hspace{-1cm}0..*}{StreamGroup}
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ float\lbrack \rbrack}] (D) at (3,-4);
 	\end{package}
 \end {tikzpicture}

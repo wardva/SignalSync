@@ -57,6 +57,11 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 			bail("Teensy port is not open");
 			return;
 		}
+		if(numberOfChannels < 1 || startChannel < 0) {
+			bail("Invalid channel parameter");
+			return;
+		}
+		
 		//Constants
 		this.startChannel = startChannel;
 		this.numberOfChannels = numberOfChannels;
@@ -82,7 +87,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 		setOutlets();
 		setAssists();
 		
-		/*this.teensy = new TeensyDAQ(sampleRate, port, startChannel, numberOfChannels);
+		this.teensy = new TeensyDAQ(sampleRate, port, startChannel, numberOfChannels);
 		
 		try {
 			this.teensy.start();
@@ -90,7 +95,7 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 		catch (SerialPortException e) {
 			post("Error while trying to start teensy from port  " + port + ": " + e.getMessage());
 		}
-		this.teensy.addDataHandler(this);*/
+		this.teensy.addDataHandler(this);
 	}
 	
 	private boolean validPort(String port1) {

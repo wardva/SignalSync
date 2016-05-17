@@ -24,22 +24,23 @@ import be.signalsync.util.Config;
 import be.signalsync.util.Key;
 
 /**
- * This class is a Slicer which is used to take slices of different streams
- * wrapped in a StreamSet.
+ * This class is a Slicer used to take slices of different streams
+ * wrapped in a StreamSet. Just the audiostreams from each StreamGroup
+ * will be sliced.
  * 
  * @author Ward Van Assche
  */
 public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implements SliceListener<float[]> {
 	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
+	//The streamset to slice
 	private final StreamSet streamSet;
-	
 	private final ExecutorService collectExecutor;
 	
-	/**
-	 * This map contains each used slicer, together with a BlockingQueue.
-	 * The blockingQueue will contain the slices received from the slicer.
-	 */
+	//This map contains each used slicer, together with a BlockingQueue.
+	//The blockingQueue will contain the slices received from the slicer.
 	private Map<Slicer<float[]>, BlockingQueue<float[]>> sliceBuffers;
+	//This map links each slicer with the corresponding streamgroup, this is
+	//a LinkedHashmap so the order is preserved.
 	private Map<Slicer<float[]>, StreamGroup> slicers;
 	private Deque<Double> timingInfo;
 	private Lock timingLock;
@@ -103,7 +104,6 @@ public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implement
 								}
 							}
 						}
-
 						//Finished one iteration, now we have a buffer from each slicer
 						//and we can emit a slice event containing the slices.
 						timingLock.lock();

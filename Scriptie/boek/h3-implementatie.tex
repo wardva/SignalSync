@@ -106,7 +106,7 @@ Max/MSP is een visuele programmeertaal voor muziek en multimedia. Het is een sys
 
 \begin{figure}[!h]
 	\captionsetup{width=0.8\textwidth}
-	\caption[Gebruikersinterface van MAX/MSP]{De gebruikersinterface van Max/MSP: een \textit{patch panel} met daarop enkele modules die samen een complexere toepassing vormen.}
+	\caption[Gebruikersinterface van Max/MSP]{De gebruikersinterface van Max/MSP: een \textit{patch panel} met daarop enkele modules die samen een complexere toepassing vormen.}
 	\centering
 	\advance\parskip0.3cm
 	\includegraphics[width=0.8\textwidth]{maxmsp.png}
@@ -334,12 +334,14 @@ Het afvlakken van pieken wordt verwezenlijkt door in plaats van de meest recente
 
 De effectiviteit van de verschillende parameters (buffergrootte en filtermethode) zal in dit gedeelte worden weergegeven aan de hand van enkele voorbeelden. Er zullen verschillende soorten filters worden toegepast op een verloop van 35 latencies. In het ongefilterde verloop (zie figuur \ref{latencydata}) komen twee grote en drie kleine pieken voor. Na het vijftiende resultaat doet er zich een blijvende verhoging van de latency voor.
 
+\input{figuren/datafiltergraph}
+
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
 	\caption[Het ongefilterde verloop van de latency]{Grafische weergave van het ongefilterde verloop van de latency.}
 	\begin{center}
 		\advance\parskip0.3cm
-		\input{figuren/latencydata}
+		\datafiltergraph{latencydata}
 	\end{center}
 	\label{latencydata}
 \end{figure}
@@ -350,9 +352,9 @@ De eerste twee voorbeelden tonen het verschil tussen de ongefilterde latencies e
 
 \begin{figure}[!tbph]
 	\centering
-	\subfloat[Buffergrootte 3]{\input{figuren/avg3data}}
+	\subfloat[Buffergrootte 3]{\datafiltergraph{avg3data}}
 	\hfill
-	\subfloat[Buffergrootte 5]{\input{figuren/avg5data}}
+	\subfloat[Buffergrootte 5]{\datafiltergraph{avg5data}}
 	\captionsetup{width=0.7\textwidth}
 	\caption{Het verloop van de latencies na het toepassen van een moving average filter.}
 \end{figure}
@@ -367,9 +369,9 @@ In de volgende voorbeelden zal de mediaan van elke buffer berekent worden. Om de
 
 \begin{figure}[!tbph]
 	\centering
-	\subfloat[Buffergrootte 3]{\input{figuren/median3data}}
+	\subfloat[Buffergrootte 3]{\datafiltergraph{median3data}}
 	\hfill
-	\subfloat[Buffergrootte 5]{\input{figuren/median5data}}
+	\subfloat[Buffergrootte 5]{\datafiltergraph{median5data}}
 	\captionsetup{width=0.7\textwidth}
 	\caption{Het verloop van de latencies na het toepassen van een moving median filter.}
 \end{figure}
@@ -539,14 +541,164 @@ Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en inte
 
 Een \texttt{StreamSetSlicer} is een subtype van de klasse \texttt{Slicer} die verantwoordelijk is voor het slicen van alle \textbf{audiostreams} van een \texttt{StreamSet}. Per \texttt{StreamGroup} wordt er dus maar één stream in stukjes verdeeld. Dit is logisch aangezien de synchronisatiealgoritmen voor het bepalen van de latency enkel worden uitgevoerd op slices van de audiostream.
 
+Bij de creatie van een \texttt{StreamSetSlicer} wordt van elke \texttt{StreamGroup} uit de \texttt{StreamSet} de audiostream opgehaald. Op dit \texttt{Stream} object wordt vervolgens de methode \texttt{createSlicer} opgeroepen waarop er een \texttt{StreamSlicer} wordt teruggegeven. De \texttt{StreamSetSlicer} voegt zichzelf als geïnteresseerd object aan de \texttt{StreamSlicer} toe. Ook wordt de \texttt{StreamSlicer}
+gekoppeld aan de \texttt{StreamGroup} door ze als sleutel en waarde toe te voegen aan een \texttt{Map}.
+
+Na afloop van deze initialisatie wordt er gewacht tot wanneer alle streams waarop de \texttt{StreamSetSlicer} zich geregistreerd heeft een \texttt{SliceEvent} (met een \texttt{float} array) verstuurd hebben. Al deze slices worden vervolgens samen met hun corresponderende \texttt{StreamGroup} via de \texttt{emitSliceEvent} methode verstuurd naar de geïnteresseerde objecten. Dit proces wordt herhaald tot er geen enkele \texttt{Stream} nog data ter beschikking heeft.
+
+Figuur \ref{streamSetSlicer} toont een vrij abstract klassendiagram van de \texttt{StreamSetSlicer} en haar supertypen. Low-level attributen zoals de buffers, threadpools en locks zijn hierop weggelaten.
+
 \subsection{Oproepen van de algoritmen}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption{UML diagram van de klassen met de synchronisatiealgoritmen.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/algorithmsUML}
+	\end{center}
+	\label{SyncStrategyUML}
+\end{figure}
+
+De synchronisatiealgoritmen bevinden zich in subklassen van \texttt{SyncStrategy}. Deze klasse bevat een abstracte methode \texttt{findLatencies}. Deze methode ontvangt als parameter een lijst van \texttt{float} arrays waarbij elke array de samples bevat van één slice bevat. Na het uitvoeren geeft de methode een lijst terug met daarin de latencies in seconden ten opzichte van de eerste slice uit de lijst.
+
+\texttt{SyncStrategy} bevat ook enkele statische methodes waarmee de verschillende mogelijke strategieën gemakkelijk kunnen worden aangemaakt. De parameters die aan de constructoren moeten worden meegegeven worden uit het configuratiebestand gehaald.
+
+Figuur \ref{SyncStrategyUML} toont het UML diagram van deze klasse en haar subtypen. 
+
+\subsubsection{Het fingerprinting algoritme}
+Het fingerprinting algoritme wordt geïmplementeerd in de klasse \texttt{FingerprintSyncStrategy}. Buiten de implementatie van \texttt{findLatencies} bevat deze klasse nog een andere publieke methode namelijk \texttt{getResults}. Deze methode is vergelijkbaar met \texttt{findLatencies} maar geeft de resultaten in een meer low-level formaat terug. In volgend paragraaf zal duidelijk worden waarvoor deze methode gebruikt wordt.
+
+\subsubsection{Het kruiscovariantie algoritme}
+De klasse \texttt{CrossCovarianceSyncStrategy} bevat een implementatie van het kruiscovariantie algoritme. De klasse bevat een instantie van \texttt{FingerprintSyncStrategy} waarmee de ruwe latency wordt berekend. Eerst wordt de methode \texttt{getResults} opgeroepen, deze methode geeft een lijst terug met per stream de ruwe verschuiving in aantal samples. Het kruiscovariantie algoritme heeft deze informatie nodig om op efficiënte wijze het resultaat te kunnen verfijnen.
 
 \subsection{Bepalen van de latency}
 
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[UML diagram van \texttt{RealtimeSignalSync} + afhankelijkheden]{UML diagram van \texttt{RealtimeSignalSync} en alle klassen waarvan ze afhankelijk is.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/latencyUML}
+	\end{center}
+	\label{latencyUML}
+\end{figure}
+
+De klasse \texttt{RealtimeSignalSync} is verantwoordelijk voor het aanroepen van de klassen uit verschillende packages waardoor de uiteindelijke synchronisatie kan plaatsvinden.
+
+Een \texttt{RealtimeSignalSync} object wordt aangemaakt door aan de constructor een \texttt{StreamSet} object mee te geven dat de te synchroniseren streams bevat. Vervolgens wordt er met behulp van de methode \texttt{createSlicer} een \texttt{StreamSetSlicer} object aangemaakt. Aangezien \texttt{SliceListener} geïmplementeerd wordt kan \texttt{RealtimeSignalSync} zich registreren als geïnteresseerd object.
+
+Wanneer er voor elke \texttt{StreamGroup} een slice beschikbaar is wordt de methode \texttt{onSliceEvent} opgeroepen. In deze methode wordt het \texttt{SyncStrategy} object gebruikt om de latencies te bepalen. Optioneel kunnen deze resultaten ook nog gefilterd worden (het ontwerp hiervan wordt in \ref{filterontwerp} besproken). Ten slotte worden de resultaten naar alle geregistreerde \texttt{SyncEventListeners} verstuurd via de private methode \texttt{emitSyncEvent}. Geïnteresseerden kunnen zich registreren via de \texttt{addEventListener} methode. Deze werkwijze leunt net zoals het \textit{slice event} mechanisme aan bij het \textit{observer} ontwerppatroon.
+
+\subsubsection{Het starten van de synchronisatie}
+
+Het starten van de synchronisatie gebeurt noch in deze klasse noch in een slicer- of \mbox{strategyklasse}. Zowel het slicen als het uitvoeren van de algoritmen is een deterministisch proces en afhankelijk van de samples die door een \texttt{Stream} object naar de \texttt{StreamProcessors} verstuurd worden. Bij een \texttt{AudioDispatcherStream} zal de synchronisatie starten wanneer de \texttt{start} methode opgeroepen wordt. Bij een \texttt{MSPStream} zal de synchronisatie pas starten wanneer de streams in Max/MSP zelf geactiveerd worden.
+
 \subsection{Filteren van de resultaten}
+\label{filterontwerp}
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption{UML diagram van de verschillende datafilters.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/filterUML}
+	\end{center}
+	\label{filterUML}
+\end{figure}
+
+Zoals in sectie \ref{filtering} is besproken kunnen de latencies gefilterd worden. De meest elementaire filter wordt beschreven door de interface \texttt{DataFilter} waarin de methode \texttt{filter} wordt beschreven. Deze methode ontvangt een \texttt{double} als parameter en geeft een (gefilterde) \texttt{double} terug. De meest eenvoudige implementatie van deze klasse is de \texttt{NoFilter}. Deze filter geeft rechtstreeks de meegegeven waarde terug zonder iets te wijzigen.
+
+\subsubsection{Gebufferde filters}
+
+\texttt{DataFilter} wordt ook geïmplementeerd door de abstracte klasse \texttt{BufferedFilter}. Dit is een filter die de laatste $ n $ waarden in een buffer bijhoudt. De waarde van $ n $ wordt bepaalt in het configuratiebestand. 
+
+Deze klasse is abstract aangezien de manier waarop de uiteindelijk gefilterde waarde \mbox{berekent} wordt nog niet bepaald is. Hiervoor is de abstracte methode \texttt{calculateNext} voorzien. De klasse \texttt{MovingAverageFilter} doet dit door het gemiddelde van de waarden uit de buffer te nemen. Bij \texttt{MovingMedianFilter} gebeurt dit door de mediaan te berekenen.
+
+Figuur \ref{filterUML} toont een UML diagram van deze verschillende klassen en interfaces.
 
 \section{Max/MSP modules}
 
-%Gans dit onderzoek heeft uiteindelijk de bedoeling te resulteren in het ontwerp en implementatie van een module in MAX/MSP\footnote{Cycling ‘74 Max/MSP is een softwarepakket en een visuele programmeertaal waarmee audio, video en multimedia kan worden verwerkt met behulp van onafhankelijke modules. Deze modules kunnen met elkaar worden verbonden om zo complexe zaken te bereiken. Buiten de standaard meegeleverde modules is het ook mogelijk om zelf modules te schrijven.\cite{maxmsp2016}} die realtime synchronisatie mogelijk moet maken via een interface die bruikbaar is voor musicologen/onderzoekers met een beperkte informatica achtergrond.
+In de introductie van deze thesis (sectie \ref{target-ui}) is er geschreven dat er voor het volledige synchronisatieproces een gebruiksvriendelijke interface ontwikkeld zal worden. Deze interface moet het voor musicologen/onderzoekers mogelijk maken om \texttt{StreamSets} aan te maken en te synchroniseren zonder één lijn code te hoeven schrijven.
 
-%Deze module moet in staat zijn om verschillende datastromen als input binnen te krijgen, de synchronisatiebibliotheek aan te roepen, en de gesynchroniseerde datastromen als output terug te geven. Een andere Max module kan er dan voor zorgen dat deze data wordt weggeschreven naar een WAVE-bestand.
+Een heel flexibele manier om dit te doen is door het schrijven van één of meerdere Max/MSP modules. Hierbij wordt de gebruiker niet in een hokje geduwd van wat een stream precies moet zijn of hoe het moet worden ingelezen. Bij deze benadering is het een garantie dat elk Max/MSP signaal gesynchroniseerd kan worden. Max/MSP ondersteund standaard het inlezen van bestanden of microfoons.
+
+Problematisch is het feit dat de streams afkomstig van Teensy microcontrollers standaard niet kunnen worden aangesproken vanuit een Max/MSP context. Aangezien dit voor dit onderzoek een vereiste is zal hier ook een module voor geschreven moeten worden.
+
+\subsection{Inlezen van de Teensy microcontroller}
+
+De klasse \texttt{TeensyReader} bevat de implementatie van een Max/MSP module waarmee signalen afkomstig van Teensy microcontrollers kunnen worden ingelezen. Het aanmaken van het object kan met volgende code:\\
+\mbox{\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader <<parameters>>}}.\\Er zijn 5 parameters vereist:
+
+\begin{description}	
+	\item\textbf{Poort} \hfill \\
+	De COM-poort waarmee de Teensy microcontroller communiceert met de computer.
+	\item\textbf{Samplefrequentie} \hfill \\
+	Dit is de samplefrequentie in Hertz waaraan de Teensy microcontroller met de computer communiceert. Alle binnenkomende signalen worden geresampled naar de samplefrequentie van Max/MSP. De meest courante waarden zijn 8000 of 11025. 
+	
+	Het is aangeraden (maar geen vereiste) om de Max/MSP samplefrequentie in te stellen op een veelvoud van de Teensy samplefrequentie. Dit vereenvoudigd het resamplingproces en heeft een positieve invloed op de geluidskwaliteit.
+	
+	\item\textbf{Startkanaal} \hfill \\
+	De index van de eerste analoge pin waarvan het signaal moet worden ingelezen. Indien het eerste in te lezen signaal zich op pin A3 bevindt, dan moet deze parameter worden ingesteld met waarde 3.
+	
+	\item\textbf{Audiokanaal} \hfill \\
+	De index van het audiokanaal dat gebruikt zal worden voor de synchronisatie. De index begint te tellen vanaf het startkanaal. Indien er gestart wordt op pin A3 en het audiosignaal zich op pin A5 bevindt, dan zal deze parameter waarde 2 moeten hebben. Het signaal van dit kanaal ondergaat na het inlezen een extra filtering waarbij het geluid geoptimaliseerd wordt. Bij het invullen van een ongeldig getal (te hoog of negatief) wordt de filtering op geen enkel kanaal toegepast.
+
+	\item\textbf{Aantal kanalen} \hfill \\
+	Met deze parameter wordt het aantal in te lezen kanalen ingesteld.
+\end{description}
+
+De parameters dienen als een door spaties gescheiden lijst te worden meegegeven aan de module. Na het valideren van de parameters wordt de module aangemaakt. Het aantal uitgaande verbindingen van deze module wordt bepaald door de parameter die het aantal kanalen instelt.
+
+\begin{figure}[h!]
+	\captionsetup{width=0.8\textwidth}
+	\caption[Screenshot van de TeensyReader in Max/MSP]{De TeensyReader module in actie. De Teensy samplet aan een frequentie van $8000 Hz$, de microfoon is aangesloten op pin A1, de infraroodsensor is aangesloten op pin A0. De linkse scope toont de gegevens van de infraroodsensor, de rechtse sensor toont de geluidsgolf.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\includegraphics[width=0.4\textwidth]{TeensyReader.png}
+	\end{center}
+	\label{teensyReader}
+\end{figure}
+
+Figuur \ref{teensyReader} toont deze module waarbij de uitgaande verbindingen zijn aangesloten op scope objecten. Hierdoor wordt de data gevisualiseerd.
+
+Een uitgebreide handleiding voor het gebruik van deze module is te vinden in bijlage X (TODO).
+%TODO handleiding schrijven
+
+\subsubsection{Implementatie}
+
+Een Max/MSP module kan in Java geschreven worden door een klasse te laten overerven van \texttt{MSPPerformer}. Bij de constructie worden de \textit{outlets} (de uitgaande verbindingen) geïnitialiseerd en wordt er een \texttt{TeensyDAQ} object aangemaakt. Dit is een object uit afkomstig uit de \texttt{TeensyDAQ} bibliotheek ontwikkeld aan het IPEM. Deze bibliotheek biedt een low-level interface naar de Teensy microcontroller aan. Na het aanmaken van dit object registreert de module zich als \textit{handler}. Om dit mogelijk te maken wordt de methode \texttt{handle} van de interface \texttt{DAQDataHandler} geïmplementeerd. Na het registreren wordt deze methode consequent opgeroepen met samples afkomstig van de Teensy microcontroller. Deze samples worden vervolgens gebufferd.
+
+Een klasse die overerft van \texttt{MSPPerformer} moet de methode \texttt{perform} implementeren. In deze methode worden de samples uit de buffers gehaald, geresamplet naar de Max/MSP samplefrequentie en verstuurd door de outlets.
+
+\subsection{De synchronisatiemodule}
+
+De tweede module zal de synchronisatie van de streams verzorgen en is geïmplementeerd in de klasse \texttt{Sync}. De module maakt gebruik van \texttt{RealtimeSignalSync} om de latencies tussen de audiostreams te bepalen. De module kan in Max/MSP met volgende code worden aangemaakt: \texttt{mxj\textapprox\  be.signalsync.msp.Sync <<parameter>>}
+
+\subsubsection{Instellen van de stream structuur}
+
+De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters 'a' en 'd'. Elk door deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters 'a' en 'd' respectievelijk voor een audiostream en datastream staan. Per deel mag uiteraard maar eenmaal de letter 'a' voorkomen. De volledige tekenreeks  (de verzameling van alle \texttt{StreamGroups}) stelt de structuur van een \texttt{StreamSet} voor. Op basis van deze string worden de \texttt{Stream} objecten aangemaakt en onderverdeeld in \texttt{StreamGroups} en \texttt{StreamSets}.
+
+Dit zou een mogelijke parameter voor deze module kunnen zijn: \texttt{addd,dad}. De eerste \texttt{StreamGroup} bestaat uit 4 streams waarbij de synchronisatie met de eerste stream zal worden uitgevoerd. De tweede \texttt{StreamGroup} bestaat uit 3 streams. De tweede stream stelt hierbij de audiostream voor.
+
+Figuur \ref{maxStreamSync} toont hoe deze module gebruikt moet worden in combinatie met de \texttt{TeensyReader}. De audiostream \textit{outlets} (bepaald door de vierde parameter van de twee \texttt{TeensyReaders}) worden verbonden met de audiostream \textit{inlets} van de \texttt{Sync} module (bepaald door de letters 'a' van de parameter).
+
+\begin{figure}[h!]
+	\captionsetup{width=0.8\textwidth}
+	\caption[Synchronisatie in Max/MSP]{De synchronisatie van streams in Max/MSP afkomstig van twee Teensy microcontrollers.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\includegraphics[width=\textwidth]{maxSync.png}
+	\end{center}
+	\label{maxStreamSync}
+\end{figure}
+
+\subsubsection{Implementatie}
+
+Net zoals \texttt{TeensyReader} erft deze module over van \texttt{MSPPerformer}. Ook wordt de interface \texttt{SyncEventListener} geïmplementeerd. In de constructor wordt op basis van de parameter van de module een \texttt{StreamSet} bestaande uit \texttt{MSPStream} objecten aangemaakt. In de perform methode van de module worden de signaalvectoren doorgegeven aan de \texttt{MSPStream} objecten. De synchronisatie wordt verwezenlijkt door in de constructor een \texttt{RealtimeSignalSync} object aan te maken waarop de klasse zich registreert. Aan het \texttt{RealtimeSignalSync} object wordt de \texttt{StreamSet} meegegeven. Elke keer wanneer er informatie over de latency beschikbaar is wordt de methode \texttt{onSyncEvent} opgeroepen met alle latencies.
+
+Met behulp van deze latencies moeten de binnenkomende Max/MSP datastreams gemanipuleerd worden zodat ze perfect synchroon lopen. Dit is in de laatste versie nog niet geïmplementeerd. In de huidige implementatie worden de latencies in de Max/MSP console geprint.
+
+
+
+

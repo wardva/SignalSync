@@ -9,28 +9,25 @@ public abstract class BufferedFilter implements DataFilter {
 	protected Queue<Double> buffer;
 	protected double currentValue;
 	protected int bufferSize;
-	protected int count;
+	private boolean initialized;
 	
 	public BufferedFilter(int bufferSize) {
-		this.count = 0;
+		this.initialized = false;
 		this.bufferSize = bufferSize;
 		this.buffer = new LinkedList<Double>();
 	}
 	
-	public BufferedFilter() {
-		this(Config.getInt(Key.LATENCY_FILTER_BUFFER_SIZE));
-	}
-	
 	@Override
 	public double filter(double rawValue) {
-		if(count++ == 0) {
+		if(!initialized) {
 			initializeBuffer(rawValue);
+			initialized = true;
 		}
 		currentValue = calculateNext(rawValue);
 		return currentValue;
 	}
 	
-	protected void initializeBuffer(double rawValue) {
+	private void initializeBuffer(double rawValue) {
 		currentValue = rawValue;
 		for(int i = 0; i<bufferSize; i++) {
 			buffer.add(rawValue);

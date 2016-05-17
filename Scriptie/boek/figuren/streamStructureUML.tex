@@ -1,22 +1,22 @@
 \begin {tikzpicture}% [ show background grid ]
 	\begin{package}[StreamPackage]{be.signalsync.stream}
 		
-		\begin {interface}[text width=3cm]{Stream}{0,0}
-		\end {interface}
+		\begin{interface}[text width=3cm]{Stream}{0,0}
+		\end{interface}
 		
-		\begin {class}[text width=6cm]{StreamGroup}{0,-4}
-		\attribute {- description : String}
-		\operation {+ start() : void}
-		\operation {+ stop() : void}
-		\operation {//getters en setters}
-		\end {class}
+		\begin{class}[text width=6cm]{StreamGroup}{0,-4}
+			\attribute {- description : String}
+			\operation {+ start() : void}
+			\operation {+ stop() : void}
+			\operation {//getters en setters}
+		\end{class}
 		
-		\begin {class}[text width=12cm]{StreamSet}{0,-10}
-		\operation {+ start() : void}
-		\operation {+ stop() : void}
-		\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
-		\operation {//getters en setters}
-		\end {class}
+		\begin{class}[text width=12cm]{StreamSet}{0,-10}
+			\operation {+ start() : void}
+			\operation {+ stop() : void}
+			\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
+			\operation {//getters en setters}
+		\end{class}
 		
 		
 		\unidirectionalAssociation{[xshift=-1cm] StreamGroup.north}{\hspace{-2.3cm}audioStream}{\hspace{-0.5cm}1}{[xshift=-1cm] Stream.south}

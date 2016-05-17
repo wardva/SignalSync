@@ -1,7 +1,7 @@
 \begin {tikzpicture}
 	\begin{package}[SlicerPackage]{be.signalsync.slicer}
 		
-		\begin{abstractclass}[template parameter=<float\lbrack \rbrack>, text width=5cm]{Slicer}{-4,0}
+		\begin{abstractclass}[template parameter=<T>, text width=5cm]{Slicer}{-4,0}
 		\end{abstractclass}
 		
 		\begin{interface}[text width=5cm]{StreamProcessor}{4,0}
@@ -16,24 +16,8 @@
 			\operation{ + processingFinished() : void}
 			\operation{//private hulpmethode's}
 		\end{class}
-	
 		
-		%\begin {class}[text width=6cm]{StreamGroup}{0,-4}
-		%\attribute {- description : String}
-		%\operation {+ start() : void}
-		%\operation {+ stop() : void}
-		%\operation {//getters en setters}
-		%\end {class}
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ float\lbrack \rbrack}] (D) at (-3.5,-4);
 		
-		%\begin {class}[text width=12cm]{StreamSet}{0,-10}
-		%\operation {+ start() : void}
-		%\operation {+ stop() : void}
-		%\operation {+ createSlicer(sliceSize : int, sliceStep : int) : StreamSetSlicer}
-		%\operation {//getters en setters}
-		%\end {class}
-		
-		%\unidirectionalAssociation{[xshift=1cm]StreamGroup.north}{\hspace{2.4cm}dataStreams}{\hspace{1cm}0..*}{[xshift=1cm]Stream.south}
-		
-		%\unidirectionalAssociation{StreamSet}{\hspace{-2.7cm}streamGroups}{\hspace{-1cm}0..*}{StreamGroup}
 	\end{package}
 \end {tikzpicture}

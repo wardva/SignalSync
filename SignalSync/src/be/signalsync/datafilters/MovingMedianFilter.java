@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import be.signalsync.util.Config;
+import be.signalsync.util.Key;
+
 public class MovingMedianFilter extends BufferedFilter {
 	private final int middle;
 	
 	public MovingMedianFilter() {
-		super();
+		this(Config.getInt(Key.LATENCY_FILTER_BUFFER_SIZE));
+	}
+	
+	public MovingMedianFilter(int bufferSize) {
+		super(bufferSize);
 		middle = bufferSize/2;
 	}
 

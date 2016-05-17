@@ -78,24 +78,33 @@
 \contentsline {subsubsection}{De abstracte klasse Slicer}{55}{section*.54}
 \contentsline {subsubsection}{StreamSlicer}{56}{section*.56}
 \contentsline {subsubsection}{StreamSetSlicer}{57}{section*.58}
-\contentsline {subsection}{\numberline {3.5.3}Oproepen van de algoritmen}{58}{subsection.3.5.3}
-\contentsline {subsection}{\numberline {3.5.4}Bepalen van de latency}{58}{subsection.3.5.4}
-\contentsline {subsection}{\numberline {3.5.5}Filteren van de resultaten}{58}{subsection.3.5.5}
-\contentsline {section}{\numberline {3.6}Max/MSP modules}{58}{section.3.6}
-\contentsline {chapter}{\numberline {4}Evaluatie}{59}{chapter.4}
-\contentsline {section}{\numberline {4.1}Unit testen}{59}{section.4.1}
-\contentsline {section}{\numberline {4.2}Stresstesten}{59}{section.4.2}
-\contentsline {section}{\numberline {4.3}Test in de praktijk}{59}{section.4.3}
-\contentsline {section}{\numberline {4.4}Usability testen}{59}{section.4.4}
-\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{59}{section.4.5}
-\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{59}{section.4.6}
-\contentsline {chapter}{\numberline {5}Conclusie}{60}{chapter.5}
-\contentsline {chapter}{Bijlagen}{61}{section*.60}
-\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{62}{Bijlage.a.A}
-\contentsline {chapter}{Referentielijst}{64}{chapter*.61}
-\contentsline {chapter}{L"yst van figuren}{67}{chapter*.62}
-\contentsline {chapter}{Lijst van figuren}{68}{chapter*.62}
-\contentsline {chapter}{L"yst van tabellen}{69}{chapter*.63}
-\contentsline {chapter}{Lijst van tabellen}{69}{chapter*.63}
-\contentsline {chapter}{Lijst van codefragmenten}{70}{chapter*.64}
-\contentsline {chapter}{Lijst van codefragmenten}{70}{chapter*.64}
+\contentsline {subsection}{\numberline {3.5.3}Oproepen van de algoritmen}{59}{subsection.3.5.3}
+\contentsline {subsubsection}{Het fingerprinting algoritme}{60}{section*.61}
+\contentsline {subsubsection}{Het kruiscovariantie algoritme}{60}{section*.62}
+\contentsline {subsection}{\numberline {3.5.4}Bepalen van de latency}{60}{subsection.3.5.4}
+\contentsline {subsubsection}{Het starten van de synchronisatie}{62}{section*.64}
+\contentsline {subsection}{\numberline {3.5.5}Filteren van de resultaten}{62}{subsection.3.5.5}
+\contentsline {subsubsection}{Gebufferde filters}{63}{section*.66}
+\contentsline {section}{\numberline {3.6}Max/MSP modules}{64}{section.3.6}
+\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{64}{subsection.3.6.1}
+\contentsline {subsubsection}{Implementatie}{66}{section*.68}
+\contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{67}{subsection.3.6.2}
+\contentsline {subsubsection}{Instellen van de stream structuur}{67}{section*.69}
+\contentsline {subsubsection}{Implementatie}{68}{section*.71}
+\contentsline {chapter}{\numberline {4}Evaluatie}{70}{chapter.4}
+\contentsline {section}{\numberline {4.1}Unit testen}{70}{section.4.1}
+\contentsline {section}{\numberline {4.2}Stresstesten}{70}{section.4.2}
+\contentsline {section}{\numberline {4.3}Test in de praktijk}{70}{section.4.3}
+\contentsline {section}{\numberline {4.4}Usability testen}{70}{section.4.4}
+\contentsline {section}{\numberline {4.5}Analyse van de complexiteitsgraad}{70}{section.4.5}
+\contentsline {section}{\numberline {4.6}Praktische bruikbaarheid van het systeem}{70}{section.4.6}
+\contentsline {chapter}{\numberline {5}Conclusie}{71}{chapter.5}
+\contentsline {chapter}{Bijlagen}{72}{section*.72}
+\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{73}{Bijlage.a.A}
+\contentsline {chapter}{Referentielijst}{75}{chapter*.73}
+\contentsline {chapter}{L"yst van figuren}{78}{chapter*.74}
+\contentsline {chapter}{Lijst van figuren}{79}{chapter*.74}
+\contentsline {chapter}{L"yst van tabellen}{80}{chapter*.75}
+\contentsline {chapter}{Lijst van tabellen}{80}{chapter*.75}
+\contentsline {chapter}{Lijst van codefragmenten}{81}{chapter*.76}
+\contentsline {chapter}{Lijst van codefragmenten}{81}{chapter*.76}

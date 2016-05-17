@@ -23,7 +23,6 @@ import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
  * 
  * @see <a href="http://panako.be">http://panako.be</a>
  * @author Ward Van Assche, Joren Six
- *
  */
 public class FingerprintSyncStrategy extends SyncStrategy {
 	private static Logger Log = Logger.getLogger("SignalSync");

@@ -37,10 +37,10 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 
 	private final StreamSetSlicer slicer;
 
-	private final SyncStrategy syncer;
+	private final SyncStrategy strategy;
 	
 	private final Map<StreamGroup, DataFilter> latencyFilters;
-
+	
 	/**
 	 * Create a new ReatimeStreamSync object.
 	 * @param streamSet This object contains the different streams which must be synchronized.
@@ -48,9 +48,9 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 	 */
 	public RealtimeSignalSync(final StreamSet streamSet) {
 		this.listeners = new HashSet<>();
-		this.syncer = SyncStrategy.createDefault();
+		this.strategy = SyncStrategy.createDefault();
 		this.latencyFilters = new HashMap<>(streamSet.size());
-		this.slicer = new StreamSetSlicer(streamSet, Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
+		this.slicer = streamSet.createSlicer(Config.getInt(Key.SLICE_SIZE_S), Config.getInt(Key.SLICE_STEP_S));
 		this.slicer.addEventListener(this);
 		
 		for(StreamGroup streamGroup : streamSet.getStreamGroups()) {
@@ -76,16 +76,6 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 	}
 
 	/**
-	 * Emit a synchronization event.
-	 * @param data The data to send to the interested listeners.
-	 */
-	public void emitSyncEvent(final Map<StreamGroup, Double> data) {
-		for (final SyncEventListener l : listeners) {
-			l.onSyncEvent(data);
-		}
-	}
-
-	/**
 	 * This method will be executed when the streamSet streams have been sliced.
 	 */
 	@Override
@@ -95,7 +85,7 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 
 		List<Double> rawLatencies = new ArrayList<>(streams.size());
 		rawLatencies.add(0.0D); //Reference stream latency
-		rawLatencies.addAll(syncer.findLatencies(slices));
+		rawLatencies.addAll(strategy.findLatencies(slices));
 		Map<StreamGroup, Double> filteredLatencies = new HashMap<>(streams.size());
 		for(int i = 0; i<streams.size(); i++) {
 			StreamGroup streamGroup = streams.get(i);
@@ -114,5 +104,16 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 	 */
 	public void removeEventListener(final SyncEventListener listener) {
 		listeners.remove(listener);
+	}
+	
+
+	/**
+	 * Emit a synchronization event.
+	 * @param data The data to send to the interested listeners.
+	 */
+	private void emitSyncEvent(final Map<StreamGroup, Double> data) {
+		for (final SyncEventListener l : listeners) {
+			l.onSyncEvent(data);
+		}
 	}
 }

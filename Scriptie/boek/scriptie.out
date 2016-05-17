@@ -50,20 +50,22 @@
 \BOOKMARK [2][-]{subsection.3.5.4}{Bepalen van de latency}{section.3.5}% 50
 \BOOKMARK [2][-]{subsection.3.5.5}{Filteren van de resultaten}{section.3.5}% 51
 \BOOKMARK [1][-]{section.3.6}{Max/MSP modules}{chapter.3}% 52
-\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 53
-\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 54
-\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 55
-\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 56
-\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 57
-\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 58
-\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 59
-\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 60
-\BOOKMARK [0][-]{section*.60}{Bijlagen}{}% 61
-\BOOKMARK [0][-]{Bijlage.a.A}{Resultaten DTW experiment}{}% 62
-\BOOKMARK [0][-]{chapter*.61}{Referentielijst}{}% 63
-\BOOKMARK [0][-]{chapter*.62}{Lijst van figuren}{}% 64
-\BOOKMARK [0][-]{chapter*.62}{Lijst van figuren}{}% 65
-\BOOKMARK [0][-]{chapter*.63}{Lijst van tabellen}{}% 66
-\BOOKMARK [0][-]{chapter*.63}{Lijst van tabellen}{}% 67
-\BOOKMARK [0][-]{chapter*.64}{Lijst van codefragmenten}{}% 68
-\BOOKMARK [0][-]{chapter*.64}{Lijst van codefragmenten}{}% 69
+\BOOKMARK [2][-]{subsection.3.6.1}{Inlezen van de Teensy microcontroller}{section.3.6}% 53
+\BOOKMARK [2][-]{subsection.3.6.2}{De synchronisatiemodule}{section.3.6}% 54
+\BOOKMARK [0][-]{chapter.4}{Evaluatie}{}% 55
+\BOOKMARK [1][-]{section.4.1}{Unit testen}{chapter.4}% 56
+\BOOKMARK [1][-]{section.4.2}{Stresstesten}{chapter.4}% 57
+\BOOKMARK [1][-]{section.4.3}{Test in de praktijk}{chapter.4}% 58
+\BOOKMARK [1][-]{section.4.4}{Usability testen}{chapter.4}% 59
+\BOOKMARK [1][-]{section.4.5}{Analyse van de complexiteitsgraad}{chapter.4}% 60
+\BOOKMARK [1][-]{section.4.6}{Praktische bruikbaarheid van het systeem}{chapter.4}% 61
+\BOOKMARK [0][-]{chapter.5}{Conclusie}{}% 62
+\BOOKMARK [0][-]{section*.72}{Bijlagen}{}% 63
+\BOOKMARK [0][-]{Bijlage.a.A}{Resultaten DTW experiment}{}% 64
+\BOOKMARK [0][-]{chapter*.73}{Referentielijst}{}% 65
+\BOOKMARK [0][-]{chapter*.74}{Lijst van figuren}{}% 66
+\BOOKMARK [0][-]{chapter*.74}{Lijst van figuren}{}% 67
+\BOOKMARK [0][-]{chapter*.75}{Lijst van tabellen}{}% 68
+\BOOKMARK [0][-]{chapter*.75}{Lijst van tabellen}{}% 69
+\BOOKMARK [0][-]{chapter*.76}{Lijst van codefragmenten}{}% 70
+\BOOKMARK [0][-]{chapter*.76}{Lijst van codefragmenten}{}% 71

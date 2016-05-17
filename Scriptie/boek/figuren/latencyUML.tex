@@ -1,0 +1,41 @@
+\begin {tikzpicture}% [ show background grid ]
+	\begin{package}[StreamPackage]{be.signalsync.sync}
+
+		\begin{interface}[text width=12cm, template parameter=<T>]{SliceListener}{0,0}
+		
+		\end{interface}
+
+		\begin{class}[text width=14cm]{RealtimeSignalSync}{0,-3}
+			\implement{Stream}
+			\operation{+ RealtimeSignalSync(streamSet : StreamSet)}
+			\operation{+ onSliceEvent(event : SliceEvent\textless Map\textless StreamGroup, float[]\textgreater\textgreater) : void}
+			\operation{+ addEventListener(listener : SyncEventListener) : void}
+			\operation{+ removeEventListener(listener : SyncEventListener) : void}
+			\operation{- emitSyncEvent(data : Map\textless StreamGroup, Double\textgreater) : void}
+		\end{class}
+		
+		\begin{interface}[text width=10.5cm]{SyncEventListener}{0,-14}
+			\operation[0]{onSyncEvent(data : Map\textless StreamGroup, Double\textgreater) : void}
+		\end{interface}
+		
+		\begin{abstractclass}[text width=5cm]{SyncStrategy}{-4,-10}
+		\end{abstractclass}
+		
+		\begin{class}[text width=5cm]{StreamSetSlicer}{4,-9.5}
+		\end{class}
+		
+		\begin{class}[text width=5cm]{StreamSet}{3,-12}
+		\end{class}
+				
+		
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ Map\textless StreamGroup,float\lbrack \rbrack\textgreater}] (D) at (3.2,-2.6);
+		
+		\unidirectionalAssociation{RealtimeSignalSync}{\hspace{-1.8cm}listeners}{\hspace{-0.9cm}0..*}{SyncEventListener}
+		
+		\unidirectionalAssociation{[xshift=-4cm]RealtimeSignalSync.south}{\hspace{-1.7cm}strategy}{\hspace{-0.5cm}1}{SyncStrategy.north}
+		
+		\unidirectionalAssociation{[xshift=4cm]RealtimeSignalSync.south}{\hspace{1.1cm}slicer}{\hspace{0.7cm}1}{StreamSetSlicer.north}
+		
+		\unidirectionalAssociation{[xshift=0.7cm]RealtimeSignalSync.south}{\hspace{2cm}streamSet}{\hspace{0.5cm}1}{[xshift=-2.3cm]StreamSet.north}
+	\end{package}
+\end {tikzpicture}

@@ -1,0 +1,26 @@
+\begin {tikzpicture}% [ show background grid ]
+	\begin{package}[StreamPackage]{be.signalsync.syncstrategy}
+		\setul{1pt}{.4pt}
+		\begin {abstractclass}[text width=11cm]{SyncStrategy}{0,0}
+			\operation{+ \ul{createDefault}() : SyncStrategy}
+			\operation{+ \ul{createFingerprintStrategy}() : FingerprintSyncStrategy}
+			\operation{+ \ul{createCrossCovariance}() : CrossCovarianceSyncStrategy}
+			\operation[0]{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless Double\textgreater}
+		\end {abstractclass}
+		
+		\begin {class}[text width=11cm]{FingerprintSyncStrategy}{-1,-6}
+			\inherit{SyncStrategy}
+			\operation{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless Double\textgreater}
+			\operation{+ getResults(sliceSet : List\textless float[]\textgreater) : List\textless int[]\textgreater}
+			\operation{//private methode's voor de werking van het algoritme}
+		\end {class}
+		
+		\begin {class}[text width=11cm]{CrossCovarianceSyncStrategy}{1,-12}
+			\inherit{SyncStrategy}
+			\operation{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless Double\textgreater}
+			\operation{//private methode's voor de werking van het algoritme}
+		\end {class}
+		
+		\unidirectionalAssociation{[xshift=-2cm]CrossCovarianceSyncStrategy.north}{\hspace{-2.6cm}fingerprinter}{\hspace{-0.5cm}1}{FingerprintSyncStrategy.south}
+	\end{package}
+\end {tikzpicture}
