@@ -112,18 +112,18 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {
 		//A map containing the results: Key: The found result (in sample), Value=The result count
 		Map<Integer, Integer> refinedResult = new HashMap<Integer, Integer>();
+		
 		//The number of nfft steps in the buffers.
 		int steps = reference.length / stepSize;
 		//The size of each divided part from the buffers.
 		int partSize = steps / nrOfTests;
-		//The absolute value of the fingerprint latency used to be sure we are not trying
-		//to access a negative buffer position.
-		int fingerprintLimit = Math.abs(fingerPrintLatency);
+		//The start position
+		int fp = Math.abs(fingerPrintLatency);
 		
 		//Start iterating. We start at the fingerprint latency value and take steps of the size of partSize.
-		for(int position = fingerprintLimit; position<=bufferSize-partSize; position+=partSize) {
+		for(int position = fp; position<=bufferSize-partSize; position+=partSize) {
 			//Calculate the refined lag using the two streams and the calculated timing data.
-			int lag = findCrossCovarianceLag(position, position+fingerprintLimit, reference, other);
+			int lag = findCrossCovarianceLag(position, position+fingerPrintLatency, reference, other);
 			//Check if the result already exists in the hashmap, if so, we increment the value, 
 			//else the value becomes 1.
 			Integer value = refinedResult.get(lag) != null ? refinedResult.get(lag) : 0;
@@ -147,27 +147,22 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		//else: calculate the offset in seconds.
 		if(max > successThreshold) {
 			// lag in seconds
-			double offsetLagInSeconds1 = bestLag / (float) sampleRate;
-			double offsetLagInSeconds2 = (bufferSize - bestLag) / (float) sampleRate;
-						
+			double offsetLagInSeconds1 = (bufferSize - bestLag) / (float) sampleRate;
+			double offsetLagInSeconds2 = bestLag / (float) sampleRate;
+			
 			double offsetFromMatching = fingerPrintLatency * FFTHopsize;
 			
-			double offsetTotalInSeconds1 = offsetFromMatching + offsetLagInSeconds1;
-			double offsetTotalInSeconds2 = offsetFromMatching - offsetLagInSeconds2;
+			double offsetTotalInSeconds1 = offsetFromMatching - offsetLagInSeconds1;
+			// Happens when the fingerprint algorithm overestimated the real latency
+			double offsetTotalInSeconds2 = offsetFromMatching + offsetLagInSeconds2;
 
 			// Calculating the difference between the fingerprint match and the
 			// covariance results.
-			double dif2 = Math.abs(offsetTotalInSeconds2 - offsetFromMatching);
 			double dif1 = Math.abs(offsetTotalInSeconds1 - offsetFromMatching);
+			double dif2 = Math.abs(offsetTotalInSeconds2 - offsetFromMatching);
 
-			// Check which result is the closest to the fingerprint match
-			double offsetTotalInSeconds;
-			if(dif1 < dif2) {
-				offsetTotalInSeconds = offsetTotalInSeconds1;
-			}
-			else {
-				offsetTotalInSeconds = offsetTotalInSeconds2;
-			}
+			// Check which results is the closest to the fingerprint match
+			double offsetTotalInSeconds = dif1 < dif2 ? offsetTotalInSeconds1 : offsetTotalInSeconds2;
 
 			//Test if the difference of the crosscovariance result and fingerprint result
 			//is not too big, if so, the crosscovariance result is probably wrong -> return null.
@@ -222,6 +217,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		otherDispatcher.run();
 		//Get the other frame which will be used in the crosscovariance algorithm.
 		float[] otherAudioFrame = otherAudioSkipper.getAudioFrame();
+
 		// lag in samples, determines how many samples the other audio frame
 		// lags with respect to the reference audio frame.
 		int lag = bestCrossCovarianceLag(referenceAudioFrame, otherAudioFrame);
@@ -257,7 +253,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @param lag The lag to use in the calculation.
 	 * @return The covariance value.
 	 */
-	private double covariance(final float[] reference, final float[] target, final int lag) {		
+	private double covariance(final float[] reference, final float[] target, final int lag) {
 		double covariance = 0.0;
 		for (int i = 0; i < reference.length; i++) {
 			final int targetIndex = (i + lag) % reference.length;
