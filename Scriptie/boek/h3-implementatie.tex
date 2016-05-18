@@ -632,7 +632,7 @@ De klasse \texttt{TeensyReader} bevat de implementatie van een Max/MSP module wa
 
 \begin{description}	
 	\item\textbf{Poort} \hfill \\
-	De COM-poort waarmee de Teensy microcontroller communiceert met de computer.
+	De COM-poort waarmee de Teensy microcontroller communiceert met de computer. Wanneer de naam van de poort vaststaat kan deze hier letterlijk worden meegegeven. Het is ook mogelijk om een index (vanaf 0) op te geven die. Indien er 3 microcontrollers zijn aangesloten kan er 0, 1 of 2 worden opgegeven. Deze parameter kan ook worden weggelaten. In dat geval wordt automatisch de Teensy met index 0 gekozen.
 	\item\textbf{Samplefrequentie} \hfill \\
 	Dit is de samplefrequentie in Hertz waaraan de Teensy microcontroller met de computer communiceert. Alle binnenkomende signalen worden geresampled naar de samplefrequentie van Max/MSP. De meest courante waarden zijn 8000 of 11025. 
 	

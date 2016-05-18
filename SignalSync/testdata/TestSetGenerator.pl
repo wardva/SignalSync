@@ -52,6 +52,12 @@ while(readdir($musicDir)) {
 	`sox "$outputName.wav" "$outputName\_-2000\_0hz.wav" trim 2.000 =$length`;
 	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-2000\_50hz.wav" trim 2.000 =$length`;
 	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-2000\_100hz.wav" trim 2.000 =$length`;
+
+	# 6000ms latency
+	`sox "$outputName.wav" "$outputName\_-6000\_0hz.wav" trim 6.000 =$length`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-6000\_50hz.wav" trim 6.000 =$length`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-6000\_100hz.wav" trim 6.000 =$length`;
+
 }
 print "done";
 

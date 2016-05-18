@@ -56,7 +56,7 @@ De frequentie van de menselijke stem varieert tussen $ 30 Hz $ en $ 3000 Hz $. D
 
 De bitdiepte is het aantal bits waarmee elke gesamplede waarde wordt voorgesteld. Meestal wordt er gebruik gemaakt van 16 bit \textit{signed integers}.
 
-De bitdiepte bepaald het dynamische bereik van audio. Dit is de verhouding tussen het stilst en luidst mogelijk weer te geven volume. Deze verhouding, uitgedrukt in decibel, kan worden berekend met volgende formule: 
+De bitdiepte bepaalt het dynamische bereik van audio. Dit is de verhouding tussen het stilst en luidst mogelijk weer te geven volume. Deze verhouding, uitgedrukt in decibel, kan worden berekend met volgende formule: 
 \begin{equation}
 DR = 20 \cdot \log_{10} \left(\frac{2^Q}{1}\right) = (6.02 \cdot Q) dB
 \end{equation}
@@ -64,6 +64,11 @@ DR = 20 \cdot \log_{10} \left(\frac{2^Q}{1}\right) = (6.02 \cdot Q) dB
 In deze formule staat DR voor het dynamische bereik en Q voor de bitdiepte. Volgens deze formule heeft 16 bit audio een theoretisch dynamische bereik van ongeveer 96 dB. De werkelijke waarde kan hier echter van afwijken door filters die zijn ingebouwd in audiosystemen.
 
 Bovenstaande informatie is gebaseerd op artikel \cite{tarsosmanual2016}, introductievideo \cite{xiph2016} en boek \cite{fries2005digital}.
+
+\subsubsection{Weergave in software}
+
+In computerprogramma's waarin digitale audio verwerkt wordt is het gebruikelijk om een sample voor te stellen als een getal. Afhankelijk van de implementatie kan een 16 bit sample op verschillende manieren worden verwerkt. Enkele mogelijke voorstellingen: signed integer (-32768 tot 32767), unsigned integer (0 tot 65536) of floating point (-1 tot 1). 
+In deze thesis en de bijhorende software wordt altijd de floating point notatie gebruikt.
 
 \section{Evaluatiecriteria}
 \label{evaluatie-criteria}

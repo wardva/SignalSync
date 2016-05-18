@@ -5,39 +5,39 @@
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Huidge werkwijze voor streamsynchronisatie}}{3}{figure.caption.5}
 \contentsline {figure}{\numberline {1.2}{\ignorespaces Samplen van audio}}{4}{figure.caption.6}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Voorbeeld van een spectrogram}}{14}{figure.caption.16}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Kandidaat-pieken en fingerprints}}{16}{figure.caption.18}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces De anatomie van een fingerprint}}{17}{figure.caption.19}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Schema synchronisatie met fingerprinting}}{18}{figure.caption.21}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Schematische weergave van de buffer}}{23}{figure.caption.28}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Voorbeeld buffering methodes}}{24}{figure.caption.30}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Voorbeeld van een spectrogram}}{14}{figure.caption.17}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Kandidaat-pieken en fingerprints}}{16}{figure.caption.19}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces De anatomie van een fingerprint}}{17}{figure.caption.20}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Schema synchronisatie met fingerprinting}}{18}{figure.caption.22}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Schematische weergave van de buffer}}{23}{figure.caption.29}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Voorbeeld buffering methodes}}{24}{figure.caption.31}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Gebruikersinterface van Audacity}}{29}{figure.caption.32}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Gebruikersinterface van Sonic Visualiser}}{30}{figure.caption.33}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Gebruikersinterface van Audacity}}{31}{figure.caption.34}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Gebruikersinterface van Max/MSP}}{32}{figure.caption.35}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Teensy microcontroller}}{33}{figure.caption.36}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Kruiscovariantie audiofragmenten}}{39}{figure.caption.37}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Kruiscovariantie buffers}}{40}{figure.caption.38}
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Zoemtoon van $50 Hz$}}{42}{figure.caption.41}
-\contentsline {figure}{\numberline {3.9}{\ignorespaces Het ongefilterde verloop van de latency}}{45}{figure.caption.42}
-\contentsline {figure}{\numberline {3.10}{\ignorespaces Het verloop van de latencies na het toepassen van een moving average filter.\relax }}{46}{figure.caption.44}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Gebruikersinterface van Audacity}}{29}{figure.caption.33}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Gebruikersinterface van Sonic Visualiser}}{30}{figure.caption.34}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Gebruikersinterface van Audacity}}{31}{figure.caption.35}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Gebruikersinterface van Max/MSP}}{32}{figure.caption.36}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Teensy microcontroller}}{33}{figure.caption.37}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Kruiscovariantie audiofragmenten}}{39}{figure.caption.38}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Kruiscovariantie buffers}}{40}{figure.caption.39}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Zoemtoon van $50 Hz$}}{42}{figure.caption.42}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Het ongefilterde verloop van de latency}}{45}{figure.caption.43}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Het verloop van de latencies na het toepassen van een moving average filter.\relax }}{46}{figure.caption.45}
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Buffergrootte 3}}}{46}{subfigure.10.1}
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Buffergrootte 5}}}{46}{subfigure.10.2}
-\contentsline {figure}{\numberline {3.11}{\ignorespaces Het verloop van de latencies na het toepassen van een moving median filter.\relax }}{47}{figure.caption.46}
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Het verloop van de latencies na het toepassen van een moving median filter.\relax }}{47}{figure.caption.47}
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Buffergrootte 3}}}{47}{subfigure.11.1}
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Buffergrootte 5}}}{47}{subfigure.11.2}
-\contentsline {figure}{\numberline {3.12}{\ignorespaces UML diagram van streams}}{51}{figure.caption.47}
-\contentsline {figure}{\numberline {3.13}{\ignorespaces UML diagram van de stream verwerkingsklassen}}{52}{figure.caption.51}
-\contentsline {figure}{\numberline {3.14}{\ignorespaces UML diagram dat toont hoe streams worden opgeslagen}}{53}{figure.caption.53}
-\contentsline {figure}{\numberline {3.15}{\ignorespaces UML diagram de observer logica van de klasse \texttt {Slicer}\relax }}{55}{figure.caption.55}
-\contentsline {figure}{\numberline {3.16}{\ignorespaces UML diagram van de klasse \texttt {StreamSlicer} en haar supertypes.\relax }}{56}{figure.caption.57}
-\contentsline {figure}{\numberline {3.17}{\ignorespaces UML diagram van de klasse \texttt {StreamSetSlicer} en haar supertypes.\relax }}{57}{figure.caption.59}
-\contentsline {figure}{\numberline {3.18}{\ignorespaces UML diagram van de klassen met de synchronisatiealgoritmen.\relax }}{58}{figure.caption.60}
-\contentsline {figure}{\numberline {3.19}{\ignorespaces UML diagram van \texttt {RealtimeSignalSync} + afhankelijkheden}}{60}{figure.caption.63}
-\contentsline {figure}{\numberline {3.20}{\ignorespaces UML diagram van de verschillende datafilters.\relax }}{62}{figure.caption.65}
-\contentsline {figure}{\numberline {3.21}{\ignorespaces Screenshot van de TeensyReader in Max/MSP}}{65}{figure.caption.67}
-\contentsline {figure}{\numberline {3.22}{\ignorespaces Synchronisatie in Max/MSP}}{67}{figure.caption.70}
+\contentsline {figure}{\numberline {3.12}{\ignorespaces UML diagram van streams}}{51}{figure.caption.48}
+\contentsline {figure}{\numberline {3.13}{\ignorespaces UML diagram van de stream verwerkingsklassen}}{52}{figure.caption.52}
+\contentsline {figure}{\numberline {3.14}{\ignorespaces UML diagram dat toont hoe streams worden opgeslagen}}{53}{figure.caption.54}
+\contentsline {figure}{\numberline {3.15}{\ignorespaces UML diagram de observer logica van de klasse \texttt {Slicer}\relax }}{55}{figure.caption.56}
+\contentsline {figure}{\numberline {3.16}{\ignorespaces UML diagram van de klasse \texttt {StreamSlicer} en haar supertypes.\relax }}{56}{figure.caption.58}
+\contentsline {figure}{\numberline {3.17}{\ignorespaces UML diagram van de klasse \texttt {StreamSetSlicer} en haar supertypes.\relax }}{57}{figure.caption.60}
+\contentsline {figure}{\numberline {3.18}{\ignorespaces UML diagram van de klassen met de synchronisatiealgoritmen.\relax }}{58}{figure.caption.61}
+\contentsline {figure}{\numberline {3.19}{\ignorespaces UML diagram van \texttt {RealtimeSignalSync} + afhankelijkheden}}{60}{figure.caption.64}
+\contentsline {figure}{\numberline {3.20}{\ignorespaces UML diagram van de verschillende datafilters.\relax }}{62}{figure.caption.66}
+\contentsline {figure}{\numberline {3.21}{\ignorespaces Screenshot van de TeensyReader in Max/MSP}}{65}{figure.caption.68}
+\contentsline {figure}{\numberline {3.22}{\ignorespaces Synchronisatie in Max/MSP}}{67}{figure.caption.71}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

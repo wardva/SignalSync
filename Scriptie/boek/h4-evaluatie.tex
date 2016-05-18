@@ -1,34 +1,26 @@
 \chapter{Evaluatie}
 \label{evaluatie}
 
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
+Om de kwaliteit van de softwarebibliotheek te kunnen garanderen zijn er verschillende soorten testen uitgevoerd. 
+
+De eerste soort testen zijn geschreven voor het bepalen en analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaalt moet worden. De moeilijkheidsgraad wordt hierbij iteratief opgedreven. Deze testen werden ook gebruikt voor het bepalen van de optimale parameterwaarden.
+
+Buiten het testen van de algoritmes zijn er ook enkele unit testen geschreven voor het testen van enkele cruciale elementen van de softwarebibliotheek. Deze testen zijn cruciaal om het aantal bugs in de softwarelogica te beperken.
+
+%Bespreken huidige implementatie, wat er nog moet gebeuren???
+
+\section{Testen van de algoritmes}
+
+Het testen van de algoritmes is uitgevoerd met behulp van een JUnit test. Hoewel een dergelijke test geen echte unit test is laat dit framework deze testen wel toe. De situaties waarin fouten zich voordoen kunnen hierbij snel worden afgelezen.
+
+De testcases bevinden zich in het package \texttt{be.signalsync.test}. De eerste testcase om de algoritmes te testen heet \texttt{SynchronizationTest}. In de methode \texttt{before} kunnen de parameters van het accoustic fingerprinting en kruiscovariantie algoritme gewijzigd worden. Er zijn ook enkele attributen voorzien die een invloed hebben op welke audiofragmenten er gebruikt worden in de testen. Deze parameters worden in volgende sectie besproken.
+
+\subsection{Aanmaken de dataset}
+
+In het meest eenvoudige scenario wordt de latency berekent tussen twee identieke audiofragmenten waarbij er een stukje van één audiofragment is weggeknipt. De lengte van dat stukje bepaalt de latency tussen beide fragmenten (het teken is afhankelijk van welk audiofragment er als referentie gezien wordt). 
+
+\section{Praktijktesten}
 
 
-\section{Unit testen}
+\section{Testen van de softwarecomponenten}
 
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-
-\section{Stresstesten}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-
-\section{Test in de praktijk}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-
-\section{Usability testen}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-
-\section{Analyse van de complexiteitsgraad}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
-
-
-\section{Praktische bruikbaarheid van het systeem}
-
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at facilisis diam, vel varius mi. Maecenas in sodales tellus. Aenean tincidunt erat sit amet accumsan bibendum. Aliquam posuere dictum diam in tempor. Aenean feugiat eget quam id malesuada. Proin pretium et urna mattis molestie. Mauris pretium neque id magna sodales pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed vel ornare leo. Nullam porttitor diam eget blandit hendrerit.
