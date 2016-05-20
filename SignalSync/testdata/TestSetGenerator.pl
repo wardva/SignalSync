@@ -26,37 +26,37 @@ while(readdir($musicDir)) {
 
 	
 	# 20ms latency
-	`sox "$outputName.wav" "$outputName\_-20\_0hz.wav" trim 0.020 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-20\_50hz.wav" trim 0.020 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-20\_100hz.wav" trim 0.020 =$length`;
+	`sox "$outputName.wav" "$outputName\_20\_0hz.wav" delay 0.020`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_20\_50hz.wav" delay 0.020`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_20\_100hz.wav" delay 0.020`;
 	
 	# 80ms latency
-	`sox "$outputName.wav" "$outputName\_-80\_0hz.wav" trim 0.080 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-80\_50hz.wav" trim 0.080 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-80\_100hz.wav" trim 0.080 =$length`;
+	`sox "$outputName.wav" "$outputName\_80\_0hz.wav" delay 0.080`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_80\_50hz.wav" delay 0.080`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_80\_100hz.wav" delay 0.080`;
 	
 	
 	# 90ms latency
-	`sox "$outputName.wav" "$outputName\_-90\_0hz.wav" trim 0.090 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-90\_50hz.wav" trim 0.090 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-90\_100hz.wav" trim 0.090 =$length`;
+	`sox "$outputName.wav" "$outputName\_90\_0hz.wav" delay 0.090`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_90\_50hz.wav" delay 0.090`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_90\_100hz.wav" delay 0.090`;
 	
 	
 	# 300ms latency
-	`sox "$outputName.wav" "$outputName\_-300\_0hz.wav" trim 0.300 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-300\_50hz.wav" trim 0.300 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-300\_100hz.wav" trim 0.300 =$length`;
+	`sox "$outputName.wav" "$outputName\_300\_0hz.wav" delay 0.300`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_300\_50hz.wav" delay 0.300`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_300\_100hz.wav" delay 0.300`;
 	
 	
 	# 2000ms latency
-	`sox "$outputName.wav" "$outputName\_-2000\_0hz.wav" trim 2.000 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-2000\_50hz.wav" trim 2.000 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-2000\_100hz.wav" trim 2.000 =$length`;
+	`sox "$outputName.wav" "$outputName\_2000\_0hz.wav" delay 2.000`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_2000\_50hz.wav" delay 2.000`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_2000\_100hz.wav" delay 2.000`;
 
 	# 6000ms latency
-	`sox "$outputName.wav" "$outputName\_-6000\_0hz.wav" trim 6.000 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_-6000\_50hz.wav" trim 6.000 =$length`;
-	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_-6000\_100hz.wav" trim 6.000 =$length`;
+	`sox "$outputName.wav" "$outputName\_6000\_0hz.wav" delay 6.000`;
+	`sox "$outputName.wav" -p synth $length sin 50 vol 0.8 | sox -m "$outputName.wav" - "$outputName\_6000\_50hz.wav" delay 6.000`;
+	`sox "$outputName.wav" -p synth $length sin 100 vol 0.2 | sox -m "$outputName.wav" - "$outputName\_6000\_100hz.wav" delay 6.000`;
 
 }
 print "done";

@@ -28,8 +28,7 @@ public class SynchronizationTest {
 	private final static String OTHER_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_%d_%dhz.wav - slice - %d.wav";
 	private final static int NUMBER_OF_SLICES = 27;
 	
-	//private final static int[] LATENCIES = {0, -20, -80, -90, -300, -2000};
-	private final static int[] LATENCIES = {-20 };
+	private final static int[] LATENCIES = {0, 20, 80, 90, 300, 2000, 6000};
 	private final static int[] FREQUENCIES = {0, 50, 100 };
 	private final static double MILLIS_TO_SECONDS = 0.001;
 	private final List<float[]> streams;
@@ -53,7 +52,7 @@ public class SynchronizationTest {
 				SAMPLE_RATE, 		//Sample rate
 				NFFT_BUFFER_SIZE, 	//Buffer size
 				NFFT_STEP_SIZE, 	//Buffer step size
-				100, 				//Number of tests
+				5, 				    //Number of tests
 				1);					//Success threshold
 	}
 
@@ -95,7 +94,7 @@ public class SynchronizationTest {
 		final List<Double> latencies = crossCovarianceStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
-				latency, latencies.get(0), 0.00001);
+				latency, latencies.get(0), 0.0005);
 	}
 
 	@Test

@@ -41,6 +41,12 @@
 %Better underlining
 \usepackage{soul}
 
+%Marge onderaan wat vergroten
+\setlength{\textheight}{660pt}
+
+%Package om geometrie overzicht van document te tonen.
+%\usepackage{layout}
+
 \interfootnotelinepenalty=10000
 
 \newcommand{\npar}{\par \vspace{2.3ex plus 0.3ex minus 0.3ex} \noindent}	% Om witruimte te krijgen tussen paragrafen
@@ -110,6 +116,9 @@
 % titelblad (voor kaft)
 \include{titel}
 
+% Invoegen van layout testpagina
+% \layout
+
 % lege pagina (!!)
 
 % titelblad (!!)
@@ -138,6 +147,7 @@
 
 % hoofdstukken
 \mainmatter
+
 
 % hier worden de hoofdstukken ingevoegd (\includes)
 \include{h1-inleiding}

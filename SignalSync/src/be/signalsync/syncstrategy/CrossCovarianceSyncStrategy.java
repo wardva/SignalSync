@@ -8,12 +8,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
+import be.tarsos.dsp.io.jvm.AudioPlayer;
 
 /**
  * A synchronization strategy which makes use of the Panako fingerprinting algorithm and
@@ -109,30 +112,28 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @param other	A float buffer containing the other stream data.
 	 * @return The latency in seconds, or null.
 	 */
-	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {
-		//A map containing the results: Key: The found result (in sample), Value=The result count
-		Map<Integer, Integer> refinedResult = new HashMap<Integer, Integer>();
-		
-		//The number of nfft steps in the buffers.
+	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {		
+		//A map containing the results: Key: The found result (in number of samples), Value=The result count
+		Map<Integer, Integer> allLags = new HashMap<Integer, Integer>();	
+		//The number of nfft steps in the reference and other buffer.
 		int steps = reference.length / stepSize;
-		//The size of each divided part from the buffers.
-		int partSize = steps / nrOfTests;
-		//The start position
-		int fp = Math.abs(fingerPrintLatency);
-		
+		//The size of each step to calculate at least nrOfTests crosscovariance values
+		int bufferStepSize = steps / nrOfTests;
+		//The start position, check for negative latency
+		int start = fingerPrintLatency < 0 ? -fingerPrintLatency : 0;
 		//Start iterating. We start at the fingerprint latency value and take steps of the size of partSize.
-		for(int position = fp; position<=bufferSize-partSize; position+=partSize) {
+		for(int position = start; position<=bufferSize-bufferStepSize; position+=bufferStepSize) {
 			//Calculate the refined lag using the two streams and the calculated timing data.
 			int lag = findCrossCovarianceLag(position, position+fingerPrintLatency, reference, other);
 			//Check if the result already exists in the hashmap, if so, we increment the value, 
 			//else the value becomes 1.
-			Integer value = refinedResult.get(lag) != null ? refinedResult.get(lag) : 0;
-			refinedResult.put(lag, value+1);
+			int value = allLags.get(lag) != null ? allLags.get(lag) : 0;
+			allLags.put(lag, value+1);
 		}
 		
 		int max = 0, bestLag = 0;
-		//Iterating over the results, we keep the best result and its occurence.
-		for(Entry<Integer, Integer> entry : refinedResult.entrySet())
+		//Iterating over the results, keeping the best result and its count
+		for(Entry<Integer, Integer> entry : allLags.entrySet())
 		{
 		   int lag = entry.getKey();
 		   int n = entry.getValue();
@@ -145,7 +146,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		
 		//Test if the occurence of the best lag is above the required threshold. If not: return null,
 		//else: calculate the offset in seconds.
-		if(max > successThreshold) {
+		if(max >= successThreshold) {
 			// lag in seconds
 			double offsetLagInSeconds1 = (bufferSize - bestLag) / (float) sampleRate;
 			double offsetLagInSeconds2 = bestLag / (float) sampleRate;
@@ -199,12 +200,10 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 			return 0;
 		}
 
-		final double sizeS = bufferSize / (double) sampleRate;
-
 		//Calculating how much we have to skip each audiodispatcher before we can start
 		//aligning the streams using the crosscovariance algorithm.
-		final double referenceAudioToSkip = sizeS + referenceTime * FFTHopsize;
-		final double otherAudioToSkip = sizeS + otherTime * FFTHopsize;
+		final double referenceAudioToSkip = referenceTime * FFTHopsize;
+		final double otherAudioToSkip = otherTime * FFTHopsize;
 		
 		AudioSkipper referenceAudioSkipper = new AudioSkipper(referenceAudioToSkip);
 		refDispatcher.addAudioProcessor(referenceAudioSkipper);

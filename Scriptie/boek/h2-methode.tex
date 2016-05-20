@@ -165,7 +165,7 @@ De naïeve implementatie kan een wijziging van de latency in het beste geval na 
 
 Een meer doordachte manier van bufferen maakt gebruik van een \textit{sliding window}. In onderstaande beschrijving wordt gebruik gemaakt van een buffer met $ t $ seconden capaciteit en een stapgrootte van $ s $ seconden, hierbij geldt dat $ s \leq t $. 
 
-Het verschil met de naïeve methode is dat de buffer niet pas na $ t $ seconden wordt opgeschoven. Door de buffer al na $ s $ seconden op te schuiven zal een wijziging van de latency sneller gedetecteerd kunnen worden; dit terwijl het algoritme toch nog steeds $ s $ seconden audio kan analyseren. In figuur \ref{slidingwindow} wordt grafisch weergegeven hoe de buffer precies verschoven wordt met $ t = 10 $ en $ s = 5 $.
+Het verschil met de naïeve methode is dat de buffer niet pas na $ t $ seconden wordt opgeschoven. Door de buffer al na $ s $ seconden op te schuiven zal een wijziging van de latency sneller gedetecteerd kunnen worden; dit terwijl het algoritme toch nog steeds $ t $ seconden audio kan analyseren. In figuur \ref{slidingwindow} wordt grafisch weergegeven hoe de buffer precies verschoven wordt met $ t = 10 $ en $ s = 5 $.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -195,20 +195,14 @@ Een praktisch voorbeeld zal bovenstaande beschrijving wat verduidelijken. In het
 	\label{latency}
 \end{figure}
 
-De initiële latency van 3 milliseconden wordt zowel met de naïeve methode als met het sliding window gedetecteerd na de analyse van de allereerste buffer (A of R) 10 seconden na aanvang van de analyse. De eerste verhoging tot 7 milliseconden vindt te laat plaats om gedetecteerd te kunnen worden door de eerste buffer van beide methodes. Bij deze verhoging van de latency wordt het verschil tussen beide methodes zichtbaar: bij  de sliding window methode vindt de detectie 6 seconden na de wijziging plaats. Bij de naïeve methode moet er echter gewacht worden tot wanneer buffer B is volgelopen 12 seconden na de wijziging. De tweede verhoging naar 10 seconden wordt zowel door de naïeve methode als door de sliding window methode gedetecteerd na 8 seconden (buffer C of W). De laatste wijziging naar 12 seconden kan door de naïeve methode pas gedetecteerd worden na 14 seconden (de buffer is niet meer zichtbaar op de grafiek). De sliding window methode zal deze wijziging na 6 seconden detecteren.
+De initiële latency van 3 milliseconden wordt zowel met de naïeve methode als met het sliding window gedetecteerd na de analyse van de allereerste buffer (A of R) 10 seconden na aanvang van de analyse. De eerste verhoging tot 7 milliseconden vindt te laat plaats om gedetecteerd te kunnen worden door de eerste buffer van beide methodes. Bij deze verhoging van de latency wordt het verschil tussen beide methodes zichtbaar: bij  de sliding window methode vindt de detectie 6 seconden na de wijziging plaats. Bij de naïeve methode moet er echter gewacht worden tot wanneer buffer B is volgelopen 12 seconden na de wijziging. De tweede verhoging naar 10 milliseconden wordt zowel door de naïeve methode als door de sliding window methode gedetecteerd 8 seconden na de wijziging (buffer C of W). 
 
 \subsubsection{Conclusie}
 
-De detectiesnelheid van een latencywijziging hangt af van twee parameters: de bufferlengte ($t$) en de staplengte ($s$). Het beste geval ($ T_b $) heeft volgende ondergrens:
+De detectiesnelheid van een latencywijziging hangt af van twee parameters: de bufferlengte ($t$) en de staplengte ($s$). De snelheid waarmee een wijziging gedetecteerd kan worden ($ T $) kan als volgt worden samengevat:
+
 \begin{equation}
-T_b = \frac{t}{2}
+	\frac{t}{2} < T < \frac{t}{2} + s
 \end{equation}
 
-Bij het slechtste geval ($ T_s $) moet ook rekening gehouden worden met de stapgrootte. De bovengrens wordt als volgt bepaalt:
-\begin{equation}
-T_s = \frac{t}{2} + s
-\end{equation}
-
-Bij het toepassen van deze formules op het voorbeeld uit het vorige paragraaf kan er worden vastgesteld dat in het beste geval een latencywijziging gedetecteerd kan worden na 5 seconden. In het slechtste geval wordt een dergelijke wijziging bij de naïeve methode ($t = s = 10 $) pas gedetecteerd na 15 seconden. Bij de sliding window methode ($t = 10, s = 4 $) is deze wachttijd echter begrensd tot maximaal 9 seconden.
-
-%Evaluatiecriteria
+Het toepassen van deze formules op het vorige paragraaf levert volgende resultaten: Zowel bij de naïeve als sliding window methode is de ondergrens 5 seconden. De bovengrens bij de naïeve methode bedraagt 15 seconden. Bij de sliding window methode is dit begrenst tot 9 seconden.

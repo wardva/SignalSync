@@ -3,24 +3,39 @@
 
 Om de kwaliteit van de softwarebibliotheek te kunnen garanderen zijn er verschillende soorten testen uitgevoerd. 
 
-De eerste soort testen zijn geschreven voor het bepalen en analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaalt moet worden. De moeilijkheidsgraad wordt hierbij iteratief opgedreven. Deze testen werden ook gebruikt voor het bepalen van de optimale parameterwaarden.
+De eerste soort testen zijn geschreven voor het bepalen en analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaalt moet worden. Met behulp van onder meer deze test zijn de optimale parameterwaarden bepaalt.
 
 Buiten het testen van de algoritmes zijn er ook enkele unit testen geschreven voor het testen van enkele cruciale elementen van de softwarebibliotheek. Deze testen zijn cruciaal om het aantal bugs in de softwarelogica te beperken.
+
+Het laatste deel van dit hoofdstuk zal dieper ingaan op de zaken die niet geïmplementeerd zijn maar die in de toekomst zeker een meerwaarde kunnen betekenen.
 
 %Bespreken huidige implementatie, wat er nog moet gebeuren???
 
 \section{Testen van de algoritmes}
 
-Het testen van de algoritmes is uitgevoerd met behulp van een JUnit test. Hoewel een dergelijke test geen echte unit test is laat dit framework deze testen wel toe. De situaties waarin fouten zich voordoen kunnen hierbij snel worden afgelezen.
-
-De testcases bevinden zich in het package \texttt{be.signalsync.test}. De eerste testcase om de algoritmes te testen heet \texttt{SynchronizationTest}. In de methode \texttt{before} kunnen de parameters van het accoustic fingerprinting en kruiscovariantie algoritme gewijzigd worden. Er zijn ook enkele attributen voorzien die een invloed hebben op welke audiofragmenten er gebruikt worden in de testen. Deze parameters worden in volgende sectie besproken.
+Het testen van de algoritmes wordt uitgevoerd met behulp de JUnit testcase \texttt{SynchronizationTest} uit het package \texttt{be.signalsync.test}. Deze testcase laat toe om de slices van verschillende audiofragmenten met elkaar te matchen en te analyseren waar de algoritmes precies in de fout gaan.
 
 \subsection{Aanmaken de dataset}
 
-In het meest eenvoudige scenario wordt de latency berekent tussen twee identieke audiofragmenten waarbij er een stukje van één audiofragment is weggeknipt. De lengte van dat stukje bepaalt de latency tussen beide fragmenten (het teken is afhankelijk van welk audiofragment er als referentie gezien wordt). 
+Bij het uitvoeren van deze test is het de bedoeling om enkel de algoritmes te testen. Om niet afhankelijk te zijn van andere softwareonderdelen wordt de dataset op voorhand aangemaakt. Het aanmaken van deze dataset gebeurt in twee stappen. Eerst wordt het originele audiofragment gewijzigd door er bijvoorbeeld latency aan toe te voegen. Dit gebeurt met behulp van een Perl script. Vervolgens worden de verschillende audiofragmenten in slices geknipt en opgeslagen. In de testcase worden de algoritmes rechtstreeks op deze slices uitgevoerd zonder andere softwareonderdelen aan te roepen.
+
+%In het meest eenvoudige scenario wordt de latency berekend tussen twee identieke audiofragmenten waarbij er een stukje van één audiofragment is weggeknipt. De lengte van dat stukje bepaalt de latency tussen beide fragmenten (het teken is afhankelijk van welk audiofragment er als referentie gezien wordt).
+
+%In sectie \ref{crosscovariance-repeated} is geschreven dat het voor het kruiscovariantie niet vanzelfsprekend is om de latency te bepalen wanneer de golfvormen van de te matchen fragmenten erg verschillend zijn. Dit werd ook in afbeelding \ref{zoemtoon} geïllustreerd. Om het gedrag van het algoritme hierop te testen worden er verschillende versies van de audiofragmenten per latency voorzien. De eerste versie is het originele audiofragment, aan de tweede en derde versie zijn respectievelijk een sinusgolf van 50Hz en 100Hz toegevoegd.
+
+%De uiteindelijke dataset bestaat uit elke mogelijke combinatie van volgende wijzigingen van een fragment.
+
+%Toevoegen van latency: 0ms, 20ms, 80ms, 90ms, 300ms, 2000ms, 6000ms.\\
+%Toevoegen van een sinusgolf: 0Hz, 50Hz, 100Hz.
+
+%De uiteindelijke dataset bestaat dus uit 21 geluidsfragmenten.
+
+%Bij het uitvoeren van de test wordt de latency bepaald tussen het originele geluidsfragment en de gewijzigde fragmenten.
 
 \section{Praktijktesten}
 
 
 \section{Testen van de softwarecomponenten}
+
+\section{Mogelijke verbeteringen}
 
