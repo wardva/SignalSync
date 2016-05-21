@@ -1,7 +1,7 @@
 \select@language {english}
 \select@language {dutch}
 \contentsline {chapter}{Extended abstract}{4}{section*.2}
-\contentsline {chapter}{Gebruikte afkortingen}{iv}{chapter*.4}
+\contentsline {chapter}{Gebruikte afkortingen}{v}{chapter*.4}
 \contentsline {chapter}{\numberline {1}Introductie}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Probleemschets}{1}{section.1.1}
 \contentsline {section}{\numberline {1.2}Digitale audio}{3}{section.1.2}
@@ -94,17 +94,21 @@
 \contentsline {subsubsection}{Implementatie}{62}{section*.72}
 \contentsline {chapter}{\numberline {4}Evaluatie}{64}{chapter.4}
 \contentsline {section}{\numberline {4.1}Testen van de algoritmes}{64}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Aanmaken de dataset}{65}{subsection.4.1.1}
-\contentsline {section}{\numberline {4.2}Praktijktesten}{65}{section.4.2}
-\contentsline {section}{\numberline {4.3}Testen van de softwarecomponenten}{65}{section.4.3}
-\contentsline {section}{\numberline {4.4}Mogelijke verbeteringen}{65}{section.4.4}
-\contentsline {chapter}{\numberline {5}Conclusie}{66}{chapter.5}
-\contentsline {chapter}{Bijlagen}{67}{section*.73}
-\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{68}{Bijlage.a.A}
-\contentsline {chapter}{Referentielijst}{70}{chapter*.74}
-\contentsline {chapter}{L"yst van figuren}{73}{chapter*.75}
-\contentsline {chapter}{Lijst van figuren}{74}{chapter*.75}
-\contentsline {chapter}{L"yst van tabellen}{75}{chapter*.76}
-\contentsline {chapter}{Lijst van tabellen}{75}{chapter*.76}
-\contentsline {chapter}{Lijst van codefragmenten}{76}{chapter*.77}
-\contentsline {chapter}{Lijst van codefragmenten}{76}{chapter*.77}
+\contentsline {subsection}{\numberline {4.1.1}Aanmaken van de dataset}{65}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Toevoegen van latency}{65}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Toevoegen van een sinusgolf}{66}{subsection.4.1.3}
+\contentsline {section}{\numberline {4.2}Praktijktesten}{66}{section.4.2}
+\contentsline {section}{\numberline {4.3}Testen van de softwarecomponenten}{66}{section.4.3}
+\contentsline {section}{\numberline {4.4}Mogelijke verbeteringen}{66}{section.4.4}
+\contentsline {chapter}{\numberline {5}Conclusie}{67}{chapter.5}
+\contentsline {chapter}{Bijlagen}{68}{section*.73}
+\contentsline {chapter}{\numberline {A}Resultaten: DTW experiment}{69}{Bijlage.a.A}
+\contentsline {chapter}{\numberline {B}Testresultaten: gewijzigde latency}{71}{Bijlage.a.B}
+\contentsline {chapter}{\numberline {C}Testresultaten: toevoegen van een sinusgolf}{75}{Bijlage.a.C}
+\contentsline {chapter}{Referentielijst}{80}{chapter*.104}
+\contentsline {chapter}{L"yst van figuren}{83}{chapter*.105}
+\contentsline {chapter}{Lijst van figuren}{84}{chapter*.105}
+\contentsline {chapter}{L"yst van tabellen}{85}{chapter*.106}
+\contentsline {chapter}{Lijst van tabellen}{85}{chapter*.106}
+\contentsline {chapter}{Lijst van codefragmenten}{86}{chapter*.107}
+\contentsline {chapter}{Lijst van codefragmenten}{86}{chapter*.107}

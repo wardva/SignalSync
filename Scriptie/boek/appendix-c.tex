@@ -1,0 +1,146 @@
+\chapter{Testresultaten: toevoegen van een sinusgolf}
+\label{appendix-c}
+
+\section*{Dataset}
+
+Bij dit experiment wordt de dataset van bijlage \ref{appendix-b} uitgebreid. Van elke latency uit de eerder besproken dataset worden twee varianten voorzien. Aan elke variant wordt één van deze sinusgolven toegevoegd waardoor de golfvorm er helemaal anders gaat uitzien:
+
+\begin{center}
+	\{ $50Hz$, $100Hz$ \}
+\end{center}
+
+Van deze aangepaste audiofragmenten worden op voorhand opnieuw slices aangemaakt. 
+
+\section*{Test 1}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Accoustic fingerprinting \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	Nauwkeurigheid & $32ms$ \\
+	Opmerking & Standaard parameters \\
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 648 \\
+	Totaal aantal foutief & 0 \\
+	Slaagpercentage & 100\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Het accoustic fingerprinting algoritme heeft geen problemen met het toevoegen van de sinusgolven aan één van de audiofragmenten.
+
+\section*{Test 2}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 1 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Eén kruiscovariantie test \\
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 465 \\
+	Totaal aantal foutief & 183 \\
+	Slaagpercentage & 72\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Het kruiscovariantie ondervindt, bij éénmalige uitvoering, serieuze problemen bij het bepalen van de latency wanneer er een sinusgolf is toegevoegd.
+
+\section*{Test 3}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 5 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Meerdere kruiscovariantie testen
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 642 \\
+	Totaal aantal foutief & 6 \\
+	Slaagpercentage & 99\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Het resultaat dat verkregen wordt wanneer het algoritme vijf maal wordt uitgevoerd staat in groot contrast met vorig resultaat. Een slaagpercentage van 99\% is zeker aanvaardbaar voor deze toepassing.
+
+\section*{Test 4}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 20 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Een groot aantal kruiscovariantie testen
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 648 \\
+	Totaal aantal foutief & 0 \\
+	Slaagpercentage & 100\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Een optimaal resultaat wordt bereikt door de test 20 maal uit te voeren.

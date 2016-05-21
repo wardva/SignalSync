@@ -26,14 +26,13 @@ public class RecordedTest {
 	private final static int NFFT_STEP_SIZE = 256;
 	
 	private final static int NUMBER_OF_SLICES = 27;
-	private final static int NUMBER_OF_RECORDINGS = 3;
 	
 	private final static String REFERENCE_TEMPLATE = "./Slices/Recorded/opname-reference.wav - slice - %d.wav";
 	private final static String OTHER_TEMPLATE = "./Slices/Recorded/opname-%d.wav - slice - %d.wav";
 	private final static double[] LATENCIES = { 2.391D, 1.847D, 4.052D };
+	private final static int[] RECORDING_NRS = {1,2,3};
 	private final static String[] RECORDING_TYPE = {"goeie microfoon via geluidskaart", 
 			"goeie microfoon zonder geluidskaart", "slechte microfoon"};
-	
 	private CrossCovarianceSyncStrategy crossCovarianceStrategy;
 	private FingerprintSyncStrategy fingerprintSyncStrategy;
 	
@@ -47,9 +46,9 @@ public class RecordedTest {
 				SAMPLE_RATE, 		//Sample rate
 				NFFT_BUFFER_SIZE, 	//Buffer size
 				NFFT_STEP_SIZE, 	//Buffer step size
-				30, 				//Minimum distance between fingerprints
-				30,					//Max number of fingerprints for each event point
-				1);					//Minimum aligned matches
+				100, 				//Minimum distance between fingerprints
+				10,				//Max number of fingerprints for each event point
+				2);					//Minimum aligned matches
 		
 		this.crossCovarianceStrategy = new CrossCovarianceSyncStrategy(this.fingerprintSyncStrategy, 
 				SAMPLE_RATE, 				//Sample rate
@@ -62,12 +61,12 @@ public class RecordedTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		final List<Object[]> params = new ArrayList<>();
-		for(int nr = 1; nr<=NUMBER_OF_RECORDINGS; nr++) {
+		for(int i = 0; i<RECORDING_TYPE.length; i++) {
 			for(int j = 0; j<NUMBER_OF_SLICES; j++) {
 				final String reference = String.format(REFERENCE_TEMPLATE, j);
-				final String other = String.format(OTHER_TEMPLATE, nr, j);
-				final double latency = LATENCIES[nr-1];
-				final String type = RECORDING_TYPE[nr-1];
+				final String other = String.format(OTHER_TEMPLATE, RECORDING_NRS[i], j);
+				final double latency = LATENCIES[i];
+				final String type = RECORDING_TYPE[i];
 				params.add(new Object[] { reference, other, latency, type });
 			}
 		}
@@ -108,6 +107,6 @@ public class RecordedTest {
 		final List<Double> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, type: %s", latency, type), 
-				latency, latencies.get(0), 0.016);
+				latency, latencies.get(0), 0.032);
 	}
 }

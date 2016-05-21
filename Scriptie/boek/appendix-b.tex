@@ -1,0 +1,117 @@
+\chapter{Testresultaten: gewijzigde latency}
+\label{appendix-b}
+
+\section*{Dataset}
+
+Alle testen worden uitgevoerd ten opzichte van een referentie audiofragment. Er zijn 12 varianten voorzien met een elk een andere latency. Dit is de verzameling van verschillende latencies:
+\begin{center}
+	\{$20ms$, $-20ms$, $80ms$, $-80ms$, $90ms$, $-90ms$, $300ms$, $-300ms$, \\$2000ms$, $-2000ms$, $6000ms$, $-6000ms$ \}
+\end{center}
+
+Van elk audiofragment (referentie en elke variant) worden (ongeveer) 55 slices aangemaakt (lengte: 10s, overlap: 5s). Elke slice wordt gematcht met de corresponderende slice van het referentie audiofragment.
+
+\section*{Test 1}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Accoustic fingerprinting \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	Nauwkeurigheid & $32ms$ \\
+	Opmerking & Standaard parameters \\
+	\\
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 324 \\
+	Totaal aantal geslaagd & 324 \\
+	Totaal aantal foutief & 0 \\
+	Slaagpercentage & 100\% \\
+	\\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Zoals verwacht slagen alle testen.
+
+\section*{Test 2}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 1 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Eén kruiscovariantie test \\
+	\\
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 324 \\
+	Totaal geslaagd & 306 \\
+	Totaal foutief & 18 \\
+	Slaagpercentage & 94\% \\
+	\\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Sommige testen falen. Analyse toont aan dat dit enkel voorvalt wanneer minstens één kruiscovariantie buffer stilte bevat (samples zijn 0.0).
+
+\section*{Test 3}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 5 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Meerdere kruiscovariantie testen \\
+	\\
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 324 \\
+	Totaal geslaagd & 324 \\
+	Totaal foutief & 0 \\
+	Slaagpercentage & 100\% \\
+	\\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Na het verhogen van het aantal kruiscovariantie testen is het slaagpercentage 100\%.

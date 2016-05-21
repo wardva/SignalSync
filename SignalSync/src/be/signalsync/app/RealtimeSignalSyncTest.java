@@ -16,9 +16,7 @@ import be.signalsync.sync.SyncEventListener;
 public class RealtimeSignalSyncTest {
 	public static void main(final String[] args) {
 		//Creating a streamset from some audio files.
-		StreamSet streamSet = StreamSetFactory.createFromFiles(
-				"./testdata/Clean/Sonic Youth - Star Power_-90_0hz.wav", 
-				"./testdata/Clean/Sonic Youth - Star Power_0_0hz.wav");
+		StreamSet streamSet = StreamSetFactory.createRecordedTeensyStreamSet();
 		
 		final RealtimeSignalSync syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {

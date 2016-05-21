@@ -6,17 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.AudioProcessor;
-import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
-import be.tarsos.dsp.io.jvm.AudioPlayer;
 
 /**
  * A synchronization strategy which makes use of the Panako fingerprinting algorithm and
@@ -28,22 +17,19 @@ import be.tarsos.dsp.io.jvm.AudioPlayer;
  *
  */
 public class CrossCovarianceSyncStrategy extends SyncStrategy {
-	private static Logger Log = Logger.getLogger("SignalSync");
 	private final FingerprintSyncStrategy fingerprinter;
 	private final int sampleRate;
-	private final int bufferSize;
+	private final int nfftBufferSize;
 	private final int stepSize;
-	private final int overlap;
 	private final int nrOfTests;
 	private final int successThreshold;
 	private final double FFTHopsize;
 
-	public CrossCovarianceSyncStrategy(FingerprintSyncStrategy fingerprinter, int sampleRate, int bufferSize, int stepSize, int nrOfTests, int succesThreshold) {
+	public CrossCovarianceSyncStrategy(FingerprintSyncStrategy fingerprinter, int sampleRate, int nfftBufferSize, int stepSize, int nrOfTests, int succesThreshold) {
 		this.fingerprinter = fingerprinter;
 		this.sampleRate = sampleRate;
-		this.bufferSize = bufferSize;
+		this.nfftBufferSize = nfftBufferSize;
 		this.stepSize = stepSize;
-		this.overlap = bufferSize - stepSize;
 		this.nrOfTests = nrOfTests;
 		this.successThreshold = succesThreshold;
 		this.FFTHopsize = stepSize / (double) sampleRate;
@@ -112,19 +98,25 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @param other	A float buffer containing the other stream data.
 	 * @return The latency in seconds, or null.
 	 */
-	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {		
+	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {
+		//The size of 1 slice (=length of reference or other buffer)
+		int sliceSize = reference.length;
+		//Convert the fingerprintLatency from number of fft steps to number of samples
+		int fingerPrintLatencyInSamples = fingerPrintLatency * stepSize;
 		//A map containing the results: Key: The found result (in number of samples), Value=The result count
 		Map<Integer, Integer> allLags = new HashMap<Integer, Integer>();	
-		//The number of nfft steps in the reference and other buffer.
-		int steps = reference.length / stepSize;
-		//The size of each step to calculate at least nrOfTests crosscovariance values
-		int bufferStepSize = steps / nrOfTests;
-		//The start position, check for negative latency
-		int start = fingerPrintLatency < 0 ? -fingerPrintLatency : 0;
+		//The step size we have use to perform `nrOfTests` tests.
+		int bufferStepSize = reference.length / nrOfTests;
+		
+		//Calculate the start position
+		int start = fingerPrintLatencyInSamples < 0 ? -fingerPrintLatencyInSamples : 0;
+		//Calculate the stop position
+		int stop = fingerPrintLatencyInSamples < 0 ? sliceSize - nfftBufferSize : sliceSize - nfftBufferSize - fingerPrintLatencyInSamples;
+
 		//Start iterating. We start at the fingerprint latency value and take steps of the size of partSize.
-		for(int position = start; position<=bufferSize-bufferStepSize; position+=bufferStepSize) {
+		for(int position = start; position < stop; position+=bufferStepSize) {
 			//Calculate the refined lag using the two streams and the calculated timing data.
-			int lag = findCrossCovarianceLag(position, position+fingerPrintLatency, reference, other);
+			int lag = findCrossCovarianceLag(position, position+fingerPrintLatencyInSamples, reference, other);
 			//Check if the result already exists in the hashmap, if so, we increment the value, 
 			//else the value becomes 1.
 			int value = allLags.get(lag) != null ? allLags.get(lag) : 0;
@@ -147,18 +139,19 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		//Test if the occurence of the best lag is above the required threshold. If not: return null,
 		//else: calculate the offset in seconds.
 		if(max >= successThreshold) {
-			// lag in seconds
-			double offsetLagInSeconds1 = (bufferSize - bestLag) / (float) sampleRate;
+			//possible lags in seconds
+			double offsetLagInSeconds1 = (nfftBufferSize - bestLag) / (float) sampleRate;
 			double offsetLagInSeconds2 = bestLag / (float) sampleRate;
 			
+			//fingerprint latency in seconds
 			double offsetFromMatching = fingerPrintLatency * FFTHopsize;
 			
+			//possible refined latencies
 			double offsetTotalInSeconds1 = offsetFromMatching - offsetLagInSeconds1;
-			// Happens when the fingerprint algorithm overestimated the real latency
 			double offsetTotalInSeconds2 = offsetFromMatching + offsetLagInSeconds2;
 
 			// Calculating the difference between the fingerprint match and the
-			// covariance results.
+			// refined results.
 			double dif1 = Math.abs(offsetTotalInSeconds1 - offsetFromMatching);
 			double dif2 = Math.abs(offsetTotalInSeconds2 - offsetFromMatching);
 
@@ -188,35 +181,10 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @return The lag between the reference stream and the other stream in samples.
 	 */
 	private int findCrossCovarianceLag(int referenceTime, int otherTime, float[] reference, float[] other) {
-		AudioDispatcher refDispatcher;
-		AudioDispatcher otherDispatcher;
-		try {
-			//Create audiodispatchers from the float buffers.
-			refDispatcher = AudioDispatcherFactory.fromFloatArray(reference, sampleRate, bufferSize, overlap);
-			otherDispatcher = AudioDispatcherFactory.fromFloatArray(other, sampleRate, bufferSize, overlap);
-		} 
-		catch (UnsupportedAudioFileException e) {
-			Log.log(Level.SEVERE, "Audio file problem, check this!", e);
-			return 0;
-		}
-
-		//Calculating how much we have to skip each audiodispatcher before we can start
-		//aligning the streams using the crosscovariance algorithm.
-		final double referenceAudioToSkip = referenceTime * FFTHopsize;
-		final double otherAudioToSkip = otherTime * FFTHopsize;
-		
-		AudioSkipper referenceAudioSkipper = new AudioSkipper(referenceAudioToSkip);
-		refDispatcher.addAudioProcessor(referenceAudioSkipper);
-		refDispatcher.run();
 		//Get the reference frame which will be used in the crosscovariance algorithm.
-		float[] referenceAudioFrame = referenceAudioSkipper.getAudioFrame();
-
-		final AudioSkipper otherAudioSkipper = new AudioSkipper(otherAudioToSkip);
-		otherDispatcher.addAudioProcessor(otherAudioSkipper);
-		otherDispatcher.run();
-		//Get the other frame which will be used in the crosscovariance algorithm.
-		float[] otherAudioFrame = otherAudioSkipper.getAudioFrame();
-
+		float[] referenceAudioFrame = skipAudio(reference, referenceTime);
+		float[] otherAudioFrame = skipAudio(other, otherTime);
+				
 		// lag in samples, determines how many samples the other audio frame
 		// lags with respect to the reference audio frame.
 		int lag = bestCrossCovarianceLag(referenceAudioFrame, otherAudioFrame);
@@ -262,38 +230,20 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	}
 	
 	/**
-	 * A helper class used for skipping a certain amount of time from
-	 * a AudioDispatcher and returning an audio buffer after the number
-	 * of frames is skipped.
-	 * @author Ward Van Assche
-	 *
+	 * This method skips a number of samples from an audio buffer and
+	 * returns a new buffer containing the first `nfftBufferSize` samples.
+	 * @param buffer The initial buffer
+	 * @param numberOfSamples The number of samples to skip
+	 * @return
 	 */
-	private class AudioSkipper implements AudioProcessor {
-		private final float[] audioFrame;
-		private final double audioToSkip;
-
-		public AudioSkipper(final double audioToSkip) {
-			this.audioToSkip = audioToSkip;
-			audioFrame = new float[bufferSize];
+	private float[] skipAudio(float[] buffer, int numberOfSamples) {
+		if(numberOfSamples + nfftBufferSize > buffer.length){
+			throw new IllegalArgumentException("Can not skip audio");
 		}
-
-		public float[] getAudioFrame() {
-			return audioFrame;
+		float[] audioFrame = new float[nfftBufferSize];
+		for(int i = 0; i<nfftBufferSize; i++) {
+			audioFrame[i] = buffer[numberOfSamples + i];
 		}
-
-		@Override
-		public boolean process(final AudioEvent audioEvent) {
-			if (Math.abs(audioEvent.getTimeStamp() - audioToSkip) < 0.00001) {
-				final float[] buffer = audioEvent.getFloatBuffer();
-				for (int i = 0; i < buffer.length; i++) {
-					audioFrame[i] = buffer[i];
-				}
-				return false;
-			}
-			return true;
-		}
-
-		@Override
-		public void processingFinished() {}
+		return audioFrame;
 	}
 }
