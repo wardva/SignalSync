@@ -79,19 +79,13 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		for(String s : streamConfig) {
 			numberOfStreams += s.length();
 		}
+		
 		//Create the Streamgroup array.
 		this.streamGroups = new StreamGroup[streamConfig.length];
 		//Create the Stream array.
 		this.streams = new MSPStream[numberOfStreams];
-		//Create a buffer for each stream
-		this.buffers = new ArrayList<>(numberOfStreams);
-		for(int i = 0; i<numberOfStreams; i++) {
-			buffers.add(new LinkedList<Float>());
-		}
-		//Creating the list of corrections
-		this.corrections = new int[numberOfStreams];
+		//Get the slice size
 		this.sliceSize = Config.getInt(Key.SLICE_SIZE_S);
-		this.previousLatencies = new HashMap<>();
 		//Initialize the inlets, outlets and assists.
 		setInlets();
 		setOutlets();
@@ -187,6 +181,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
 		sampleRate = sigs_in[0].sr;
 		bufferSize = sigs_in[0].n;
+		previousLatencies = new HashMap<>();
 		int ctr = 0;
 		for(int i = 0; i<streamConfig.length; ++i) {
 			String s = streamConfig[i];
@@ -211,6 +206,14 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		streamSet = new StreamSet(Arrays.asList(streamGroups));
 		syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(this);
+		
+		//Create a buffer for each stream
+		buffers = new ArrayList<>(numberOfStreams);
+		for(int i = 0; i<numberOfStreams; i++) {
+			buffers.add(new LinkedList<Float>());
+		}
+		//Initialize the list of corrections
+		this.corrections = new int[numberOfStreams];
 		//The initial latency of each stream is the sliceSize
 		Arrays.fill(corrections, (int) (sliceSize * sampleRate));
 	}
@@ -253,6 +256,9 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		}
 	}
 	
+	/**
+	 * Print the latency information to the Max console
+	 */
 	private void printLatencies(Map<StreamGroup, LatencyResult> data) {
 		for(Entry<StreamGroup, LatencyResult> entry : data.entrySet()) {
 			StreamGroup streamGroup = entry.getKey();
