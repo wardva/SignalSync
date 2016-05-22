@@ -29,11 +29,13 @@ public class SynchronizationTest {
 	private final static String OTHER_TEMPLATE = "./Slices/Clean/Sonic Youth - Star Power_%d_%dhz.wav - slice - %d.wav";
 	private final static int NUMBER_OF_SLICES = 27;
 	
+	//The latencies in milliseconds, latency in samples: multiply by 8
 	private final static int[] LATENCIES = {20, 80, 90, 300, 2000, 6000, -20, -80, -90, -300, -2000, -6000};
 	private final static int[] FREQUENCIES = {50, 100};
 	private final static double MILLIS_TO_SECONDS = 0.001;
 	private final List<float[]> streams;
-	private final double latency;
+	private final double latencyInSeconds;
+	private final int latencyInSamples;
 	private final int frequency;
 	
 	private CrossCovarianceSyncStrategy crossCovarianceStrategy;
@@ -73,7 +75,8 @@ public class SynchronizationTest {
 	}
 
 	public SynchronizationTest(final String reference, final String other, final int expectedLatency, final int currentFrequency) {
-		this.latency = expectedLatency * MILLIS_TO_SECONDS;
+		this.latencyInSeconds = expectedLatency * MILLIS_TO_SECONDS;
+		this.latencyInSamples = expectedLatency * 8;
 		this.frequency = currentFrequency;
 		this.streams = new ArrayList<>();
 		
@@ -96,8 +99,10 @@ public class SynchronizationTest {
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertTrue("The latency should be found", latencies.get(0).isLatencyFound());
 		Assert.assertTrue("The latency should be refined", latencies.get(0).isRefined());
-		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
-				latency, latencies.get(0).getLatency(), 0.0001);
+		Assert.assertEquals(String.format("Crosscovariance failed when latency (in seconds): %.4f, frequency: %d", latencyInSeconds, frequency), 
+				latencyInSeconds, latencies.get(0).getLatencyInSeconds(), 0.0001);
+		Assert.assertEquals(String.format("Crosscovariance failed when latency (in samples): %d, frequency: %d", latencyInSamples, frequency), 
+				latencyInSamples, latencies.get(0).getLatencyInSamples(), 1);
 	}
 
 	@Test
@@ -106,7 +111,9 @@ public class SynchronizationTest {
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
 		Assert.assertTrue("The latency should be found", latencies.get(0).isLatencyFound());
 		Assert.assertFalse("The latency should not be refined", latencies.get(0).isRefined());
-		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, frequency: %d", latency, frequency), 
-				latency, latencies.get(0).getLatency(), 0.032);
+		Assert.assertEquals(String.format("Fingerprinting failed when latency (in seconds): %.4f, frequency: %d", latencyInSeconds, frequency), 
+				latencyInSeconds, latencies.get(0).getLatencyInSeconds(), 0.032);
+		Assert.assertEquals(String.format("Fingerprinting failed when latency (in samples): %d, frequency: %d", latencyInSamples, frequency), 
+				latencyInSamples, latencies.get(0).getLatencyInSamples(), 256);
 	}
 }

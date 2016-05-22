@@ -1,20 +1,21 @@
 package be.signalsync.syncstrategy;
 
 public class LatencyResult {
-	public static final LatencyResult NO_RESULT = new LatencyResult(0, false, false);
-	private double latency;
+	private double latencyInSeconds;
+	private int latencyInSamples;
 	private double timestamp;
 	private boolean latencyFound;
 	private boolean refined;
 	private boolean hasTimestamp;
+	public final static LatencyResult NO_RESULT = new LatencyResult(0, 0, false, false);
 	
 	/**
 	 * Create a new LatencyResult without a timestamp containing
 	 * a raw latency.
 	 * @param latency The raw latency
 	 */
-	public static LatencyResult rawResult(double latency) {
-		return new LatencyResult(latency, true, false);
+	public static LatencyResult rawResult(double latencyInSeconds, int latencyInSamples) {
+		return new LatencyResult(latencyInSeconds, latencyInSamples, true, false);
 	}
 	
 	/**
@@ -22,34 +23,36 @@ public class LatencyResult {
 	 * a refined latency.
 	 * @param latency The refined latency
 	 */
-	public static LatencyResult refinedResult(double latency) {
-		return new LatencyResult(latency, true, true);
+	public static LatencyResult refinedResult(double latencyInSeconds, int latencyInSamples) {
+		return new LatencyResult(latencyInSeconds, latencyInSamples, true, true);
 	}
 	
 	/**
 	 * Create a new LatencyResult without a timestamp specifying all the fields.
 	 */
-	public LatencyResult(double result, boolean latencyFound, boolean refined) {
-		this.latency = result;
-		this.latencyFound = latencyFound;
-		this.refined = refined;
-		this.hasTimestamp = false;
+	public LatencyResult(double latencyInSeconds, int latencyInSamples, boolean latencyFound, boolean refined) {
+		this(latencyInSeconds, latencyInSamples, 0, latencyFound, refined, false);
 	}
 	
 	/**
 	 * Create a new LatencyResult with a timestamp specifying all the fields.
 	 */
-	public LatencyResult(double latency, double timestamp, boolean latencyFound, boolean refined) {
-		this.latency = latency;
+	public LatencyResult(double latencyInSeconds, int latencyInSamples, double timestamp, boolean latencyFound, boolean refined) {
+		this(latencyInSeconds, latencyInSamples, timestamp, latencyFound, refined, true);
+	}
+	
+	/**
+	 * Create a new LatencyResult with a timestamp specifying all the fields.
+	 */
+	public LatencyResult(double latencyInSeconds, int latencyInSamples, double timestamp, boolean latencyFound, boolean refined, boolean hasTimestamp) {
+		this.latencyInSeconds = latencyInSeconds;
+		this.latencyInSamples = latencyInSamples;
 		this.timestamp = timestamp;
 		this.latencyFound = latencyFound;
 		this.refined = refined;
-		this.hasTimestamp = true;
+		this.hasTimestamp = hasTimestamp;
 	}
-	
-	public double getLatency() {
-		return latency;
-	}
+
 	public boolean isLatencyFound() {
 		return latencyFound;
 	}
@@ -61,13 +64,20 @@ public class LatencyResult {
 	}
 	public double getTimestamp() {
 		return timestamp;
+	}	
+	public double getLatencyInSeconds() {
+		return latencyInSeconds;
 	}
-	
+	public int getLatencyInSamples() {
+		return latencyInSamples;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		if(this.isLatencyFound()) {
-			sb.append(String.format("Latency: %.3f\n", this.getLatency()));
+			sb.append(String.format("Latency in seconds: %.3f\n", this.getLatencyInSeconds()));
+			sb.append(String.format("Latency in samples: %d\n", this.getLatencyInSamples()));
 		}
 		if(this.hasTimestamp()) {
 			sb.append(String.format("Timestamp: %.3f\n", this.getTimestamp()));

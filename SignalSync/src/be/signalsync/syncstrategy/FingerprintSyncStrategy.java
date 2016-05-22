@@ -94,20 +94,18 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 	 * @param slices A list of slices, each slice is an array of float values. The first slice
 	 * acts as reference slice in the synchronization.
 	 * @exception IllegalArgumentException Will be thrown when the slices list is empty.
-	 * @return A list of latencies for each (non-reference) slice in comparison with the reference slice. When there is no
-	 *         match found, NaN is added to the list.
+	 * @return A list of LatencyResults for each (non-reference) slice in comparison with the reference slice.
 	 */
 	@Override
 	public List<LatencyResult> findLatencies(List<float[]> slices) {
 		if(slices.isEmpty()) {
 			throw new IllegalArgumentException("The slices list can not be empty.");
 		}
-		final double fftHopSizesS = stepSize / (double) sampleRate;
 		final List<LatencyResult> latencies = new ArrayList<>();
 		for (final int[] timing : getResults(slices)) {
 			if (timing.length > 0) {
-				// Calculating the time difference from the time index
-				LatencyResult result = LatencyResult.rawResult(timing[1] * fftHopSizesS - timing[0] * fftHopSizesS);
+				int latencyInSamples = (timing[1] - timing[0]) * stepSize;
+				LatencyResult result = LatencyResult.rawResult(((double) latencyInSamples) / sampleRate, latencyInSamples);
 				latencies.add(result);
 			} else {
 				latencies.add(LatencyResult.NO_RESULT);
@@ -207,7 +205,7 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 		return fingerprintsToHash(filterPrints(extractFingerprints(dispatcher)));
 	}
 
-	public List<int[]> getResults(List<float[]> slices) {
+	private List<int[]> getResults(List<float[]> slices) {
 		List<int[]> result = new ArrayList<>();
 		try {
 			List<AudioDispatcher> dispatchers = new ArrayList<>();

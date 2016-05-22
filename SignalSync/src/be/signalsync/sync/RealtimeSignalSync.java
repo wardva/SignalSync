@@ -83,20 +83,23 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 	public void onSliceEvent(SliceEvent<Map<StreamGroup, float[]>> event) {
 		List<StreamGroup> streams = new ArrayList<>(event.getSlice().keySet());
 		List<float[]> slices = new ArrayList<>(event.getSlice().values());
-
 		List<LatencyResult> unfilteredLatencies = new ArrayList<>(streams.size());
-		unfilteredLatencies.add(LatencyResult.refinedResult(0.0D)); //Reference stream latency is 0.0
+		unfilteredLatencies.add(LatencyResult.refinedResult(0.0D, 0)); //Reference stream latency is 0.0
 		unfilteredLatencies.addAll(strategy.findLatencies(slices));
 		Map<StreamGroup, LatencyResult> filteredLatencies = new HashMap<>(streams.size());
 		for(int i = 0; i<streams.size(); i++) {
 			StreamGroup streamGroup = streams.get(i);
 			DataFilter filter = latencyFilters.get(streamGroup);
 			LatencyResult rawLatency = unfilteredLatencies.get(i);
-			double filteredLatency = filter.filter(rawLatency.getLatency());
+			int filteredLatencyInSamples = (int) filter.filter(rawLatency.getLatencyInSamples());
+			double filteredLatencyInSeconds = filteredLatencyInSamples / Config.getDouble(Key.SAMPLE_RATE);
 			//Add the (potentiel) filtered latencies in a new LatencyResult object. Also add
 			//the event begintime.
-			filteredLatencies.put(streamGroup, new LatencyResult(filteredLatency, event.getBeginTime(), 
-					rawLatency.isLatencyFound(), rawLatency.isRefined()));
+			LatencyResult filteredResult = new LatencyResult(filteredLatencyInSeconds, 
+															 filteredLatencyInSamples, 
+															 rawLatency.isLatencyFound(), 
+															 rawLatency.isRefined());
+			filteredLatencies.put(streamGroup, filteredResult);
 		}
 		emitSyncEvent(filteredLatencies);
 	}

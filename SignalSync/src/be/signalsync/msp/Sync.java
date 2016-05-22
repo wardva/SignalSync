@@ -1,17 +1,24 @@
 package be.signalsync.msp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import com.cycling74.msp.MSPPerformer;
 import com.cycling74.msp.MSPSignal;
+
 import be.signalsync.stream.MSPStream;
 import be.signalsync.stream.StreamGroup;
 import be.signalsync.stream.StreamSet;
 import be.signalsync.sync.RealtimeSignalSync;
 import be.signalsync.sync.SyncEventListener;
 import be.signalsync.syncstrategy.LatencyResult;
+import be.signalsync.util.Config;
+import be.signalsync.util.Key;
 
 /**
  * Max/MSP module for synchronizing signals using audio-to-audio alignment.
@@ -20,9 +27,10 @@ import be.signalsync.syncstrategy.LatencyResult;
 public class Sync extends MSPPerformer implements SyncEventListener {
 	//Regular expression for validating the configuration string.
 	private final static String STREAM_CONFIG_REGEX = "d*ad*(,d*ad*)*";
-
-	//The Max/MSP samplerate
+	//Max/MSP samplerate
 	private double sampleRate;
+	//Max/MSP bufferSize
+	private int bufferSize;
 	//Array containing the MSPStream objects. The method maxPerformed has to be called on
 	//these objects with an MSPSignal as parameter in order to activate the streams.
 	private MSPStream[] streams;
@@ -38,6 +46,14 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	private int numberOfStreams;
 	//The object which actually performs the synchronization.
 	private RealtimeSignalSync syncer;
+	//A treemap containing the input buffers, key is the timestamp
+	private List<LinkedList<Float>> buffers;
+	//The list of corrections (in samples) of each stream
+	private int[] corrections;
+	//The initial latency of each stream is the sliceSize.
+	private int sliceSize;
+	//Previous latency in samplenumbers
+	private Map<StreamGroup, Integer> previousLatencies;
 	
 	public Sync() {
 		bail("(Sync) Invalid method parameters.");
@@ -67,6 +83,15 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		this.streamGroups = new StreamGroup[streamConfig.length];
 		//Create the Stream array.
 		this.streams = new MSPStream[numberOfStreams];
+		//Create a buffer for each stream
+		this.buffers = new ArrayList<>(numberOfStreams);
+		for(int i = 0; i<numberOfStreams; i++) {
+			buffers.add(new LinkedList<Float>());
+		}
+		//Creating the list of corrections
+		this.corrections = new int[numberOfStreams];
+		this.sliceSize = Config.getInt(Key.SLICE_SIZE_S);
+		this.previousLatencies = new HashMap<>();
 		//Initialize the inlets, outlets and assists.
 		setInlets();
 		setOutlets();
@@ -128,15 +153,30 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	 */
 	@Override
 	public void perform(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
-		
 		for(int i = 0; i<numberOfStreams; ++i) {
 			//Do for each channel:
 			MSPSignal input = sigs_in[i];
 			MSPSignal output = sigs_out[i];
-			//Pass the signal object to the corresponding stream.
+			LinkedList<Float> buffer = buffers.get(i);
+			//Adding the samples to the corresponding buffer
+			buffer.addAll(floatArrayToList(input.vec));
+			
+			//Get the current correction in samples, the max current correction
+			//is the number of samples in 1 Max/MSP buffer.
+			int correction = corrections[i];
+			int currentCorrection = correction > bufferSize ? bufferSize : correction;
+			corrections[i] -= currentCorrection;
+			float[] currentBuffer = new float[bufferSize];
+			//Fill the current buffer with empty sample values.
+			Arrays.fill(currentBuffer, 0, currentCorrection, 0);
+			//If there is more space, add audio samples to the current buffer
+			for(int j = currentCorrection; j<bufferSize; j++) {
+				currentBuffer[j] = buffer.remove();
+			}
+			//Pass the signal object to the corresponding MSPStream object.
 			streams[i].maxPerformed(input);
-			//input -> output without modifications or synchronization.
-			System.arraycopy(input.vec, 0, output.vec, 0, input.n);
+			//Copy the current buffer to the MSP output vector
+			System.arraycopy(currentBuffer, 0, output.vec, 0, bufferSize);
 		}
 	}
 	
@@ -146,6 +186,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	@Override
 	public void dspsetup(MSPSignal[] sigs_in, MSPSignal[] sigs_out) {
 		sampleRate = sigs_in[0].sr;
+		bufferSize = sigs_in[0].n;
 		int ctr = 0;
 		for(int i = 0; i<streamConfig.length; ++i) {
 			String s = streamConfig[i];
@@ -165,10 +206,13 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 				streams[ctr++] = stream;
 			}
 			streamGroups[i] = group;
+			previousLatencies.put(group, 0);
 		}
 		streamSet = new StreamSet(Arrays.asList(streamGroups));
 		syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(this);
+		//The initial latency of each stream is the sliceSize
+		Arrays.fill(corrections, (int) (sliceSize * sampleRate));
 	}
 	
 	/**
@@ -178,9 +222,43 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	 */
 	@Override
 	public void onSyncEvent(Map<StreamGroup, LatencyResult> data) {
+		printLatencies(data);
+		int highestCorrection = Integer.MIN_VALUE;
+		Map<StreamGroup, Integer> currentCorrections = new HashMap<>();
 		for(Entry<StreamGroup, LatencyResult> entry : data.entrySet()) {
-			post("Streamgroup " + entry.getKey().getDescription());
-			post(entry.getValue().toString());
+			LatencyResult latency = entry.getValue();
+			StreamGroup group = entry.getKey();
+			int previousLatency = previousLatencies.get(group);
+			//Calculate the correction: the difference between the current latency 
+			//and the previous latency in  number of samples.
+			int correction = latency.getLatencyInSamples() - previousLatency;
+			if(correction > highestCorrection) {
+				highestCorrection = correction;
+			}
+			currentCorrections.put(group, correction);
+			previousLatencies.put(group, latency.getLatencyInSamples());
+		}
+		//Change each correction so it's relative to the highest correction
+		for(Entry<StreamGroup, Integer> entry : currentCorrections.entrySet()) {
+			entry.setValue(highestCorrection - entry.getValue());
+		}
+		int streamCounter = 0;
+		//Iterate over the streamgroups in the order of the insets.
+		for(StreamGroup group : streamGroups) {
+			int correction = currentCorrections.get(group);
+			for(int i = 0; i<group.size(); i++) {
+				//Set the correction for the corresponding streamNumber
+				corrections[streamCounter++] = correction;
+			}
+		}
+	}
+	
+	private void printLatencies(Map<StreamGroup, LatencyResult> data) {
+		for(Entry<StreamGroup, LatencyResult> entry : data.entrySet()) {
+			StreamGroup streamGroup = entry.getKey();
+			LatencyResult latency = entry.getValue();
+			post("Streamgroup " + streamGroup.getDescription());
+			post(latency.toString());
 		}
 		post("------------");
 	}
@@ -191,5 +269,13 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	@Override
 	protected void notifyDeleted() {
 		//Cleanup
+	}
+	
+	private List<Float> floatArrayToList(float[] array) {
+		List<Float> list = new ArrayList<Float>(array.length);
+	    for (float value : array) {
+	        list.add(value);
+	    }
+	    return list;
 	}
 }

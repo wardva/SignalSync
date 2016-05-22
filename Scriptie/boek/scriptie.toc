@@ -89,7 +89,7 @@
 \contentsline {section}{\numberline {3.6}Max/MSP modules}{59}{section.3.6}
 \contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{59}{subsection.3.6.1}
 \contentsline {subsubsection}{Implementatie}{61}{section*.69}
-\contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{62}{subsection.3.6.2}
+\contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{61}{subsection.3.6.2}
 \contentsline {subsubsection}{Instellen van de stream structuur}{62}{section*.70}
 \contentsline {subsubsection}{Implementatie}{62}{section*.72}
 \contentsline {chapter}{\numberline {4}Evaluatie}{64}{chapter.4}
@@ -112,10 +112,12 @@
 \contentsline {chapter}{\numberline {B}Testresultaten: gewijzigde latency}{74}{Bijlage.a.B}
 \contentsline {chapter}{\numberline {C}Testresultaten: toevoegen van een sinusgolf}{78}{Bijlage.a.C}
 \contentsline {chapter}{\numberline {D}Praktijktest: details}{83}{Bijlage.a.D}
-\contentsline {chapter}{Referentielijst}{87}{chapter*.113}
-\contentsline {chapter}{L"yst van figuren}{90}{chapter*.114}
-\contentsline {chapter}{Lijst van figuren}{91}{chapter*.114}
-\contentsline {chapter}{L"yst van tabellen}{92}{chapter*.115}
-\contentsline {chapter}{Lijst van tabellen}{92}{chapter*.115}
-\contentsline {chapter}{Lijst van codefragmenten}{93}{chapter*.116}
-\contentsline {chapter}{Lijst van codefragmenten}{93}{chapter*.116}
+\contentsline {chapter}{\numberline {E}Gebruikershandleiding}{87}{Bijlage.a.E}
+\contentsline {chapter}{\numberline {F}Handleiding voor ontwikkelaars}{88}{Bijlage.a.F}
+\contentsline {chapter}{Referentielijst}{89}{chapter*.113}
+\contentsline {chapter}{L"yst van figuren}{92}{chapter*.114}
+\contentsline {chapter}{Lijst van figuren}{93}{chapter*.114}
+\contentsline {chapter}{L"yst van tabellen}{94}{chapter*.115}
+\contentsline {chapter}{Lijst van tabellen}{94}{chapter*.115}
+\contentsline {chapter}{Lijst van codefragmenten}{95}{chapter*.116}
+\contentsline {chapter}{Lijst van codefragmenten}{95}{chapter*.116}

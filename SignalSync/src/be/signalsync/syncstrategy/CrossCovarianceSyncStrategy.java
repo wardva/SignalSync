@@ -18,12 +18,11 @@ import java.util.Map.Entry;
  */
 public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private final FingerprintSyncStrategy fingerprinter;
-	private final int sampleRate;
+	private final double sampleRate;
 	private final int nfftBufferSize;
 	private final int stepSize;
 	private final int nrOfTests;
 	private final int successThreshold;
-	private final double FFTHopsize;
 
 	public CrossCovarianceSyncStrategy(FingerprintSyncStrategy fingerprinter, int sampleRate, int nfftBufferSize, int stepSize, int nrOfTests, int succesThreshold) {
 		this.fingerprinter = fingerprinter;
@@ -32,7 +31,6 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		this.stepSize = stepSize;
 		this.nrOfTests = nrOfTests;
 		this.successThreshold = succesThreshold;
-		this.FFTHopsize = stepSize / (double) sampleRate;
 	}
 
 	/**
@@ -42,8 +40,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @param slices A list of slices, each slice is an array of float values. The first slice
 	 * acts as reference slice in the synchronization.
 	 * @exception IllegalArgumentException Will be thrown when the slices list is empty.
-	 * @return A list of latencies for each (non-reference) slice in comparison with the reference slice. When there is no
-	 *         match found, NaN is added to the list.
+	 * @return A list of latency results for each (non-reference) slice in comparison with the reference slice.
 	 */
 	@Override
 	public List<LatencyResult> findLatencies(final List<float[]> slices) {
@@ -56,32 +53,30 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		
 		List<LatencyResult> results = new ArrayList<>();
 		//Get the timing information using the fingerprinting algorithm.
-		List<int[]> fingerprintTimingData = fingerprinter.getResults(slices);
-
-		Iterator<int[]> timingDataIterator = fingerprintTimingData.iterator();
+		List<LatencyResult> fingerprintlatencies = fingerprinter.findLatencies(slices);
+		Iterator<LatencyResult> latenciesIt = fingerprintlatencies.iterator();
 		Iterator<float[]> othersIterator = others.iterator();
 		
-		//Iterate over the other streams, and the timing information of the streams.
-		while (timingDataIterator.hasNext() && othersIterator.hasNext()) {
-			int[] timing = timingDataIterator.next();
-			if (timing.length < 2) {
-				//No timing data available -> no crosscovariance possible.
+		//Iterate over the other streams, and the fingerprint latencies.
+		while (latenciesIt.hasNext() && othersIterator.hasNext()) {
+			LatencyResult fingerprintLatency = latenciesIt.next();
+			if(!fingerprintLatency.isLatencyFound()) {
 				results.add(LatencyResult.NO_RESULT);
-			} 
+			}
 			else {
 				//Calculate fingerprint latency
-				int fingerPrintLatency = timing[1] - timing[0];
+				int latencyInSamples = fingerprintLatency.getLatencyInSamples();
 				float[] other = othersIterator.next();
 				//Find the best crosscovariance result
-				Double refined = findBestCrossCovarianceResult(fingerPrintLatency, reference, other);
+				Integer refined = findBestCrossCovarianceResult(latencyInSamples, reference, other);
 				if(refined != null) {
 					//A result is found, adding it to the results.
-					results.add(LatencyResult.refinedResult(refined));
+					results.add(LatencyResult.refinedResult(refined/sampleRate, refined));
 				}
 				else {
 					//No result found, getting the fingerprint offset and adding it to the resuls.
-					double offsetFromMatching = fingerPrintLatency * FFTHopsize;
-					results.add(LatencyResult.rawResult(offsetFromMatching));
+					int offsetFromMatching = latencyInSamples;
+					results.add(LatencyResult.rawResult(offsetFromMatching/sampleRate, offsetFromMatching));
 				}
 			}
 		}
@@ -96,13 +91,11 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 * @param fingerPrintLatency The approximated latency calculated with the fingerprinting algorithm.
 	 * @param reference A float buffer containing the reference stream data.
 	 * @param other	A float buffer containing the other stream data.
-	 * @return The latency in seconds, or null.
+	 * @return The latency in samples, or null.
 	 */
-	private Double findBestCrossCovarianceResult(int fingerPrintLatency, float[] reference, float[] other) {
+	private Integer findBestCrossCovarianceResult(int fingerPrintLatencyInSamples, float[] reference, float[] other) {
 		//The size of 1 slice (=length of reference or other buffer)
 		int sliceSize = reference.length;
-		//Convert the fingerprintLatency from number of fft steps to number of samples
-		int fingerPrintLatencyInSamples = fingerPrintLatency * stepSize;
 		//A map containing the results: Key: The found result (in number of samples), Value=The result count
 		Map<Integer, Integer> allLags = new HashMap<Integer, Integer>();	
 		//The step size we have use to perform `nrOfTests` tests.
@@ -136,33 +129,28 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		   }
 		}
 		
-		//Test if the occurence of the best lag is above the required threshold. If not: return null,
-		//else: calculate the offset in seconds.
 		if(max >= successThreshold) {
-			//possible lags in seconds
-			double offsetLagInSeconds1 = (nfftBufferSize - bestLag) / (float) sampleRate;
-			double offsetLagInSeconds2 = bestLag / (float) sampleRate;
-			
-			//fingerprint latency in seconds
-			double offsetFromMatching = fingerPrintLatency * FFTHopsize;
-			
+			//possible lags in samples
+			int offsetLag1 = nfftBufferSize - bestLag;
+			int offsetLag2 = bestLag;
+
 			//possible refined latencies
-			double offsetTotalInSeconds1 = offsetFromMatching - offsetLagInSeconds1;
-			double offsetTotalInSeconds2 = offsetFromMatching + offsetLagInSeconds2;
+			int offsetTotal1 = fingerPrintLatencyInSamples - offsetLag1;
+			int offsetTotal2 = fingerPrintLatencyInSamples + offsetLag2;
 
 			// Calculating the difference between the fingerprint match and the
 			// refined results.
-			double dif1 = Math.abs(offsetTotalInSeconds1 - offsetFromMatching);
-			double dif2 = Math.abs(offsetTotalInSeconds2 - offsetFromMatching);
+			int dif1 = Math.abs(offsetTotal1 - fingerPrintLatencyInSamples);
+			int dif2 = Math.abs(offsetTotal2 - fingerPrintLatencyInSamples);
 
 			// Check which results is the closest to the fingerprint match
-			double offsetTotalInSeconds = dif1 < dif2 ? offsetTotalInSeconds1 : offsetTotalInSeconds2;
+			int offsetTotal = dif1 < dif2 ? offsetTotal1 : offsetTotal2;
 
 			//Test if the difference of the crosscovariance result and fingerprint result
 			//is not too big, if so, the crosscovariance result is probably wrong -> return null.
-			if(Math.abs(offsetFromMatching-offsetTotalInSeconds) < 2*FFTHopsize) { 
+			if(Math.abs(fingerPrintLatencyInSamples-offsetTotal) < 2*stepSize) { 
 				System.err.println("Covariancelag is CORRECT!");
-				return offsetTotalInSeconds; 
+				return offsetTotal; 
 			} 
 			System.err.println("Covariancelag is incorrect!");
 		}
@@ -174,8 +162,8 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 
 	/**
 	 * This method returns the cross covariance lag of two buffers.
-	 * @param referenceTime The matching fingerprint time of the reference stream.
-	 * @param otherTime The matching fingerprint time of the other stream.
+	 * @param referenceTime The matching fingerprint time of the reference stream in samples.
+	 * @param otherTime The matching fingerprint time of the other stream in samples.
 	 * @param reference The float buffer of the reference stream.
 	 * @param other The float buffer of the other stream.
 	 * @return The lag between the reference stream and the other stream in samples.

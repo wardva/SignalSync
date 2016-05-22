@@ -36,7 +36,7 @@
 \contentsline {figure}{\numberline {3.18}{\ignorespaces UML diagram van de klassen met de synchronisatiealgoritmen.\relax }}{55}{figure.caption.61}
 \contentsline {figure}{\numberline {3.19}{\ignorespaces UML diagram van \texttt {RealtimeSignalSync} + afhankelijkheden}}{56}{figure.caption.64}
 \contentsline {figure}{\numberline {3.20}{\ignorespaces UML diagram van de verschillende datafilters.\relax }}{58}{figure.caption.66}
-\contentsline {figure}{\numberline {3.21}{\ignorespaces Screenshot van de TeensyReader in Max/MSP}}{61}{figure.caption.68}
+\contentsline {figure}{\numberline {3.21}{\ignorespaces Screenshot van de TeensyReader in Max/MSP.\relax }}{61}{figure.caption.68}
 \contentsline {figure}{\numberline {3.22}{\ignorespaces Synchronisatie in Max/MSP}}{63}{figure.caption.71}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
@@ -47,3 +47,5 @@
 \contentsline {figure}{\numberline {D.1}{\ignorespaces Teensy testopstelling}}{83}{figure.caption.105}
 \contentsline {figure}{\numberline {D.2}{\ignorespaces Max/MSP testopstelling}}{84}{figure.caption.108}
 \contentsline {figure}{\numberline {D.3}{\ignorespaces Praktijktest resultaten}}{86}{figure.caption.112}
+\addvspace {10\p@ }
+\addvspace {10\p@ }

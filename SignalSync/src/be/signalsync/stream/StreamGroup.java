@@ -41,6 +41,10 @@ public class StreamGroup {
 		this.description = description;
 	}
 	
+	public int size() {
+		return 1+dataStreams.size();
+	}
+	
 	public void start() {
 		audioStream.start();
 		for(Stream s : dataStreams) {

@@ -101,7 +101,7 @@ public class RecordedTest {
 		Assert.assertTrue("The latency should exist and should be refined", 
 				latencies.get(0).isLatencyFound() && latencies.get(0).isRefined());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, type: %s", latency, type), 
-				latency, latencies.get(0).getLatency(), 0.002);
+				latency, latencies.get(0).getLatencyInSeconds(), 0.002);
 		
 	}
 
@@ -113,6 +113,6 @@ public class RecordedTest {
 		Assert.assertTrue("The latency should exist and should not be refined", 
 				latencies.get(0).isLatencyFound() && !latencies.get(0).isRefined());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, type: %s", latency, type), 
-				latency, latencies.get(0).getLatency(), 0.032);
+				latency, latencies.get(0).getLatencyInSeconds(), 0.032);
 	}
 }
