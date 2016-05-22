@@ -98,18 +98,19 @@ public class FingerprintSyncStrategy extends SyncStrategy {
 	 *         match found, NaN is added to the list.
 	 */
 	@Override
-	public List<Double> findLatencies(List<float[]> slices) {
+	public List<LatencyResult> findLatencies(List<float[]> slices) {
 		if(slices.isEmpty()) {
 			throw new IllegalArgumentException("The slices list can not be empty.");
 		}
 		final double fftHopSizesS = stepSize / (double) sampleRate;
-		final List<Double> latencies = new ArrayList<>();
+		final List<LatencyResult> latencies = new ArrayList<>();
 		for (final int[] timing : getResults(slices)) {
 			if (timing.length > 0) {
 				// Calculating the time difference from the time index
-				latencies.add(timing[1] * fftHopSizesS - timing[0] * fftHopSizesS);
+				LatencyResult result = LatencyResult.rawResult(timing[1] * fftHopSizesS - timing[0] * fftHopSizesS);
+				latencies.add(result);
 			} else {
-				latencies.add(Double.NaN);
+				latencies.add(LatencyResult.NO_RESULT);
 			}
 		}
 		return latencies;

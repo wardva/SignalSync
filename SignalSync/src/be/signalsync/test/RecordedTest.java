@@ -13,6 +13,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import be.signalsync.syncstrategy.CrossCovarianceSyncStrategy;
 import be.signalsync.syncstrategy.FingerprintSyncStrategy;
+import be.signalsync.syncstrategy.LatencyResult;
 import be.signalsync.util.Config;
 import be.signalsync.util.FloatBufferGenerator;
 import be.signalsync.util.Key;
@@ -47,7 +48,7 @@ public class RecordedTest {
 				NFFT_BUFFER_SIZE, 	//Buffer size
 				NFFT_STEP_SIZE, 	//Buffer step size
 				100, 				//Minimum distance between fingerprints
-				10,				//Max number of fingerprints for each event point
+				10,					//Max number of fingerprints for each event point
 				2);					//Minimum aligned matches
 		
 		this.crossCovarianceStrategy = new CrossCovarianceSyncStrategy(this.fingerprintSyncStrategy, 
@@ -95,18 +96,23 @@ public class RecordedTest {
 	@Test
 	public void testCrossCovariance() {
 		Config.set(Key.LATENCY_ALGORITHM, "crosscovariance");
-		final List<Double> latencies = crossCovarianceStrategy.findLatencies(streams);
+		final List<LatencyResult> latencies = crossCovarianceStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
+		Assert.assertTrue("The latency should exist and should be refined", 
+				latencies.get(0).isLatencyFound() && latencies.get(0).isRefined());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, type: %s", latency, type), 
-				latency, latencies.get(0), 0.002);
+				latency, latencies.get(0).getLatency(), 0.002);
+		
 	}
 
 	@Test
 	public void testFingerprint() {
 		Config.set(Key.LATENCY_ALGORITHM, "fingerprint");
-		final List<Double> latencies = fingerprintSyncStrategy.findLatencies(streams);
+		final List<LatencyResult> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
+		Assert.assertTrue("The latency should exist and should not be refined", 
+				latencies.get(0).isLatencyFound() && !latencies.get(0).isRefined());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, type: %s", latency, type), 
-				latency, latencies.get(0), 0.032);
+				latency, latencies.get(0).getLatency(), 0.032);
 	}
 }

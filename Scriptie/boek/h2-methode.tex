@@ -157,8 +157,6 @@ De grootte van de buffer heeft invloed op de kwaliteit van de resultaten. Het sp
 
 \subsubsection{Naïeve implementatie}
 
-Indien er buffers gebruikt worden die $ t $ aantal seconden audio kunnen bevatten, dan zal het bij een naïeve implementatie in het slechtste geval pas mogelijk zijn om een wijziging van de latency na $ \frac{3}{2} t $ seconden te detecteren. Dit is als volgt te verklaren: Een wijziging van de latency kan gedetecteerd worden wanneer meer dan de helft van de buffer gevuld is met audio met de nieuwe latency. Wanneer er samples gedropt worden net na het moment dat de buffer voor de helft gevuld is ($ \frac{1}{2} t $), dan zal het algoritme uitgevoerd op de huidige buffer de wijziging niet kunnen detecteren. De volgende buffer zal wel gevuld zijn audio met de nieuwe latency, het duurt echter nog een bijkomende $ t $ seconden vooraleer deze buffer gevuld is. De detectietijd bedraagt bijgevolg in het slechtste geval dus $ \frac{3}{2} t $ seconden.
-
 De naïeve implementatie kan een wijziging van de latency in het beste geval na $ \frac{1}{2} t $ seconden detecteren. Wanneer er samples gedropt worden net voor het moment dat de buffer voor de helft gevuld is, dan kan het algoritme de nieuwe latency wel onmiddellijk detecteren.
 
 \subsubsection{Sliding window}

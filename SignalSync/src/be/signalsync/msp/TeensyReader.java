@@ -196,6 +196,11 @@ public class TeensyReader extends MSPPerformer implements DAQDataHandler {
 		for(int i = 0; i<numberOfChannels; i++) {
 			this.resamplers[i] = new Resampler(true, sampleRatio, sampleRatio);
 		}
+		
+		post("(TeensyReader) targetSampleRate: " + targetSampleRate);
+		post("(TeensyReader) targetBufferSize: " + targetBufferSize);
+		post("(TeensyReader) sampleRatio: " + sampleRatio);
+		post("(TeensyReader) teensyBufferSize: " + teensyBufferSize);
 	}
 	
 	/**

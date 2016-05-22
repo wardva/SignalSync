@@ -46,7 +46,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	 *         match found, NaN is added to the list.
 	 */
 	@Override
-	public List<Double> findLatencies(final List<float[]> slices) {
+	public List<LatencyResult> findLatencies(final List<float[]> slices) {
 		if(slices.isEmpty()) {
 			throw new IllegalArgumentException("The slices list can not be empty.");
 		}
@@ -54,7 +54,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		final List<float[]> others = new ArrayList<>(slices);
 		float[] reference = others.remove(0);
 		
-		List<Double> results = new ArrayList<>();
+		List<LatencyResult> results = new ArrayList<>();
 		//Get the timing information using the fingerprinting algorithm.
 		List<int[]> fingerprintTimingData = fingerprinter.getResults(slices);
 
@@ -66,7 +66,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 			int[] timing = timingDataIterator.next();
 			if (timing.length < 2) {
 				//No timing data available -> no crosscovariance possible.
-				results.add(Double.NaN);
+				results.add(LatencyResult.NO_RESULT);
 			} 
 			else {
 				//Calculate fingerprint latency
@@ -76,12 +76,12 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 				Double refined = findBestCrossCovarianceResult(fingerPrintLatency, reference, other);
 				if(refined != null) {
 					//A result is found, adding it to the results.
-					results.add(refined);
+					results.add(LatencyResult.refinedResult(refined));
 				}
 				else {
 					//No result found, getting the fingerprint offset and adding it to the resuls.
 					double offsetFromMatching = fingerPrintLatency * FFTHopsize;
-					results.add(offsetFromMatching);
+					results.add(LatencyResult.rawResult(offsetFromMatching));
 				}
 			}
 		}

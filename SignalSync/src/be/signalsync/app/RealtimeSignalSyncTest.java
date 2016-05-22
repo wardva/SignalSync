@@ -8,6 +8,7 @@ import be.signalsync.stream.StreamSet;
 import be.signalsync.stream.StreamSetFactory;
 import be.signalsync.sync.RealtimeSignalSync;
 import be.signalsync.sync.SyncEventListener;
+import be.signalsync.syncstrategy.LatencyResult;
 
 /**
  * Application class for testing the current SignalSync implementation.
@@ -16,18 +17,20 @@ import be.signalsync.sync.SyncEventListener;
 public class RealtimeSignalSyncTest {
 	public static void main(final String[] args) {
 		//Creating a streamset from some audio files.
-		StreamSet streamSet = StreamSetFactory.createRecordedTeensyStreamSet();
+		StreamSet streamSet = StreamSetFactory.createRecordedStreamSet();
 		
 		final RealtimeSignalSync syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {
 			@Override
-			public void onSyncEvent(final Map<StreamGroup, Double> data) {
-				for(Entry<StreamGroup, Double> entry : data.entrySet()) {
+			public void onSyncEvent(final Map<StreamGroup, LatencyResult> data) {
+				for(Entry<StreamGroup, LatencyResult> entry : data.entrySet()) {
 					StreamGroup streamGroup = entry.getKey();
-					double latency = entry.getValue();
-					System.out.printf("%-40s: %.3f\n", streamGroup.getDescription(), latency);
+					LatencyResult result = entry.getValue();
+					System.out.println("Streamgroup: " + streamGroup.getDescription());
+					System.out.println(result.toString());
 				}
-				System.out.println("---------------------------------");
+				System.out.println("---------------------------------\n\n");
+				
 			}
 		});
 		streamSet.start();

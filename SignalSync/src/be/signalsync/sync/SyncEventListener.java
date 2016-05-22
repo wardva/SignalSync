@@ -3,6 +3,7 @@ package be.signalsync.sync;
 import java.util.Map;
 
 import be.signalsync.stream.StreamGroup;
+import be.signalsync.syncstrategy.LatencyResult;
 
 /**
  * This interface has to be implemented by a class which is interested in
@@ -10,5 +11,5 @@ import be.signalsync.stream.StreamGroup;
  * @author Ward Van Assche
  */
 public interface SyncEventListener {
-	void onSyncEvent(Map<StreamGroup, Double> data);
+	void onSyncEvent(Map<StreamGroup, LatencyResult> data);
 }

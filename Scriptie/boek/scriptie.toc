@@ -97,18 +97,25 @@
 \contentsline {subsection}{\numberline {4.1.1}Aanmaken van de dataset}{65}{subsection.4.1.1}
 \contentsline {subsection}{\numberline {4.1.2}Toevoegen van latency}{65}{subsection.4.1.2}
 \contentsline {subsection}{\numberline {4.1.3}Toevoegen van een sinusgolf}{66}{subsection.4.1.3}
-\contentsline {section}{\numberline {4.2}Praktijktesten}{66}{section.4.2}
-\contentsline {section}{\numberline {4.3}Testen van de softwarecomponenten}{66}{section.4.3}
-\contentsline {section}{\numberline {4.4}Mogelijke verbeteringen}{66}{section.4.4}
-\contentsline {chapter}{\numberline {5}Conclusie}{67}{chapter.5}
-\contentsline {chapter}{Bijlagen}{68}{section*.73}
-\contentsline {chapter}{\numberline {A}Resultaten: DTW experiment}{69}{Bijlage.a.A}
-\contentsline {chapter}{\numberline {B}Testresultaten: gewijzigde latency}{71}{Bijlage.a.B}
-\contentsline {chapter}{\numberline {C}Testresultaten: toevoegen van een sinusgolf}{75}{Bijlage.a.C}
-\contentsline {chapter}{Referentielijst}{80}{chapter*.104}
-\contentsline {chapter}{L"yst van figuren}{83}{chapter*.105}
-\contentsline {chapter}{Lijst van figuren}{84}{chapter*.105}
-\contentsline {chapter}{L"yst van tabellen}{85}{chapter*.106}
-\contentsline {chapter}{Lijst van tabellen}{85}{chapter*.106}
-\contentsline {chapter}{Lijst van codefragmenten}{86}{chapter*.107}
-\contentsline {chapter}{Lijst van codefragmenten}{86}{chapter*.107}
+\contentsline {section}{\numberline {4.2}Praktijktest}{66}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Opstelling}{66}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Conclusie}{67}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Testen van de softwarecomponenten}{67}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Testen van de StreamSlicer}{67}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Testen van de Datafilters}{67}{subsection.4.3.2}
+\contentsline {section}{\numberline {4.4}Mogelijke verbeteringen}{68}{section.4.4}
+\contentsline {chapter}{\numberline {5}Conclusie}{69}{chapter.5}
+\contentsline {section}{\numberline {5.1}Doelen}{69}{section.5.1}
+\contentsline {section}{\numberline {5.2}Beoordelingscriteria algoritmes}{70}{section.5.2}
+\contentsline {chapter}{Bijlagen}{71}{section*.73}
+\contentsline {chapter}{\numberline {A}Resultaten: DTW experiment}{72}{Bijlage.a.A}
+\contentsline {chapter}{\numberline {B}Testresultaten: gewijzigde latency}{74}{Bijlage.a.B}
+\contentsline {chapter}{\numberline {C}Testresultaten: toevoegen van een sinusgolf}{78}{Bijlage.a.C}
+\contentsline {chapter}{\numberline {D}Praktijktest: details}{83}{Bijlage.a.D}
+\contentsline {chapter}{Referentielijst}{87}{chapter*.113}
+\contentsline {chapter}{L"yst van figuren}{90}{chapter*.114}
+\contentsline {chapter}{Lijst van figuren}{91}{chapter*.114}
+\contentsline {chapter}{L"yst van tabellen}{92}{chapter*.115}
+\contentsline {chapter}{Lijst van tabellen}{92}{chapter*.115}
+\contentsline {chapter}{Lijst van codefragmenten}{93}{chapter*.116}
+\contentsline {chapter}{Lijst van codefragmenten}{93}{chapter*.116}

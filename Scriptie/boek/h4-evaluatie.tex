@@ -10,6 +10,7 @@ Buiten het testen van de algoritmes zijn er ook enkele unit testen geschreven vo
 Het laatste deel van dit hoofdstuk zal dieper ingaan op de zaken die niet geïmplementeerd zijn maar die in de toekomst zeker een meerwaarde kunnen betekenen.
 
 \section{Testen van de algoritmes}
+\label{algoritme-test}
 
 Het testen van de algoritmes wordt uitgevoerd met behulp de JUnit testcase \texttt{SynchronizationTest} uit het package \texttt{be.signalsync.test}. Deze testcase laat toe om de slices van verschillende audiofragmenten met elkaar te matchen en te analyseren waar de algoritmes precies in de fout gaan.
 
@@ -31,11 +32,43 @@ In sectie \ref{crosscovariance-repeated} is geschreven dat het kruiscovariantie 
 
 De resultaten uit bijlage \ref{appendix-c} tonen aan dat het meerdere malen uitvoeren van het algoritme wel degelijk betere resultaten levert. Bij het laatste experiment (waarbij het algoritme 20 maal werd uitgevoerd) werden alle latencies correct bepaald.
 
-\section{Praktijktesten}
+\section{Praktijktest}
+\label{praktijktest}
+
+De ontwikkelde toepassing zal door het IPEM gebruikt worden tijdens experimenten om de datastreams afkomstig van sensoren te synchroniseren. Meestal worden de sensoren samen met een microfoon aangesloten op één of meerdere Teensy microcontrollers. Het is dus belangrijk om uit te testen dat het mogelijk is om de latency te bepalen bij een geluidsopname afkomstig van een Teensy.
+
+\subsection{Opstelling}
+
+Bij deze test zullen de algoritmes niet rechtstreeks worden aangeroepen. Het bepalen van de latency zal gebeuren met behulp van de reeds besproken Max/MSP modules. De werking van volgende componenten zal hierdoor gecontroleerd worden:
+\begin{itemize}[noitemsep]
+	\item De synchronisatie algoritmes
+	\item De slicers
+	\item De \texttt{TeensyReader} Max/MSP module
+	\item De \texttt{Sync} Max/MSP module
+\end{itemize}
+
+In deze test zal één audiostream worden ingelezen van een Teensy microcontroller. De andere audiostream is afkomstig van de standaard microfoon van een laptop. Beide opnames zijn van relatief slechte kwaliteit. Daarom is dit een goede test om te bepalen of de volledige toepassing voldoende robuust is.
+
+De gedetailleerde opstelling en de resultaten worden beschreven in bijlage \ref{appendix-d}
+
+\subsection{Conclusie}
+
+De belangrijkste conclusie die kan worden getrokken is dat alles werkt. De latency wordt in de Max/MSP console geprint en vertoont geen afwijkende resultaten. Het valt wel op dat er drift is opgetreden. De oorzaak hiervan is niet verder onderzocht. 
 
 \section{Testen van de softwarecomponenten}
 
+Buiten de synchronisatiealgoritmes bevat de geschreven software nog enkele componenten met vrij complexe logica. Om de kwaliteit van de software te garanderen zijn er enkele unittesten geschreven.
 
+\subsection{Testen van de StreamSlicer}
+
+De klasse \texttt{StreamSlicerTest} bevat de vereiste testlogica. De test maakt gebruik van een verzonnen stream. Van deze stream zijn handmatige de groottes van de slices berekend. Deze worden vergeleken met de slices die de \texttt{StreamSlicer} teruggeeft. De samples van de stream zijn de afgeronde timestamps, hierdoor kan ook de inhoud van de slices getest worden.
+
+
+\subsection{Testen van de Datafilters}
+
+
+Deze testen bevinden zich in de klasse \texttt{DataFilterTest}. De test bevat een hardgecodeerde opeenvolging van latencies. Van deze latencies zijn handmatig de verwachte waarden na toepassing van verschillende soorten datafilters berekend. In de test worden de datafilters op de originele reeks latencies toegepast. De resultaten worden vergeleken met de handmatig berekende waarden.
 
 \section{Mogelijke verbeteringen}
 
+De belangrijkste mogelijke verbetering is het implementeren van de daadwerkelijke synchronisatie in Max/MSP. Dit is vereist om het systeem in productie te kunnen gebruiken.

@@ -11,6 +11,7 @@ import be.signalsync.stream.StreamGroup;
 import be.signalsync.stream.StreamSet;
 import be.signalsync.sync.RealtimeSignalSync;
 import be.signalsync.sync.SyncEventListener;
+import be.signalsync.syncstrategy.LatencyResult;
 
 /**
  * Max/MSP module for synchronizing signals using audio-to-audio alignment.
@@ -149,6 +150,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		for(int i = 0; i<streamConfig.length; ++i) {
 			String s = streamConfig[i];
 			StreamGroup group = new StreamGroup();
+			group.setDescription("inset " + i);
 			for(int j = 0; j<s.length(); j++) {
 				char c = s.charAt(j);
 				MSPStream stream = new MSPStream(sampleRate);
@@ -175,9 +177,10 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	 * results to the Max console.
 	 */
 	@Override
-	public void onSyncEvent(Map<StreamGroup, Double> data) {
-		for(Entry<StreamGroup, Double> entry : data.entrySet()) {
-			post("Latency: " + entry.getValue());
+	public void onSyncEvent(Map<StreamGroup, LatencyResult> data) {
+		for(Entry<StreamGroup, LatencyResult> entry : data.entrySet()) {
+			post("Streamgroup " + entry.getKey().getDescription());
+			post(entry.getValue().toString());
 		}
 		post("------------");
 	}

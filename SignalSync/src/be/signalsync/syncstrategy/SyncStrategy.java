@@ -62,12 +62,12 @@ public abstract class SyncStrategy {
 	}
 
 	/**
-	 * This method has to be implemented by a specific algorithm subclass and
-	 * should return a List containing timing information of each slice.
+	 * This method has to be implemented by a any algorithm subclass and
+	 * should return a List containing the latency object of non-reference slice.
 	 * 
 	 * @param sliceSet A List of sample arrays. Each sample array contains
 	 * the samples of a stream slice. The first sample array is the reference slice.
 	 * @return A List of timestamps in seconds where the slices are synchronized.
 	 */
-	public abstract List<Double> findLatencies(List<float[]> sliceSet);
+	public abstract List<LatencyResult> findLatencies(List<float[]> sliceSet);
 }

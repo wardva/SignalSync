@@ -13,6 +13,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import be.signalsync.syncstrategy.CrossCovarianceSyncStrategy;
 import be.signalsync.syncstrategy.FingerprintSyncStrategy;
+import be.signalsync.syncstrategy.LatencyResult;
 import be.signalsync.util.FloatBufferGenerator;
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
@@ -91,17 +92,21 @@ public class SynchronizationTest {
 	
 	@Test
 	public void testCrossCovariance() {
-		final List<Double> latencies = crossCovarianceStrategy.findLatencies(streams);
+		final List<LatencyResult> latencies = crossCovarianceStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
+		Assert.assertTrue("The latency should be found", latencies.get(0).isLatencyFound());
+		Assert.assertTrue("The latency should be refined", latencies.get(0).isRefined());
 		Assert.assertEquals(String.format("Crosscovariance failed when latency: %.4f, frequency: %d", latency, frequency), 
-				latency, latencies.get(0), 0.0001);
+				latency, latencies.get(0).getLatency(), 0.0001);
 	}
 
-	/*@Test
+	@Test
 	public void testFingerprint() {
-		final List<Double> latencies = fingerprintSyncStrategy.findLatencies(streams);
+		final List<LatencyResult> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
+		Assert.assertTrue("The latency should be found", latencies.get(0).isLatencyFound());
+		Assert.assertFalse("The latency should not be refined", latencies.get(0).isRefined());
 		Assert.assertEquals(String.format("Fingerprinting failed when latency: %.4f, frequency: %d", latency, frequency), 
-				latency, latencies.get(0), 0.032);
-	}*/
+				latency, latencies.get(0).getLatency(), 0.032);
+	}
 }

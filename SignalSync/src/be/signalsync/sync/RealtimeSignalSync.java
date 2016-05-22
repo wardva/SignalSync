@@ -17,6 +17,7 @@ import be.signalsync.slicer.Slicer;
 import be.signalsync.slicer.StreamSetSlicer;
 import be.signalsync.stream.StreamGroup;
 import be.signalsync.stream.StreamSet;
+import be.signalsync.syncstrategy.LatencyResult;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
@@ -83,17 +84,19 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 		List<StreamGroup> streams = new ArrayList<>(event.getSlice().keySet());
 		List<float[]> slices = new ArrayList<>(event.getSlice().values());
 
-		List<Double> rawLatencies = new ArrayList<>(streams.size());
-		rawLatencies.add(0.0D); //Reference stream latency
-		rawLatencies.addAll(strategy.findLatencies(slices));
-		Map<StreamGroup, Double> filteredLatencies = new HashMap<>(streams.size());
+		List<LatencyResult> unfilteredLatencies = new ArrayList<>(streams.size());
+		unfilteredLatencies.add(LatencyResult.refinedResult(0.0D)); //Reference stream latency is 0.0
+		unfilteredLatencies.addAll(strategy.findLatencies(slices));
+		Map<StreamGroup, LatencyResult> filteredLatencies = new HashMap<>(streams.size());
 		for(int i = 0; i<streams.size(); i++) {
 			StreamGroup streamGroup = streams.get(i);
 			DataFilter filter = latencyFilters.get(streamGroup);
-			double rawLatency = rawLatencies.get(i);
-			double filteredLatency = filter.filter(rawLatency);
-			double timing = filteredLatency;// + event.getBeginTime();
-			filteredLatencies.put(streamGroup, timing);
+			LatencyResult rawLatency = unfilteredLatencies.get(i);
+			double filteredLatency = filter.filter(rawLatency.getLatency());
+			//Add the (potentiel) filtered latencies in a new LatencyResult object. Also add
+			//the event begintime.
+			filteredLatencies.put(streamGroup, new LatencyResult(filteredLatency, event.getBeginTime(), 
+					rawLatency.isLatencyFound(), rawLatency.isRefined()));
 		}
 		emitSyncEvent(filteredLatencies);
 	}
@@ -111,7 +114,7 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 	 * Emit a synchronization event.
 	 * @param data The data to send to the interested listeners.
 	 */
-	private void emitSyncEvent(final Map<StreamGroup, Double> data) {
+	private void emitSyncEvent(final Map<StreamGroup, LatencyResult> data) {
 		for (final SyncEventListener l : listeners) {
 			l.onSyncEvent(data);
 		}

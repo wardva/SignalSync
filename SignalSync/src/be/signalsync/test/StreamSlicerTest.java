@@ -21,7 +21,7 @@ import be.signalsync.slicer.StreamSlicer;
 import be.signalsync.stream.StreamEvent;
 
 @RunWith(Parameterized.class)
-public class SteppedSlicerTest {
+public class StreamSlicerTest {
 	
 	private List<StreamEvent> streamEvents;
 	private int sliceSize;
@@ -44,7 +44,7 @@ public class SteppedSlicerTest {
 		});
 	}
 	
-	public SteppedSlicerTest(int sliceSize, int sliceStep, int limit, int[] expectedSliceLengths) {
+	public StreamSlicerTest(int sliceSize, int sliceStep, int limit, int[] expectedSliceLengths) {
 		this.sliceSize = sliceSize;
 		this.sliceStep = sliceStep;
 		this.limit = limit;
@@ -91,6 +91,7 @@ public class SteppedSlicerTest {
 		slicer.processingFinished();
 	}
 	
+	//Create a dummy StreamEvent. The data is a float array with 1 item: the timestamp.
 	private StreamEvent createDummyStreamEvent(double timestamp) {
 		return new StreamEvent(new float[] { (float) Math.floor(timestamp) }, timestamp);
 	}
