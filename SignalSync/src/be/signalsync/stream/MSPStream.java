@@ -107,16 +107,26 @@ public class MSPStream implements Stream {
 		}
 	}
 	
+	/**
+	 * Add a StreamProcessor to the list of StreamProcessors.
+	 */
 	@Override
 	public void addStreamProcessor(StreamProcessor s) {
 		processors.add(s);
 	}
 	
+	/**
+	 * Remove a StreamProcessor from the list of StreamProcessors.
+	 */
 	@Override
 	public void removeStreamProcessor(StreamProcessor s) {
 		processors.remove(s);
 	}
 
+	/**
+	 * Create a StreamSlicer from the MSPStream. The slicer is registered
+	 * as StreamProcessor.
+	 */
 	@Override
 	public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
 		StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, getSampleRate());
@@ -124,12 +134,22 @@ public class MSPStream implements Stream {
 		return slicer;
 	}
 
+	/**
+	 * This method does nothing.
+	 */
 	@Override
 	public void start() {}
 
+	/**
+	 * This method does nothing.
+	 */
 	@Override
 	public void stop() {}
 
+	/**
+	 * This method returns the samplerate used after resampling
+	 * from the Max/MSP samplerate.
+	 */
 	@Override
 	public double getSampleRate() {
 		return targetSampleRate;

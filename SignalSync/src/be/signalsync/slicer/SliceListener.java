@@ -10,6 +10,14 @@ package be.signalsync.slicer;
  *            then this type will be Map<StreamGroup, float[]>.
  */
 public interface SliceListener<T> {
+	/**
+	 * Called when the Slicer is finished.
+	 * @param s
+	 */
 	void done(Slicer<T> s);
+	/**
+	 * Called when a new slice is available.
+	 * @param event
+	 */
 	void onSliceEvent(SliceEvent<T> event);
 }

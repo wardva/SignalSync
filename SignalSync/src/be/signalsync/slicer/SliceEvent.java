@@ -1,5 +1,10 @@
 package be.signalsync.slicer;
 
+/**
+ * This class contains a slice and metadata about a slice.
+ * @author Ward Van Assche
+ * @param <T> The type of a slice.
+ */
 public class SliceEvent<T> {
 	private Slicer<T> slicer;
 	private T slice;

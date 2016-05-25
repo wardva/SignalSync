@@ -23,7 +23,6 @@ import jssc.SerialPortException;
  * Max/MSP module for reading signals from a Teensy microcontroller.
  * More information can be found in my thesis.
  * 
- * @see <a href="https://github.com/wardva/SignalSync">https://github.com/wardva/SignalSync</a>
  * @author Ward Van Assche
  */
 public class TeensyReader extends MSPPerformer implements DAQDataHandler {

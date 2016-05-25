@@ -17,6 +17,10 @@ public class MovingAverageFilter extends BufferedFilter {
 		super(bufferSize);
 	}
 	
+	/**
+	 * Calculate the next value by taking the average
+	 * of the current buffer.
+	 */
 	@Override
 	protected double calculateNext(double rawValue) {
 		buffer.offer(rawValue);

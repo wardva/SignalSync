@@ -9,9 +9,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import be.signalsync.datafilters.DataFilter;
 import be.signalsync.datafilters.DataFilterFactory;
 import be.signalsync.slicer.SliceEvent;
@@ -24,9 +21,6 @@ import be.signalsync.syncstrategy.LatencyResult;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
-import be.tarsos.dsp.io.jvm.AudioPlayer;
 
 /**
  * This class is used for starting and managing the real time stream

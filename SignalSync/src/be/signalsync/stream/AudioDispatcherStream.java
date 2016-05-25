@@ -29,6 +29,10 @@ public class AudioDispatcherStream implements Stream {
 		this.started = false;
 	}
 	
+	/**
+	 * Create a new TarsosDSP StreamProcessor. This method is responsible
+	 * for mapping the events between the libraries.
+	 */
 	@Override
 	public void addStreamProcessor(StreamProcessor streamProcessor) {
 		AudioProcessor audioProcessor = new AudioProcessor() {
@@ -102,6 +106,9 @@ public class AudioDispatcherStream implements Stream {
 		return dispatcher.getFormat().getSampleRate();
 	}
 
+	/**
+	 * Remove a StreamProcessor from the list of StreamProcessors.
+	 */
 	@Override
 	public void removeStreamProcessor(StreamProcessor s) {
 		AudioProcessor audioProcessor = processorMap.get(s);

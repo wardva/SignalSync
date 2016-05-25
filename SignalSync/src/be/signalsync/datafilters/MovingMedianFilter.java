@@ -24,6 +24,10 @@ public class MovingMedianFilter extends BufferedFilter {
 		middle = bufferSize/2;
 	}
 
+	/**
+	 * Calculate the next value by taking the median
+	 * of the current buffer.
+	 */
 	@Override
 	protected double calculateNext(double rawValue) {
 		buffer.poll();
