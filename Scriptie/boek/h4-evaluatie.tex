@@ -24,15 +24,15 @@ In het meest eenvoudige scenario wordt de latency berekend tussen twee identieke
 
 Voor de test worden 13 varianten voorzien van een audiofragment. Het originele audiofragment is de referentie. Er zijn zowel varianten met een positieve latency als varianten met een negatieve latency voorzien.
 
-De resultaten van de test bevinden zich in bijlage \ref{appendix-b}. Het accoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten wanneer de test maar eenmaal wordt uitgevoerd. Dit is logisch te verklaren. Het kruiscovariantie wordt namelijk uitgevoerd op een zeer klein stukje audio. Wanneer de test maar eenmaal wordt uitgevoerd kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0 en wordt er hoogst waarschijnlijk een fout resultaat teruggegeven. Dit probleem kan gemakkelijk opgelost worden door het algoritme minstens 2 keer uit te voeren (zie \ref{crosscovariance-repeated}).
+De resultaten van de test bevinden zich in bijlage \ref{appendix-c}. Het accoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten wanneer de test maar eenmaal wordt uitgevoerd. Dit is logisch te verklaren. Het kruiscovariantie wordt namelijk uitgevoerd op een zeer klein stukje audio. Wanneer de test maar eenmaal wordt uitgevoerd kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0 en wordt er hoogst waarschijnlijk een fout resultaat teruggegeven. Dit probleem kan gemakkelijk opgelost worden door het algoritme minstens 2 keer uit te voeren (zie \ref{crosscovariance-repeated}).
 
 \subsection{Toevoegen van een sinusgolf}
 
 In sectie \ref{crosscovariance-repeated} is geschreven dat het kruiscovariantie algoritme het moeilijk krijgt wanneer de te matchen geluidsgolven visueel erg van elkaar verschillen. Dit wordt gesimuleerd door het toevoegen van een lage toon (sinusgolf van $50Hz$ en $100Hz$) aan één van de audiofragmenten. Door het kruiscovariantie algoritme verschillende keren uit te voeren wordt de invloed van dit probleem beperkt.
 
-De resultaten uit bijlage \ref{appendix-c} tonen aan dat het meerdere malen uitvoeren van het algoritme wel degelijk betere resultaten levert. Bij het laatste experiment (waarbij het algoritme 20 maal werd uitgevoerd) werden alle latencies correct bepaald.
+De resultaten uit bijlage \ref{appendix-d} tonen aan dat het meerdere malen uitvoeren van het algoritme wel degelijk betere resultaten levert. Bij het laatste experiment (waarbij het algoritme 20 maal werd uitgevoerd) werden alle latencies correct bepaald.
 
-\section{Praktijktest}
+\section{Praktijktest: bepalen van de latency}
 \label{praktijktest}
 
 De ontwikkelde toepassing zal door het IPEM gebruikt worden tijdens experimenten om de datastreams afkomstig van sensoren te synchroniseren. Meestal worden de sensoren samen met een microfoon aangesloten op één of meerdere Teensy microcontrollers. Het is dus belangrijk om uit te testen dat het mogelijk is om de latency te bepalen bij een geluidsopname afkomstig van een Teensy.
@@ -49,11 +49,19 @@ Bij deze test zullen de algoritmes niet rechtstreeks worden aangeroepen. Het bep
 
 In deze test zal één audiostream worden ingelezen van een Teensy microcontroller. De andere audiostream is afkomstig van de standaard microfoon van een laptop. Beide opnames zijn van relatief slechte kwaliteit. Daarom is dit een goede test om te bepalen of de volledige toepassing voldoende robuust is.
 
-De gedetailleerde opstelling en de resultaten worden beschreven in bijlage \ref{appendix-d}
+De gedetailleerde opstelling en de resultaten worden beschreven in bijlage \ref{appendix-e}
 
 \subsection{Conclusie}
 
 De belangrijkste conclusie die kan worden getrokken is dat alles werkt. De latency wordt in de Max/MSP console geprint en vertoont geen afwijkende resultaten. Het valt wel op dat er drift is opgetreden. De oorzaak hiervan is niet verder onderzocht. 
+
+\section{Praktijktest: synchroniseren van streams}
+
+Met deze test is getracht te bepalen dat de streams daadwerkelijk correct gesynchroniseerd worden. De test is uitgevoerd in Max/MSP waarbij twee audiobestanden werden ingelezen. Aan de geluidsfragmenten zijn op willekeurige plaatsen korte stiltes toegevoegd. Elke stilte zorgt voor een wijziging van de latency tussen de geluidsfragmenten. Door de gesynchroniseerde streams weg te schrijven naar een wave-bestand kon het resultaat handmatig gecontroleerd worden. Ook kan de synchronisatie auditief geverifieerd worden door elke gesynchroniseerde stream langs één zijde van een hoofdtelefoon af te spelen.
+
+\subsection{Conclusie}
+
+Deze test heeft aangetoond dat de synchronisatie correct wordt uitgevoerd. De gesynchroniseerde streams kunnen bij bepaalde samplefrequenties in Max/MSP een afwijking van enkele milliseconden bevatten. Hoogstwaarschijnlijk wordt dit veroorzaakt door een afrondingsfout in de programmacode.
 
 \section{Testen van de softwarecomponenten}
 

@@ -1,5 +1,12 @@
 package be.signalsync.syncstrategy;
 
+/**
+ * This class represents a latency between two streams. The class contains
+ * the latency in seconds and in samples. The conversion between these formats is not
+ * handled in this class.
+ * 
+ * @author Ward Van Assche
+ */
 public class LatencyResult {
 	private double latencyInSeconds;
 	private int latencyInSamples;

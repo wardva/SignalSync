@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import be.signalsync.datafilters.DataFilter;
 import be.signalsync.datafilters.DataFilterFactory;
 import be.signalsync.slicer.SliceEvent;
@@ -21,6 +24,9 @@ import be.signalsync.syncstrategy.LatencyResult;
 import be.signalsync.syncstrategy.SyncStrategy;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
+import be.tarsos.dsp.AudioDispatcher;
+import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
+import be.tarsos.dsp.io.jvm.AudioPlayer;
 
 /**
  * This class is used for starting and managing the real time stream
@@ -78,27 +84,42 @@ public class RealtimeSignalSync implements SliceListener<Map<StreamGroup, float[
 
 	/**
 	 * This method will be executed when the streamSet streams have been sliced.
+	 * In this method the interested SyncListeners will be notified by calling emitSyncEvent.
 	 */
 	@Override
 	public void onSliceEvent(SliceEvent<Map<StreamGroup, float[]>> event) {
 		List<StreamGroup> streams = new ArrayList<>(event.getSlice().keySet());
 		List<float[]> slices = new ArrayList<>(event.getSlice().values());
 		List<LatencyResult> unfilteredLatencies = new ArrayList<>(streams.size());
-		unfilteredLatencies.add(LatencyResult.refinedResult(0.0D, 0)); //Reference stream latency is 0.0
+		
+		//Add the latency of the reference stream to the unfiltered latencies
+		unfilteredLatencies.add(LatencyResult.refinedResult(0.0D, 0));
+		
+		//Call the synchronization algorithm with the slices and add the latencies
+		//to the unfiltered latencies.
 		unfilteredLatencies.addAll(strategy.findLatencies(slices));
+		
+		//Create a Map for the filtered latencies
 		Map<StreamGroup, LatencyResult> filteredLatencies = new HashMap<>(streams.size());
+		
 		for(int i = 0; i<streams.size(); i++) {
 			StreamGroup streamGroup = streams.get(i);
 			DataFilter filter = latencyFilters.get(streamGroup);
 			LatencyResult rawLatency = unfilteredLatencies.get(i);
+			
+			//Filter the raw latency of the current streamGroup.
 			int filteredLatencyInSamples = (int) filter.filter(rawLatency.getLatencyInSamples());
+			
+			//Convert the latency to seconds
 			double filteredLatencyInSeconds = filteredLatencyInSamples / Config.getDouble(Key.SAMPLE_RATE);
-			//Add the (potentiel) filtered latencies in a new LatencyResult object. Also add
-			//the event begintime.
+			
+			//Add the filtered latencies to a new LatencyResult object. Also add the event begintime.
 			LatencyResult filteredResult = new LatencyResult(filteredLatencyInSeconds, 
-															 filteredLatencyInSamples, 
+															 filteredLatencyInSamples,
+															 event.getBeginTime(),
 															 rawLatency.isLatencyFound(), 
 															 rawLatency.isRefined());
+			//Add the filtered result to our datastructure
 			filteredLatencies.put(streamGroup, filteredResult);
 		}
 		emitSyncEvent(filteredLatencies);

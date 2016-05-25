@@ -22,23 +22,25 @@
 \contentsline {subsubsection}{Selectie en optimalisatie van algoritmes}{11}{section*.13}
 \contentsline {subsubsection}{Ontwerp en implementatie van een softwarebibliotheek}{11}{section*.14}
 \contentsline {subsubsection}{Ontwerp en implementatie van een gebruiksvriendelijke interface}{11}{section*.15}
-\contentsline {chapter}{\numberline {2}Methode}{13}{chapter.2}
-\contentsline {section}{\numberline {2.1}Algoritmen}{13}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}Accoustic fingerprinting}{13}{subsection.2.1.1}
-\contentsline {subsubsection}{Features}{13}{section*.16}
-\contentsline {subsubsection}{Werking}{14}{section*.18}
-\contentsline {subsubsection}{Bepalen van de latency}{18}{section*.21}
-\contentsline {subsubsection}{Nauwkeurigheid}{18}{section*.23}
-\contentsline {subsection}{\numberline {2.1.2}Kruiscovariantie}{19}{subsection.2.1.2}
-\contentsline {subsubsection}{Werking}{19}{section*.24}
-\contentsline {subsubsection}{Toepassing in realtime}{20}{section*.25}
-\contentsline {subsection}{\numberline {2.1.3}Toepasbaarheid}{20}{subsection.2.1.3}
-\contentsline {section}{\numberline {2.2}Bufferen van streams}{21}{section.2.2}
-\contentsline {subsubsection}{Buffergrootte}{21}{section*.26}
-\contentsline {subsubsection}{Na\IeC {\"\i }eve implementatie}{21}{section*.27}
-\contentsline {subsubsection}{Sliding window}{22}{section*.28}
-\contentsline {subsubsection}{Voorbeeld}{23}{section*.30}
-\contentsline {subsubsection}{Conclusie}{24}{section*.32}
+\contentsline {chapter}{\numberline {2}Methode}{12}{chapter.2}
+\contentsline {section}{\numberline {2.1}Algoritmen}{12}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Accoustic fingerprinting}{12}{subsection.2.1.1}
+\contentsline {subsubsection}{Features}{12}{section*.16}
+\contentsline {subsubsection}{Werking}{13}{section*.18}
+\contentsline {subsubsection}{Bepalen van de latency}{16}{section*.21}
+\contentsline {subsubsection}{Nauwkeurigheid}{17}{section*.23}
+\contentsline {subsection}{\numberline {2.1.2}Kruiscovariantie}{18}{subsection.2.1.2}
+\contentsline {subsubsection}{Werking}{18}{section*.24}
+\contentsline {subsubsection}{Toepassing in realtime}{19}{section*.25}
+\contentsline {subsection}{\numberline {2.1.3}Toepasbaarheid}{19}{subsection.2.1.3}
+\contentsline {section}{\numberline {2.2}Bufferen van streams}{20}{section.2.2}
+\contentsline {subsubsection}{Buffergrootte}{20}{section*.26}
+\contentsline {subsubsection}{Na\IeC {\"\i }eve implementatie}{20}{section*.27}
+\contentsline {subsubsection}{Sliding window}{20}{section*.28}
+\contentsline {subsubsection}{Voorbeeld}{21}{section*.30}
+\contentsline {subsubsection}{Conclusie}{22}{section*.32}
+\contentsline {section}{\numberline {2.3}Synchroniseren van streams}{23}{section.2.3}
+\contentsline {subsubsection}{Algoritme}{23}{section*.33}
 \contentsline {chapter}{\numberline {3}Implementatie}{25}{chapter.3}
 \contentsline {section}{\numberline {3.1}Technologie\IeC {\"e}n en software}{25}{section.3.1}
 \contentsline {subsection}{\numberline {3.1.1}Java 7}{25}{subsection.3.1.1}
@@ -50,7 +52,7 @@
 \contentsline {subsection}{\numberline {3.1.7}Sonic Visualiser}{28}{subsection.3.1.7}
 \contentsline {subsection}{\numberline {3.1.8}Audacity}{29}{subsection.3.1.8}
 \contentsline {subsection}{\numberline {3.1.9}Max/MSP}{30}{subsection.3.1.9}
-\contentsline {subsection}{\numberline {3.1.10}Teensy}{30}{subsection.3.1.10}
+\contentsline {subsection}{\numberline {3.1.10}Teensy}{31}{subsection.3.1.10}
 \contentsline {section}{\numberline {3.2}Accoustic fingerprinting}{31}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Optimalisaties}{32}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Parameters en hun invloed op het algoritme}{32}{subsection.3.2.2}
@@ -58,66 +60,62 @@
 \contentsline {section}{\numberline {3.3}Kruiscovariantie}{36}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Integratie met accoustic fingerprinting}{36}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Optimalisaties}{38}{subsection.3.3.2}
-\contentsline {subsubsection}{Bugfixes}{38}{section*.40}
-\contentsline {subsubsection}{Meerdere malen uitvoeren van het algoritme}{38}{section*.41}
-\contentsline {subsection}{\numberline {3.3.3}Parameters en hun invloed op het algoritme}{40}{subsection.3.3.3}
+\contentsline {subsubsection}{Bugfixes}{38}{section*.41}
+\contentsline {subsubsection}{Meerdere malen uitvoeren van het algoritme}{38}{section*.42}
+\contentsline {subsection}{\numberline {3.3.3}Parameters en hun invloed op het algoritme}{39}{subsection.3.3.3}
 \contentsline {subsection}{\numberline {3.3.4}Optimale instellingen}{40}{subsection.3.3.4}
 \contentsline {section}{\numberline {3.4}Filteren van de resultaten}{41}{section.3.4}
 \contentsline {subsection}{\numberline {3.4.1}Werking}{42}{subsection.3.4.1}
 \contentsline {subsection}{\numberline {3.4.2}Voorbeelden}{42}{subsection.3.4.2}
-\contentsline {subsubsection}{Moving average filter}{43}{section*.44}
-\contentsline {subsubsection}{Moving median filter}{44}{section*.46}
+\contentsline {subsubsection}{Moving average filter}{42}{section*.45}
+\contentsline {subsubsection}{Moving median filter}{43}{section*.47}
 \contentsline {subsection}{\numberline {3.4.3}Parameters}{44}{subsection.3.4.3}
-\contentsline {subsection}{\numberline {3.4.4}Gevolgen}{45}{subsection.3.4.4}
+\contentsline {subsection}{\numberline {3.4.4}Gevolgen}{44}{subsection.3.4.4}
 \contentsline {section}{\numberline {3.5}Ontwerp van de softwarebibliotheek}{45}{section.3.5}
 \contentsline {subsection}{\numberline {3.5.1}Streams}{46}{subsection.3.5.1}
-\contentsline {subsubsection}{AudioDispatcherStream}{48}{section*.49}
-\contentsline {subsubsection}{MSPStream}{48}{section*.50}
-\contentsline {subsubsection}{Het verwerken van streams}{48}{section*.51}
-\contentsline {subsubsection}{Het bijhouden van streams}{49}{section*.53}
-\contentsline {subsection}{\numberline {3.5.2}Bufferen van streams}{51}{subsection.3.5.2}
-\contentsline {subsubsection}{De abstracte klasse Slicer}{51}{section*.55}
-\contentsline {subsubsection}{StreamSlicer}{52}{section*.57}
-\contentsline {subsubsection}{StreamSetSlicer}{53}{section*.59}
-\contentsline {subsection}{\numberline {3.5.3}Oproepen van de algoritmen}{54}{subsection.3.5.3}
-\contentsline {subsubsection}{Het fingerprinting algoritme}{55}{section*.62}
-\contentsline {subsubsection}{Het kruiscovariantie algoritme}{55}{section*.63}
-\contentsline {subsection}{\numberline {3.5.4}Bepalen van de latency}{56}{subsection.3.5.4}
-\contentsline {subsubsection}{Het starten van de synchronisatie}{57}{section*.65}
-\contentsline {subsection}{\numberline {3.5.5}Filteren van de resultaten}{57}{subsection.3.5.5}
-\contentsline {subsubsection}{Gebufferde filters}{58}{section*.67}
-\contentsline {section}{\numberline {3.6}Max/MSP modules}{59}{section.3.6}
-\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{59}{subsection.3.6.1}
-\contentsline {subsubsection}{Implementatie}{61}{section*.69}
-\contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{61}{subsection.3.6.2}
-\contentsline {subsubsection}{Instellen van de stream structuur}{62}{section*.70}
-\contentsline {subsubsection}{Implementatie}{62}{section*.72}
-\contentsline {chapter}{\numberline {4}Evaluatie}{64}{chapter.4}
-\contentsline {section}{\numberline {4.1}Testen van de algoritmes}{64}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Aanmaken van de dataset}{65}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Toevoegen van latency}{65}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}Toevoegen van een sinusgolf}{66}{subsection.4.1.3}
-\contentsline {section}{\numberline {4.2}Praktijktest}{66}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Opstelling}{66}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Conclusie}{67}{subsection.4.2.2}
-\contentsline {section}{\numberline {4.3}Testen van de softwarecomponenten}{67}{section.4.3}
-\contentsline {subsection}{\numberline {4.3.1}Testen van de StreamSlicer}{67}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {4.3.2}Testen van de Datafilters}{67}{subsection.4.3.2}
-\contentsline {section}{\numberline {4.4}Mogelijke verbeteringen}{68}{section.4.4}
-\contentsline {chapter}{\numberline {5}Conclusie}{69}{chapter.5}
-\contentsline {section}{\numberline {5.1}Doelen}{69}{section.5.1}
-\contentsline {section}{\numberline {5.2}Beoordelingscriteria algoritmes}{70}{section.5.2}
-\contentsline {chapter}{Bijlagen}{71}{section*.73}
-\contentsline {chapter}{\numberline {A}Resultaten: DTW experiment}{72}{Bijlage.a.A}
-\contentsline {chapter}{\numberline {B}Testresultaten: gewijzigde latency}{74}{Bijlage.a.B}
-\contentsline {chapter}{\numberline {C}Testresultaten: toevoegen van een sinusgolf}{78}{Bijlage.a.C}
-\contentsline {chapter}{\numberline {D}Praktijktest: details}{83}{Bijlage.a.D}
-\contentsline {chapter}{\numberline {E}Gebruikershandleiding}{87}{Bijlage.a.E}
-\contentsline {chapter}{\numberline {F}Handleiding voor ontwikkelaars}{88}{Bijlage.a.F}
-\contentsline {chapter}{Referentielijst}{89}{chapter*.113}
-\contentsline {chapter}{L"yst van figuren}{92}{chapter*.114}
-\contentsline {chapter}{Lijst van figuren}{93}{chapter*.114}
-\contentsline {chapter}{L"yst van tabellen}{94}{chapter*.115}
-\contentsline {chapter}{Lijst van tabellen}{94}{chapter*.115}
-\contentsline {chapter}{Lijst van codefragmenten}{95}{chapter*.116}
-\contentsline {chapter}{Lijst van codefragmenten}{95}{chapter*.116}
+\contentsline {subsubsection}{AudioDispatcherStream}{47}{section*.50}
+\contentsline {subsubsection}{MSPStream}{48}{section*.51}
+\contentsline {subsubsection}{Het verwerken van streams}{48}{section*.52}
+\contentsline {subsubsection}{Het bijhouden van streams}{48}{section*.54}
+\contentsline {section}{\numberline {3.6}Max/MSP modules}{50}{section.3.6}
+\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{51}{subsection.3.6.1}
+\contentsline {subsubsection}{Implementatie}{53}{section*.57}
+\contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{53}{subsection.3.6.2}
+\contentsline {subsubsection}{Instellen van de stream structuur}{53}{section*.58}
+\contentsline {subsubsection}{Implementatie}{54}{section*.60}
+\contentsline {subsection}{\numberline {3.6.3}Andere modules}{55}{subsection.3.6.3}
+\contentsline {chapter}{\numberline {4}Evaluatie}{56}{chapter.4}
+\contentsline {section}{\numberline {4.1}Testen van de algoritmes}{56}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Aanmaken van de dataset}{57}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Toevoegen van latency}{57}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Toevoegen van een sinusgolf}{58}{subsection.4.1.3}
+\contentsline {section}{\numberline {4.2}Praktijktest: bepalen van de latency}{58}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Opstelling}{58}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Conclusie}{59}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Praktijktest: synchroniseren van streams}{59}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Conclusie}{59}{subsection.4.3.1}
+\contentsline {section}{\numberline {4.4}Testen van de softwarecomponenten}{60}{section.4.4}
+\contentsline {subsection}{\numberline {4.4.1}Testen van de StreamSlicer}{60}{subsection.4.4.1}
+\contentsline {subsection}{\numberline {4.4.2}Testen van de Datafilters}{60}{subsection.4.4.2}
+\contentsline {section}{\numberline {4.5}Mogelijke verbeteringen}{60}{section.4.5}
+\contentsline {chapter}{\numberline {5}Conclusie}{61}{chapter.5}
+\contentsline {section}{\numberline {5.1}Doelen}{61}{section.5.1}
+\contentsline {section}{\numberline {5.2}Beoordelingscriteria algoritmes}{62}{section.5.2}
+\contentsline {chapter}{Bijlagen}{63}{section*.61}
+\contentsline {chapter}{\numberline {A}Resultaten: DTW experiment}{64}{Bijlage.a.A}
+\contentsline {chapter}{\numberline {B}Ontwerp van de softwarebibliotheek}{66}{Bijlage.a.B}
+\contentsline {subsubsection}{De abstracte klasse Slicer}{66}{section*.63}
+\contentsline {subsubsection}{StreamSlicer}{68}{section*.65}
+\contentsline {subsubsection}{StreamSetSlicer}{68}{section*.67}
+\contentsline {subsubsection}{Het fingerprinting algoritme}{71}{section*.71}
+\contentsline {subsubsection}{Het kruiscovariantie algoritme}{71}{section*.72}
+\contentsline {subsubsection}{Het starten van de synchronisatie}{72}{section*.75}
+\contentsline {subsubsection}{Gebufferde filters}{74}{section*.78}
+\contentsline {chapter}{\numberline {C}Testresultaten: gewijzigde latency}{75}{Bijlage.a.C}
+\contentsline {chapter}{\numberline {D}Testresultaten: toevoegen van een sinusgolf}{79}{Bijlage.a.D}
+\contentsline {chapter}{\numberline {E}Praktijktest: details}{84}{Bijlage.a.E}
+\contentsline {chapter}{\numberline {F}Gebruikershandleiding}{88}{Bijlage.a.F}
+\contentsline {chapter}{\numberline {G}Handleiding voor ontwikkelaars}{89}{Bijlage.a.G}
+\contentsline {chapter}{Referentielijst}{90}{chapter*.118}
+\contentsline {chapter}{L"yst van figuren}{93}{chapter*.119}
+\contentsline {chapter}{Lijst van figuren}{94}{chapter*.119}

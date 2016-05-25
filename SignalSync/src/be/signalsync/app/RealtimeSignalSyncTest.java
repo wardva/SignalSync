@@ -17,7 +17,7 @@ import be.signalsync.syncstrategy.LatencyResult;
 public class RealtimeSignalSyncTest {
 	public static void main(final String[] args) {
 		//Creating a streamset from some audio files.
-		StreamSet streamSet = StreamSetFactory.createRecordedStreamSet();
+		StreamSet streamSet = StreamSetFactory.createCleanStreamSet();
 		
 		final RealtimeSignalSync syncer = new RealtimeSignalSync(streamSet);
 		syncer.addEventListener(new SyncEventListener() {

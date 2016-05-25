@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 import com.cycling74.msp.MSPPerformer;
 import com.cycling74.msp.MSPSignal;
@@ -19,6 +21,7 @@ import be.signalsync.sync.SyncEventListener;
 import be.signalsync.syncstrategy.LatencyResult;
 import be.signalsync.util.Config;
 import be.signalsync.util.Key;
+import be.signalsync.util.Util;
 
 /**
  * Max/MSP module for synchronizing signals using audio-to-audio alignment.
@@ -54,6 +57,9 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	private int sliceSize;
 	//Previous latency in samplenumbers
 	private Map<StreamGroup, Integer> previousLatencies;
+	//Lock for modifying the corrections array (Shared between the onSyncEvent method
+	//and the perform method).
+	private Lock syncLock;
 	
 	public Sync() {
 		bail("(Sync) Invalid method parameters.");
@@ -79,13 +85,13 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 		for(String s : streamConfig) {
 			numberOfStreams += s.length();
 		}
-		
+		this.syncLock = new ReentrantLock();
 		//Create the Streamgroup array.
 		this.streamGroups = new StreamGroup[streamConfig.length];
 		//Create the Stream array.
 		this.streams = new MSPStream[numberOfStreams];
 		//Get the slice size
-		this.sliceSize = Config.getInt(Key.SLICE_SIZE_S);
+		this.sliceSize = Config.getInt(Key.SLICE_SIZE_S)/2;
 		//Initialize the inlets, outlets and assists.
 		setInlets();
 		setOutlets();
@@ -153,13 +159,21 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 			MSPSignal output = sigs_out[i];
 			LinkedList<Float> buffer = buffers.get(i);
 			//Adding the samples to the corresponding buffer
-			buffer.addAll(floatArrayToList(input.vec));
+			buffer.addAll(Util.floatArrayToList(input.vec));
 			
-			//Get the current correction in samples, the max current correction
-			//is the number of samples in 1 Max/MSP buffer.
-			int correction = corrections[i];
-			int currentCorrection = correction > bufferSize ? bufferSize : correction;
-			corrections[i] -= currentCorrection;
+			int currentCorrection;
+			syncLock.lock();
+			try {
+				//Get the current correction in samples, the max current correction
+				//is the number of samples in 1 Max/MSP buffer.
+				int correction = corrections[i];
+				currentCorrection = correction > bufferSize ? bufferSize : correction;
+				corrections[i] -= currentCorrection;
+			}
+			finally {
+				syncLock.unlock();
+			}
+			
 			float[] currentBuffer = new float[bufferSize];
 			//Fill the current buffer with empty sample values.
 			Arrays.fill(currentBuffer, 0, currentCorrection, 0);
@@ -189,7 +203,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 			group.setDescription("inset " + i);
 			for(int j = 0; j<s.length(); j++) {
 				char c = s.charAt(j);
-				MSPStream stream = new MSPStream(sampleRate);
+				MSPStream stream = new MSPStream(sampleRate, bufferSize);
 				switch(c) {
 				case 'a':
 					group.setAudioStream(stream);
@@ -232,27 +246,37 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 			LatencyResult latency = entry.getValue();
 			StreamGroup group = entry.getKey();
 			int previousLatency = previousLatencies.get(group);
+			
+			//Latency in seconds to latency in samples. 
+			int latencyInSamples = (int) Math.round(latency.getLatencyInSeconds() * sampleRate);
+			post("MSP latency in samples: " + latencyInSamples);
 			//Calculate the correction: the difference between the current latency 
 			//and the previous latency in  number of samples.
-			int correction = latency.getLatencyInSamples() - previousLatency;
+			int correction = latencyInSamples - previousLatency;
 			if(correction > highestCorrection) {
 				highestCorrection = correction;
 			}
 			currentCorrections.put(group, correction);
-			previousLatencies.put(group, latency.getLatencyInSamples());
+			previousLatencies.put(group, latencyInSamples);
 		}
 		//Change each correction so it's relative to the highest correction
 		for(Entry<StreamGroup, Integer> entry : currentCorrections.entrySet()) {
 			entry.setValue(highestCorrection - entry.getValue());
 		}
 		int streamCounter = 0;
-		//Iterate over the streamgroups in the order of the insets.
-		for(StreamGroup group : streamGroups) {
-			int correction = currentCorrections.get(group);
-			for(int i = 0; i<group.size(); i++) {
-				//Set the correction for the corresponding streamNumber
-				corrections[streamCounter++] = correction;
+		syncLock.lock();
+		try {
+			//Iterate over the streamgroups in the order of the insets.
+			for(StreamGroup group : streamGroups) {
+				int correction = currentCorrections.get(group);
+				for(int i = 0; i<group.size(); i++) {
+					//Set the correction for the corresponding streamNumber
+					corrections[streamCounter++] = correction;
+				}
 			}
+		}
+		finally {
+			syncLock.unlock();
 		}
 	}
 	
@@ -275,13 +299,5 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	@Override
 	protected void notifyDeleted() {
 		//Cleanup
-	}
-	
-	private List<Float> floatArrayToList(float[] array) {
-		List<Float> list = new ArrayList<Float>(array.length);
-	    for (float value : array) {
-	        list.add(value);
-	    }
-	    return list;
 	}
 }

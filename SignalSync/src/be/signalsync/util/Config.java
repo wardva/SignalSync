@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 //import java.io.UnsupportedEncodingException;
 //import java.net.URL;
 //import java.net.URLDecoder;
@@ -116,12 +118,12 @@ public class Config {
 		//final String path = Config.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		//String decodedPath = "";
 		preferenceStore = Preferences.userNodeForPackage(Config.class);
-
-		//try {
-		//	decodedPath = URLDecoder.decode(path, "UTF-8");
-		//} catch (final UnsupportedEncodingException e) {
-		//	e.printStackTrace();
-		//}
+/*
+		try {
+			decodedPath = URLDecoder.decode(path, "UTF-8");
+		} catch (final UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}*/
 		//configrationFileName = new File(new File(decodedPath).getParent(), "config.properties").getAbsolutePath();
 		//TODO: fixen!!!
 		configrationFileName = "D:\\Documenten\\School\\Master\\Masterproef\\Git\\SignalSync\\config.properties";

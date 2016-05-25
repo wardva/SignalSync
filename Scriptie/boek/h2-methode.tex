@@ -122,7 +122,7 @@ Deze methode bepaalt de gelijkenis tussen twee audiofragmenten en resulteert in 
 Stel twee audioblokken $ a $ en $ b $ bestaande uit een gelijk aantal samples ($n$). Deze audioblokken worden telkens cyclisch één sample verschoven tot wanneer de kruiscovariantie waarde ($ k $) voor elke mogelijke verschuiving berekend werd. De variabele $ i $ stelt de huidige verschuiving voor en gaat van 0 tot $ n $. De kruiscovariantie wordt berekend met formule:
 
 \begin{equation}
-	k = \sum_{j=0}^{n} a_{j} \cdot b_{(i+j)\ mod\ n}
+	k = \sum_{j=0}^{n} a_{j} \cdot b_{(i+j) \bmod n}
 \end{equation}
 
 De waarde van $ i $ waarbij de kruiscovariantie het hoogst is stelt de latency voor tussen beide audioblokken in aantal samples. De latency in seconden kan bepaald worden door dit resultaat te delen door de samplefrequentie.
@@ -204,3 +204,41 @@ De detectiesnelheid van een latencywijziging hangt af van twee parameters: de bu
 \end{equation}
 
 Het toepassen van deze formules op het vorige paragraaf levert volgende resultaten: Zowel bij de naïeve als sliding window methode is de ondergrens 5 seconden. De bovengrens bij de naïeve methode bedraagt 15 seconden. Bij de sliding window methode is dit begrenst tot 9 seconden.
+
+\section{Synchroniseren van streams}
+
+In deze toepassing wordt de latency van alle streams bepaald ten opzichte van een referentiestream. Het is niet geweten welke stream voorloopt of achterloopt. Wanneer de referentiestream een bepaalde vertraging heeft ten opzichte van een andere stream dan zal de latency van de andere stream negatief zijn. Bij de daadwerkelijke synchronisatie is het belangrijk dat hiermee rekening gehouden wordt.
+
+\subsubsection{Algoritme}
+
+Elke keer wanneer er een nieuwe verzameling latencies (ten opzichte van de referentiestream) bepaald is moeten de streams worden aangepast. Dit gebeurt door het toevoegen van stilte (samples met waarde 0.0). Het volgende algoritme berekent hoeveel stilte aan welke streams moet worden toegevoegd.
+
+\begin{algorithm}
+	\setstretch{1}
+	\label{sync-algo}
+	\begin{algorithmic}[1] % The number tells where the line numbering should start
+		\Function{Correcties}{$L, P$} \Comment{L: lijst van latencies, P: lijst van vorige latencies}
+		\State $n\gets$ lengte van $L$ en $P$
+		\State $h\gets -\infty$ \Comment{h: de huidige hoogste correctie}
+		\State $C_i\gets$ lege lijst \Comment{lijst met de correcties van elke stream}
+		\For{$i\gets 1..n$}
+			\State $l\gets$ aantal samples in $L_i$
+			\State $p\gets$ aantal samples in $P_i$
+			\State $c\gets l - p $ \Comment{c: correctie in samples van stream $ i $}
+			\If{$c > h$}
+				\State $h\gets c$ \Comment{wijzigen van hoogste correctie}
+			\EndIf
+			\State $C_i\gets c$
+		\EndFor
+		
+		\For{$i\gets 1..n$}
+			\State $C_i\gets h - C_i$\Comment{correctie wordt relatief t.o.v. hoogste correctie}
+		\EndFor
+		\State \textbf{return} $C$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+In het algoritme wordt op basis van de nieuwe en vorige verzameling van latencies per stream de correctie bepaald. Dit is het aantal nul-samples die aan de overeenkomstige stream moet worden toegevoegd. Bij de eerste berekening (regel 8) is het mogelijk dat de correctie negatief is. Aangezien we geen extra audio willen verliezen (samples wegknippen) wordt de correctie omgezet zodat deze relatief is ten opzichte van de hoogste correctie (regel 16). 
+
+Door het berekende aantal nul-samples aan elke stream toe te voegen worden de streams gesynchroniseerd.

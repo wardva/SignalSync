@@ -1,9 +1,14 @@
 package be.signalsync.stream;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import com.cycling74.msp.MSPSignal;
 import be.signalsync.slicer.StreamSlicer;
+import be.signalsync.util.Config;
+import be.signalsync.util.Key;
+import be.signalsync.util.Util;
+import be.tarsos.dsp.resample.Resampler;
 
 /**
  * This class makes it possible to use a sequence of MSPSignal object
@@ -13,25 +18,92 @@ import be.signalsync.slicer.StreamSlicer;
  */
 public class MSPStream implements Stream {
 	private List<StreamProcessor> processors;
-	private double sampleRate;
 	private long sampleCtr;
+	private double mspSampleRate;
+	private double targetSampleRate;
+	private int mspBufferSize;
+	private int resampleBufferSize;
+	private int outputBufferSize;
+	private boolean resampling;
 	
-	public MSPStream(double sampleRate) {
-		this.sampleRate = sampleRate;
+	//Resampler fields
+	private Resampler resampler;
+	private LinkedList<Float> buffer;
+	private double sampleRatio;
+	private float[] resampledBuffer;;
+	
+	/**
+	 * Create a new MSPStream object. If the sampleRate in the config
+	 * file is different from the Max/MSP sampleRate the stream
+	 * will be resampled.
+	 * 
+	 * @param mspSampleRate The sampleRate used in Max/MSP
+	 * @param mspBufferSize The bufferSize used in Max/MSP
+	 */
+	public MSPStream(double mspSampleRate, int mspBufferSize) {
+		this.mspSampleRate = mspSampleRate;
+		this.targetSampleRate = Config.getDouble(Key.SAMPLE_RATE);
+		this.outputBufferSize = Config.getInt(Key.NFFT_BUFFER_SIZE);
+		this.mspBufferSize = mspBufferSize;
+		this.resampling = Math.abs(mspSampleRate - targetSampleRate) > 0.001;
 		this.processors = new ArrayList<>();
+		this.buffer = new LinkedList<>();
 		this.sampleCtr = 0;
+		if(resampling) {
+			initResampler();
+		}
+	}
+
+	/**
+	 * Initialize everything regarding the resampling process.
+	 */
+	private void initResampler() {
+		sampleRatio = targetSampleRate / mspSampleRate;
+		resampler = new Resampler(true, sampleRatio, sampleRatio);
+		resampleBufferSize = (int) Math.round(sampleRatio * mspBufferSize);
+		resampledBuffer = new float[resampleBufferSize];
+		
 	}
 	
 	/**
-	 * This method should be called for each MSPSignal object
+	 * This method should be called for each MSPSignal object of the stream.
 	 * received from Max/MSP.
 	 */
 	public void maxPerformed(MSPSignal s) {
-		sampleCtr += s.n;
-		double timestamp = (double) sampleCtr / sampleRate;
-		for(StreamProcessor p : processors) {
-			StreamEvent event = new StreamEvent(s.vec, timestamp);
-			p.process(event);
+		if(resampling) {
+			//Resample and process the resampled buffer
+			resampler.process(sampleRatio, s.vec, 0, mspBufferSize, false, resampledBuffer, 0, resampleBufferSize);
+			process(resampledBuffer);
+		}
+		else {
+			//No resampling
+			process(s.vec);
+		}
+	}
+	
+	/**
+	 * This method processes a array containing samples.
+	 * The samples are added to the buffer attribute. When there
+	 * are enough samples in the buffer, the samples will be sent
+	 * to the streamProcessors.
+	 * @param vector The array containing the samples
+	 */
+	private void process(float[] vector) {
+		//Add the sampleVector to our total buffer.
+		buffer.addAll(Util.floatArrayToList(vector));
+		//Fill as many outputBuffers as possible
+		while(buffer.size() > outputBufferSize) {
+			sampleCtr += outputBufferSize;
+			double timestamp = (double) sampleCtr / targetSampleRate;
+			float[] outputBuffer = new float[outputBufferSize];
+			for(int i = 0; i<outputBufferSize; i++) {
+				outputBuffer[i] = buffer.remove();
+			}
+			//Send the outputBuffer to the processors.
+			for(StreamProcessor p : processors) {
+				StreamEvent event = new StreamEvent(outputBuffer, timestamp);
+				p.process(event);
+			}
 		}
 	}
 	
@@ -46,11 +118,6 @@ public class MSPStream implements Stream {
 	}
 
 	@Override
-	public double getSampleRate() {
-		return sampleRate;
-	}
-
-	@Override
 	public StreamSlicer createSlicer(int sliceSize, int sliceStep) {
 		StreamSlicer slicer = new StreamSlicer(sliceSize, sliceStep, getSampleRate());
 		addStreamProcessor(slicer);
@@ -58,12 +125,13 @@ public class MSPStream implements Stream {
 	}
 
 	@Override
-	public void start() {
-		throw new UnsupportedOperationException();
-	}
+	public void start() {}
 
 	@Override
-	public void stop() {
-		throw new UnsupportedOperationException();
+	public void stop() {}
+
+	@Override
+	public double getSampleRate() {
+		return targetSampleRate;
 	}
 }

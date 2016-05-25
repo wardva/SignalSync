@@ -410,7 +410,7 @@ Bij de moving median filter wordt een wijziging van de latency gedetecteerd wann
 \section{Ontwerp van de softwarebibliotheek}
 \label{ontwerp}
 
-De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillende onderdelen onderverdeeld in \texttt{packages}. Na het bespreken van de packages zal het ontwerp van de applicatie gedetailleerd worden toegelicht.
+De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillende onderdelen onderverdeeld in \texttt{packages}.
 
 \begin{description}	
 	\item\texttt{be.signalsync.stream} \hfill \\
@@ -433,7 +433,10 @@ De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillend
 	
 \end{description}
 
+De complete bespreking van het ontwerp is vrij droog en uitgebreid. Enkel het ontwerp van de verschillende soorten streams zal behandeld worden. De bespreking van het volledige ontwerp van de softwarebibliotheek bevindt zich in bijlage \ref{appendix-b}.
+
 \subsection{Streams}
+\label{streams-design}
 
 Streams kunnen van verschillende bronnen afkomstig zijn: van een microfoon, van een bestand of van een virtuele patchkabel uit Max/MSP,... Streams afkomstig van een microfoon of bestand kunnen met behulp van de klasse \texttt{AudioDispatcher} worden ingelezen (besproken in sectie \ref{tarsos}). Deze klasse laat op eenvoudige wijze verdere verwerking toe. Het inlezen van data uit Max/MSP gebeurt op een fundamenteel andere manier die niet door de klasse \texttt{AudioDispatcher} ondersteund wordt. Daarom wordt er nog een extra abstractielaag voorzien waarmee het mogelijk wordt om zowel \texttt{AudioDispatchers} als Max/MSP streams op dezelfde manier aan te spreken en te verwerken. Figuur \ref{StreamUml} toont de \texttt{Stream} interface en de klassen die deze interface implementeren. De methodes van de interface worden in de concrete klassen niet herhaald maar zijn uiteraard wel aanwezig.
 
@@ -489,139 +492,11 @@ Een verzameling van \texttt{StreamGroups} wordt een \texttt{StreamSet} genoemd. 
 
 Figuur \ref{streamStorage} toont een klassendiagram van hoe de streams intern worden bijgehouden.
 
-\subsection{Bufferen van streams}
-
-Alle klassen die te maken hebben met het bufferen van streams (het opsplitsen in zogenaamde \textit{slices}) bevinden zich in het package \texttt{be.signalsync.slicer}. Het hoe en waarom van deze verwerking werd al uitgebreid behandeld in sectie \ref{streambuffers}.
-
-\subsubsection{De abstracte klasse Slicer}
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram de observer logica van de klasse \texttt{Slicer}}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/slicerAbstractUML}
-	\end{center}
-	\label{slicerObserver}
-\end{figure}
-
-Een \texttt{Slicer} is een abstracte klasse die een stream of verzameling van streams inleest, in stukjes knipt en vervolgens deze stukjes teruggeeft aan elke geïnteresseerd object. Hoe en wat er precies in stukjes geknipt wordt hangt af van het subtype van \texttt{Slicer}. De klasse \texttt{Slicer} is enkel verantwoordelijk voor het registreren, bijhouden en verwittigen van objecten die geïnteresseerd zijn in slices. Dit proces wordt verwezenlijk met behulp van het \textit{observer} ontwerppatroon (uitgebreid besproken in boek \cite{vlissides1995design}). 
-
-Figuur \ref{slicerObserver} toont de drie klassen die een rol spelen het observer mechanisme. Elke klasse is generiek en maakt gebruik van type parameter \texttt{T}. Dit is het type van hoe een slice wordt voorgesteld. Bij een slice van een stream is dit type bijvoorbeeld een array van \texttt{float} waarden.
-
-Zoals in de figuur te zien is bevat \texttt{Slicer} een verzameling van geïnteresseerde objecten. De klasse van een geïnteresseerd object moet de interface \texttt{SliceListener} implementeren. Wanneer een object geregistreerd is kan het \texttt{SliceEvent} objecten ontvangen. Dit object bevat de laatste nieuwe slice, de \texttt{Slicer} vanwaar de slice afkomstig is en een timestamp. Wanneer er geen slices meer verzameld kunnen worden kan de methode \texttt{done} van elke geïnteresseerd object worden opgeroepen.
-
-\subsubsection{StreamSlicer}
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram van de klasse \texttt{StreamSlicer} en haar supertypes.}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/streamSlicerUML}
-	\end{center}
-	\label{streamSlicer}
-\end{figure}
-
-Een \texttt{StreamSlicer} is een subklasse van \texttt{Slicer} die de data afkomstig van een stream opdeelt in \texttt{float} arrays van een welbepaalde lengte. Om toegang te krijgen tot de data van een \texttt{Stream} implementeert de \texttt{StreamSlicer} de interface \texttt{StreamProcessor}. Via \texttt{process} krijgt deze klasse opeenvolgende \texttt{float} arrays met samples binnen die worden opgeslagen in buffers. Wanneer er een slice gereed is worden de buffers samengevoegd tot één float array en wordt \texttt{emitSliceEvent} van de superklasse \texttt{Slicer} opgeroepen. Wanneer \texttt{processingFinished} wordt opgeroepen en de stream dus geen data meer beschikbaar heeft, dan wordt \texttt{emitDoneEvent} zodat alle \texttt{StreamListeners} hiervan op de hoogte zijn.
-
-Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en interfaces. Sommige low-level methoden en attributen zijn hierbij weggelaten. 
-
-\subsubsection{StreamSetSlicer}
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram van de klasse \texttt{StreamSetSlicer} en haar supertypes.}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/streamSetSlicerUML}
-	\end{center}
-	\label{streamSetSlicer}
-\end{figure}
-
-Een \texttt{StreamSetSlicer} is een subtype van de klasse \texttt{Slicer} die verantwoordelijk is voor het slicen van alle \textbf{audiostreams} van een \texttt{StreamSet}. Per \texttt{StreamGroup} wordt er dus maar één stream in stukjes verdeeld. Dit is logisch aangezien de synchronisatiealgoritmen voor het bepalen van de latency enkel worden uitgevoerd op slices van de audiostream.
-
-Bij de creatie van een \texttt{StreamSetSlicer} wordt van elke \texttt{StreamGroup} uit de \texttt{StreamSet} de audiostream opgehaald. Op dit \texttt{Stream} object wordt vervolgens de methode \texttt{createSlicer} opgeroepen waarop er een \texttt{StreamSlicer} wordt teruggegeven. De \texttt{StreamSetSlicer} voegt zichzelf als geïnteresseerd object aan de \texttt{StreamSlicer} toe. Ook wordt de \texttt{StreamSlicer}
-gekoppeld aan de \texttt{StreamGroup} door ze als sleutel en waarde toe te voegen aan een \texttt{Map}.
-
-Na afloop van deze initialisatie wordt er gewacht tot wanneer alle streams waarop de \texttt{StreamSetSlicer} zich geregistreerd heeft een \texttt{SliceEvent} (met een \texttt{float} array) verstuurd hebben. Al deze slices worden vervolgens samen met hun corresponderende \texttt{StreamGroup} via de \texttt{emitSliceEvent} methode verstuurd naar de geïnteresseerde objecten. Dit proces wordt herhaald tot er geen enkele \texttt{Stream} nog data ter beschikking heeft.
-
-Figuur \ref{streamSetSlicer} toont een vrij abstract klassendiagram van de \texttt{StreamSetSlicer} en haar supertypen. Low-level attributen zoals de buffers, threadpools en locks zijn hierop weggelaten.
-
-\subsection{Oproepen van de algoritmen}
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram van de klassen met de synchronisatiealgoritmen.}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/algorithmsUML}
-	\end{center}
-	\label{SyncStrategyUML}
-\end{figure}
-
-De synchronisatiealgoritmen bevinden zich in subklassen van \texttt{SyncStrategy}. Deze klasse bevat een abstracte methode \texttt{findLatencies}. Deze methode ontvangt als parameter een lijst van \texttt{float} arrays waarbij elke array de samples bevat van één slice bevat. Na het uitvoeren geeft de methode een lijst terug met daarin de latencies in seconden ten opzichte van de eerste slice uit de lijst.
-
-\texttt{SyncStrategy} bevat ook enkele statische methodes waarmee de verschillende mogelijke strategieën gemakkelijk kunnen worden aangemaakt. De parameters die aan de constructoren moeten worden meegegeven worden uit het configuratiebestand gehaald.
-
-Figuur \ref{SyncStrategyUML} toont het UML diagram van deze klasse en haar subtypen. 
-
-\subsubsection{Het fingerprinting algoritme}
-Het fingerprinting algoritme wordt geïmplementeerd in de klasse \texttt{FingerprintSyncStrategy}. Buiten de implementatie van \texttt{findLatencies} bevat deze klasse nog een andere publieke methode namelijk \texttt{getResults}. Deze methode is vergelijkbaar met \texttt{findLatencies} maar geeft de resultaten in een meer low-level formaat terug. In volgend paragraaf zal duidelijk worden waarvoor deze methode gebruikt wordt.
-
-\subsubsection{Het kruiscovariantie algoritme}
-De klasse \texttt{CrossCovarianceSyncStrategy} bevat een implementatie van het kruiscovariantie algoritme. De klasse bevat een instantie van \texttt{FingerprintSyncStrategy} waarmee de ruwe latency wordt berekend. Eerst wordt de methode \texttt{getResults} opgeroepen, deze methode geeft een lijst terug met per stream de ruwe verschuiving in aantal samples. Het kruiscovariantie algoritme heeft deze informatie nodig om op efficiënte wijze het resultaat te kunnen verfijnen.
-
-\subsection{Bepalen van de latency}
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption[UML diagram van \texttt{RealtimeSignalSync} + afhankelijkheden]{UML diagram van \texttt{RealtimeSignalSync} en alle klassen waarvan ze afhankelijk is.}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/latencyUML}
-	\end{center}
-	\label{latencyUML}
-\end{figure}
-
-De klasse \texttt{RealtimeSignalSync} is verantwoordelijk voor het aanroepen van de klassen uit verschillende packages waardoor de uiteindelijke synchronisatie kan plaatsvinden.
-
-Een \texttt{RealtimeSignalSync} object wordt aangemaakt door aan de constructor een \texttt{StreamSet} object mee te geven dat de te synchroniseren streams bevat. Vervolgens wordt er met behulp van de methode \texttt{createSlicer} een \texttt{StreamSetSlicer} object aangemaakt. Aangezien \texttt{SliceListener} geïmplementeerd wordt kan \texttt{RealtimeSignalSync} zich registreren als geïnteresseerd object.
-
-Wanneer er voor elke \texttt{StreamGroup} een slice beschikbaar is wordt de methode \texttt{onSliceEvent} opgeroepen. In deze methode wordt het \texttt{SyncStrategy} object gebruikt om de latencies te bepalen. Optioneel kunnen deze resultaten ook nog gefilterd worden (het ontwerp hiervan wordt in \ref{filterontwerp} besproken). Ten slotte worden de resultaten naar alle geregistreerde \texttt{SyncEventListeners} verstuurd via de private methode \texttt{emitSyncEvent}. Geïnteresseerden kunnen zich registreren via de \texttt{addEventListener} methode. Deze werkwijze leunt net zoals het \textit{slice event} mechanisme aan bij het \textit{observer} ontwerppatroon.
-
-\subsubsection{Het starten van de synchronisatie}
-
-Het starten van de synchronisatie gebeurt noch in deze klasse noch in een slicer- of \mbox{strategyklasse}. Zowel het slicen als het uitvoeren van de algoritmen is een deterministisch proces en afhankelijk van de samples die door een \texttt{Stream} object naar de \texttt{StreamProcessors} verstuurd worden. Bij een \texttt{AudioDispatcherStream} zal de synchronisatie starten wanneer de \texttt{start} methode opgeroepen wordt. Bij een \texttt{MSPStream} zal de synchronisatie pas starten wanneer de streams in Max/MSP zelf geactiveerd worden.
-
-\subsection{Filteren van de resultaten}
-\label{filterontwerp}
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram van de verschillende datafilters.}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/filterUML}
-	\end{center}
-	\label{filterUML}
-\end{figure}
-
-Zoals in sectie \ref{filtering} is besproken kunnen de latencies gefilterd worden. De meest elementaire filter wordt beschreven door de interface \texttt{DataFilter} waarin de methode \texttt{filter} wordt beschreven. Deze methode ontvangt een \texttt{double} als parameter en geeft een (gefilterde) \texttt{double} terug. De meest eenvoudige implementatie van deze klasse is de \texttt{NoFilter}. Deze filter geeft rechtstreeks de meegegeven waarde terug zonder iets te wijzigen.
-
-\subsubsection{Gebufferde filters}
-
-\texttt{DataFilter} wordt ook geïmplementeerd door de abstracte klasse \texttt{BufferedFilter}. Dit is een filter die de laatste $ n $ waarden in een buffer bijhoudt. De waarde van $ n $ wordt bepaalt in het configuratiebestand. 
-
-Deze klasse is abstract aangezien de manier waarop de uiteindelijk gefilterde waarde \mbox{berekent} wordt nog niet bepaald is. Hiervoor is de abstracte methode \texttt{calculateNext} voorzien. De klasse \texttt{MovingAverageFilter} doet dit door het gemiddelde van de waarden uit de buffer te nemen. Bij \texttt{MovingMedianFilter} gebeurt dit door de mediaan te berekenen.
-
-Figuur \ref{filterUML} toont een UML diagram van deze verschillende klassen en interfaces.
-
 \section{Max/MSP modules}
 
 In de introductie van deze thesis (sectie \ref{target-ui}) is er geschreven dat er voor het volledige synchronisatieproces een gebruiksvriendelijke interface ontwikkeld zal worden. Deze interface moet het voor musicologen/onderzoekers mogelijk maken om \texttt{StreamSets} aan te maken en te synchroniseren zonder één lijn code te hoeven schrijven.
 
-Een heel flexibele manier om dit te doen is door het schrijven van één of meerdere Max/MSP modules. Hierbij wordt de gebruiker niet in een hokje geduwd van wat een stream precies moet zijn of hoe het moet worden ingelezen. Bij deze benadering is het een garantie dat elk Max/MSP signaal gesynchroniseerd kan worden. Max/MSP ondersteund standaard het inlezen van bestanden of microfoons.
+Een heel flexibele manier om dit te doen is door het schrijven van één of meerdere Max/MSP modules. Hierbij wordt de gebruiker niet in een hokje geduwd van wat een stream precies moet zijn of hoe het moet worden ingelezen. Bij deze benadering is het een garantie dat elk Max/MSP signaal gesynchroniseerd kan worden. Max/MSP ondersteund standaard het inlezen van bestanden en microfoons.
 
 Problematisch is het feit dat de streams afkomstig van Teensy microcontrollers standaard niet kunnen worden aangesproken vanuit een Max/MSP context. Aangezien dit voor dit onderzoek een vereiste is zal hier ook een module voor geschreven moeten worden.
 
@@ -662,7 +537,7 @@ De parameters dienen als een door spaties gescheiden lijst te worden meegegeven 
 
 Figuur \ref{teensyReader} toont de TeensyReader waarbij de Teensy samplet aan een frequentie van $8000Hz$. De microfoon is aangesloten op pin pin A1, de infraroodsensor is aangesloten op pin A0. De links scope module toont de gegevens van de infraroodsensor, de rechtse module toont de geluidsgolf. 
 
-Een uitgebreide handleiding voor het gebruik van deze module is te vinden in bijlage \ref{appendix-e}.
+Een uitgebreide handleiding voor het gebruik van deze module is te vinden in bijlage \ref{appendix-f}.
 
 \subsubsection{Implementatie}
 
@@ -676,7 +551,7 @@ De tweede module zal de synchronisatie van de streams verzorgen en is geïmpleme
 
 \subsubsection{Instellen van de stream structuur}
 
-De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters 'a' en 'd'. Elk door deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters 'a' en 'd' respectievelijk voor een audiostream en datastream staan. Per deel mag uiteraard maar eenmaal de letter 'a' voorkomen. De volledige tekenreeks  (de verzameling van alle \texttt{StreamGroups}) stelt de structuur van een \texttt{StreamSet} voor. Op basis van deze string worden de \texttt{Stream} objecten aangemaakt en onderverdeeld in \texttt{StreamGroups} en \texttt{StreamSets}.
+De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters 'a' en 'd'. Elk door komma's gesplitst deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters 'a' en 'd' respectievelijk voor een audiostream en datastream staan. Per deel mag uiteraard maar eenmaal de letter 'a' voorkomen. De volledige tekenreeks  (de verzameling van alle \texttt{StreamGroups}) stelt de structuur van een \texttt{StreamSet} voor onderverdeeld in \texttt{StreamGroups}.
 
 Dit zou een mogelijke parameter voor deze module kunnen zijn: \texttt{addd,dad}. De eerste \texttt{StreamGroup} bestaat uit 4 streams waarbij de synchronisatie met de eerste stream zal worden uitgevoerd. De tweede \texttt{StreamGroup} bestaat uit 3 streams. De tweede stream stelt hierbij de audiostream voor.
 
@@ -694,10 +569,24 @@ Figuur \ref{maxStreamSync} toont hoe deze module gebruikt moet worden in combina
 
 \subsubsection{Implementatie}
 
-Net zoals \texttt{TeensyReader} erft deze module over van \texttt{MSPPerformer}. Ook wordt de interface \texttt{SyncEventListener} geïmplementeerd. In de constructor wordt op basis van de parameter van de module een \texttt{StreamSet} bestaande uit \texttt{MSPStream} objecten aangemaakt. In de perform methode van de module worden de signaalvectoren doorgegeven aan de \texttt{MSPStream} objecten. De synchronisatie wordt verwezenlijkt door in de constructor een \texttt{RealtimeSignalSync} object aan te maken waarop de klasse zich registreert. Aan het \texttt{RealtimeSignalSync} object wordt de \texttt{StreamSet} meegegeven. Elke keer wanneer er informatie over de latency beschikbaar is wordt de methode \texttt{onSyncEvent} opgeroepen met alle latencies.
+Net zoals \texttt{TeensyReader} erft deze module over van \texttt{MSPPerformer}. Ook wordt de interface \texttt{SyncEventListener} geïmplementeerd. In de constructor wordt op basis van de parameter van de module een \texttt{StreamSet} van \texttt{MSPStream} objecten aangemaakt. In de perform methode van de module worden de signaalvectoren doorgegeven aan de \texttt{MSPStream} objecten. De synchronisatie wordt verwezenlijkt door in de constructor een \texttt{RealtimeSignalSync} object aan te maken waarop de klasse zich registreert. Aan het \texttt{RealtimeSignalSync} object wordt de \texttt{StreamSet} meegegeven. Elke keer wanneer er informatie over de latency beschikbaar is wordt de methode \texttt{onSyncEvent} opgeroepen met alle latencies.
 
-Met behulp van deze latencies moeten de binnenkomende Max/MSP datastreams gemanipuleerd worden zodat ze perfect synchroon lopen. Dit is in de laatste versie nog niet geïmplementeerd. In de huidige implementatie worden de latencies in de Max/MSP console geprint.
+Met behulp van deze latencies worden de Max/MSP streams gesynchroniseerd.
 
+\subsection{Andere modules}
 
+Aangezien Max/MSP al een groot aantal modules bevat was het niet nodig om bepaalde features in de eigen modules te implementeren. Enkele modules die zeer bruikbaar zijn voor deze toepassing:
+
+\begin{description}
+	\item\texttt{sfplay\textapprox} \hfill \\
+	Met deze module is het mogelijk om streams uit verschillende soorten bestanden in te lezen. Dit kan handig zijn om de synchronisatie van een experiment als naverwerking uit te voeren.
+	
+	\item\texttt{sfrecord\textapprox} \hfill \\
+	Deze module laat toe om een Max/MSP signaal weg te schrijven naar een bestand. De gesynchroniseerde streams kunnen met behulp van deze module worden bijgehouden.
+	
+	\item\texttt{scope\textapprox} \hfill \\
+	Deze module toont de golfvorm van een Max/MSP signaal. Dit is handig tijdens het uitvoeren van een experiment om de signalen te controleren.
+	
+\end{description}
 
 

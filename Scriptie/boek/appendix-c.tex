@@ -1,15 +1,14 @@
-\chapter{Testresultaten: toevoegen van een sinusgolf}
+\chapter{Testresultaten: gewijzigde latency}
 \label{appendix-c}
 
 \section*{Dataset}
 
-Bij dit experiment wordt de dataset van bijlage \ref{appendix-b} uitgebreid. Van elke latency uit de eerder besproken dataset worden twee varianten voorzien. Aan elke variant wordt één van deze sinusgolven toegevoegd waardoor de golfvorm er helemaal anders gaat uitzien:
-
+Alle testen worden uitgevoerd ten opzichte van een referentie audiofragment. Er zijn 12 varianten voorzien met een elk een andere latency. Dit is de verzameling van verschillende latencies:
 \begin{center}
-	\{ $50Hz$, $100Hz$ \}
+	\{$20ms$, $-20ms$, $80ms$, $-80ms$, $90ms$, $-90ms$, $300ms$, $-300ms$, \\$2000ms$, $-2000ms$, $6000ms$, $-6000ms$ \}
 \end{center}
 
-Van deze aangepaste audiofragmenten worden op voorhand opnieuw slices aangemaakt. 
+Van elk audiofragment (referentie en elke variant) worden (ongeveer) 55 slices aangemaakt (lengte: 10s, overlap: 5s). Elke slice wordt gematcht met de corresponderende slice van het referentie audiofragment.
 
 \section*{Test 1}
 
@@ -25,6 +24,7 @@ Van deze aangepaste audiofragmenten worden op voorhand opnieuw slices aangemaakt
 	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
 	Nauwkeurigheid & $32ms$ \\
 	Opmerking & Standaard parameters \\
+	\\
 \end{tabular}\\
 
 \subsection*{Resultaten}
@@ -33,15 +33,16 @@ Van deze aangepaste audiofragmenten worden op voorhand opnieuw slices aangemaakt
 	\hline
 	\textbf{Resultaat} & \textbf{Waarde} \\
 	\hline
-	Totaal aantal testen & 648 \\
-	Totaal aantal geslaagd & 648 \\
+	Totaal aantal testen & 324 \\
+	Totaal aantal geslaagd & 324 \\
 	Totaal aantal foutief & 0 \\
 	Slaagpercentage & 100\% \\
+	\\
 \end{tabular}\\
 
 \subsection*{Conclusie}
 
-Het accoustic fingerprinting algoritme heeft geen problemen met het toevoegen van de sinusgolven aan één van de audiofragmenten.
+Zoals verwacht slagen alle testen.
 
 \section*{Test 2}
 
@@ -59,6 +60,7 @@ Het accoustic fingerprinting algoritme heeft geen problemen met het toevoegen va
 	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
 	Nauwkeurigheid & $0.1ms$ \\
 	Opmerking & Eén kruiscovariantie test \\
+	\\
 \end{tabular}\\
 
 \subsection*{Resultaten}
@@ -67,15 +69,16 @@ Het accoustic fingerprinting algoritme heeft geen problemen met het toevoegen va
 	\hline
 	\textbf{Resultaat} & \textbf{Waarde} \\
 	\hline
-	Totaal aantal testen & 648 \\
-	Totaal aantal geslaagd & 465 \\
-	Totaal aantal foutief & 183 \\
-	Slaagpercentage & 72\% \\
+	Totaal aantal testen & 324 \\
+	Totaal geslaagd & 306 \\
+	Totaal foutief & 18 \\
+	Slaagpercentage & 94\% \\
+	\\
 \end{tabular}\\
 
 \subsection*{Conclusie}
 
-Het kruiscovariantie ondervindt, bij éénmalige uitvoering, serieuze problemen bij het bepalen van de latency wanneer er een sinusgolf is toegevoegd.
+Sommige testen falen. Analyse toont aan dat dit enkel voorvalt wanneer minstens één kruiscovariantie buffer stilte bevat (samples zijn 0.0).
 
 \section*{Test 3}
 
@@ -92,7 +95,8 @@ Het kruiscovariantie ondervindt, bij éénmalige uitvoering, serieuze problemen 
 	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 5 \\
 	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
 	Nauwkeurigheid & $0.1ms$ \\
-	Opmerking & Meerdere kruiscovariantie testen
+	Opmerking & Meerdere kruiscovariantie testen \\
+	\\
 \end{tabular}\\
 
 \subsection*{Resultaten}
@@ -101,46 +105,13 @@ Het kruiscovariantie ondervindt, bij éénmalige uitvoering, serieuze problemen 
 	\hline
 	\textbf{Resultaat} & \textbf{Waarde} \\
 	\hline
-	Totaal aantal testen & 648 \\
-	Totaal aantal geslaagd & 642 \\
-	Totaal aantal foutief & 6 \\
-	Slaagpercentage & 99\% \\
-\end{tabular}\\
-
-\subsection*{Conclusie}
-
-Het resultaat dat verkregen wordt wanneer het algoritme vijf maal wordt uitgevoerd staat in groot contrast met vorig resultaat. Een slaagpercentage van 99\% is zeker aanvaardbaar voor deze toepassing.
-
-\section*{Test 4}
-
-\subsection*{Instellingen}
-
-\begin{tabular}{ l  l}
-	\hline
-	\textbf{Instelling} & \textbf{Waarde} \\
-	\hline
-	Algoritme & Kruiscovariantie \\
-	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
-	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
-	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
-	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 20 \\
-	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
-	Nauwkeurigheid & $0.1ms$ \\
-	Opmerking & Een groot aantal kruiscovariantie testen
-\end{tabular}\\
-
-\subsection*{Resultaten}
-
-\begin{tabular}{ l  l}
-	\hline
-	\textbf{Resultaat} & \textbf{Waarde} \\
-	\hline
-	Totaal aantal testen & 648 \\
-	Totaal aantal geslaagd & 648 \\
-	Totaal aantal foutief & 0 \\
+	Totaal aantal testen & 324 \\
+	Totaal geslaagd & 324 \\
+	Totaal foutief & 0 \\
 	Slaagpercentage & 100\% \\
+	\\
 \end{tabular}\\
 
 \subsection*{Conclusie}
 
-Een optimaal resultaat wordt bereikt door de test 20 maal uit te voeren.
+Na het verhogen van het aantal kruiscovariantie testen is het slaagpercentage 100\%.

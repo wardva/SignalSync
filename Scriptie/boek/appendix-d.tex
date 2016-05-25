@@ -1,92 +1,146 @@
-\chapter{Praktijktest: details}
+\chapter{Testresultaten: toevoegen van een sinusgolf}
 \label{appendix-d}
 
-\section*{Teensy}
+\section*{Dataset}
 
-Op de Teensy microcontroller (figuur \ref{teensy-test}) wordt een microfoon aangesloten op pin A0. Het programma \texttt{TeensyAnalogRead} wordt op de Teensy uitgevoerd. Dit programma is afkomstig van het TeensyDAQ project (IPEM software). Hierdoor worden er maximum 5 analoge waarden aan een frequentie van $8000Hz$ ingelezen.
+Bij dit experiment wordt de dataset van bijlage \ref{appendix-b} uitgebreid. Van elke latency uit de eerder besproken dataset worden twee varianten voorzien. Aan elke variant wordt één van deze sinusgolven toegevoegd waardoor de golfvorm er helemaal anders gaat uitzien:
 
-\begin{figure}[!h]
-	\captionsetup{width=0.7\textwidth}
-	\caption[Teensy testopstelling]{De Teensy microcontroller verbonden met een microfoon op pin A0.}
-	\centering
-	\advance\parskip0.3cm
-	\includegraphics[width=0.4\textwidth]{teensy2.jpg}
-	\label{teensy-test}
-\end{figure}
-
-\section*{Microfoon}
-
-De andere audiostream is afkomstig van een laptopmicrofoon. Alle mogelijke verbeteringen die worden ondersteund (ruisonderdrukking en onderdrukking van akoestische echo) zijn uitgeschakeld.
-
-\section*{Max/MSP patch}
-
-\begin{figure}[!h]
-	\captionsetup{width=0.7\textwidth}
-	\caption[Max/MSP testopstelling]{De Max/MSP patch waarmee de test is uitgevoerd.}
-	\centering
-	\advance\parskip0.3cm
-	\includegraphics[width=0.6\textwidth]{maxtest.png}
-	\label{max-test}
-\end{figure}
-
-De laptopmicrofoon wordt ingelezen met behulp van de \texttt{ezadc\textapprox} module. Deze module is standaard aanwezig in Max/MSP. De audiostream afkomstig van de Teensy microcontroller wordt en ingelezen met behulp van de \texttt{TeensyReader} module (geschreven voor dit onderzoek). De module is aangemaakt met volgende code:
 \begin{center}
-	\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader 8000 0 0 1}
+	\{ $50Hz$, $100Hz$ \}
 \end{center}
-Het synchroniseren gebeurd met de \texttt{Sync} module. Er worden geen datastreams gekoppeld aan de audiostreams. Dit is de code voor het aanmaken van de module:
-\begin{center}
-	\texttt{mxj\textapprox\ be.signalsync.msp.Sync a,a}
-\end{center}
-Aangezien deze module nog niet volledig is afgewerkt vindt de daadwerkelijke synchronisatie nog niet plaats. De latencies worden uitgeprint in de Max/MSP console. Figuur \ref{max-test} toont een screenshot van de patch en de console.
 
-\section*{Instellingen}
+Van deze aangepaste audiofragmenten worden op voorhand opnieuw slices aangemaakt. 
 
-De slechte geluidskwaliteit heeft als gevolg dat de parameters extremer moeten worden ingesteld.\\
+\section*{Test 1}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Accoustic fingerprinting \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	Nauwkeurigheid & $32ms$ \\
+	Opmerking & Standaard parameters \\
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 648 \\
+	Totaal aantal foutief & 0 \\
+	Slaagpercentage & 100\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Het accoustic fingerprinting algoritme heeft geen problemen met het toevoegen van de sinusgolven aan één van de audiofragmenten.
+
+\section*{Test 2}
+
+\subsection*{Instellingen}
 
 \begin{tabular}{ l  l}
 	\hline
 	\textbf{Instelling} & \textbf{Waarde} \\
 	\hline
 	Algoritme & Kruiscovariantie \\
-	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 10 \\
-	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 50 \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
 	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
-	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 30 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 1 \\
 	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
 	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Eén kruiscovariantie test \\
 \end{tabular}\\
 
-\section*{Uitvoering en resultaten}
+\subsection*{Resultaten}
 
-Tijdens het uitvoeren van de test worden enkele liedjes afgespeeld op een normaal volume. Tijdens de test wordt er ook gesproken. De test duurt ongeveer 4 minuten. De latencies worden niet gefilterd.
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 465 \\
+	Totaal aantal foutief & 183 \\
+	Slaagpercentage & 72\% \\
+\end{tabular}\\
 
-Onderstaande resultaten tonen de latency van de Teensy ten opzichte van de laptopmicrofoon. De algoritmes zijn er in geslaagd om alle latencies te bepalen. De resultaten bevatten dus geen gaten. Tabel \ref{results-table} bevat de opeenvolgende latencies. De resultaten worden ook grafisch weergegeven in figuur \ref{test-latency-graph}.
+\subsection*{Conclusie}
 
-\begin{table}[h!]
-	\caption{Tabel met de opeenvolgende latencies (in seconden) uit de test.}
-	\centering
-	\begin{tabular}{l l|l l|l l|l l|l l}
-		1 & 0.250621 & 11 & 0.249121 & 21 & 0.247121 & 31 & 0.245371 & 41 & 0.24337 \\
-		2 & 0.250501 & 12 & 0.248991 & 22 & 0.247001 & 32 & 0.245121 & 42 & 0.24337 \\
-		3 & 0.250371 & 13 & 0.248501 & 23 & 0.246741 & 33 & 0.244741 & 43 & 0.24299 \\
-		4 & 0.250121 & 14 & 0.248251 & 24 & 0.246501 & 34 & 0.244741 & 44 & 0.24287 \\
-		5 & 0.250121 & 15 & 0.248121 & 25 & 0.246241 & 35 & 0.244491 & 45 & 0.24275 \\
-		6 & 0.249991 & 16 & 0.247991 & 26 & 0.246121 & 36 & 0.244491 & 46 & 0.24262 \\
-		7 & 0.249621 & 17 & 0.247751 & 27 & 0.246001 & 37 & 0.244121 & 47 & 0.24262 \\
-		8 & 0.249621 & 18 & 0.247491 & 28 & 0.245741 & 38 & 0.243991 & 48 & 0.24237 \\
-		9 & 0.249371 & 19 & 0.247491 & 29 & 0.245501 & 39 & 0.243871 & 49 & 0.24250 \\
-		10 & 0.249241 & 20 & 0.247121 & 30 & 0.245501 & 40 & 0.243751 & 50 & 0.24187 \\
-	\end{tabular}
-	\label{results-table}
-\end{table}
+Het kruiscovariantie ondervindt, bij éénmalige uitvoering, serieuze problemen bij het bepalen van de latency wanneer er een sinusgolf is toegevoegd.
 
+\section*{Test 3}
 
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption[Praktijktest resultaten]{Grafische voorstelling van het verloop van de latency.}
-	\begin{center}
-		\advance\parskip0.3cm
-		\input{figuren/testlatencygraph}
-	\end{center}
-	\label{test-latency-graph}
-\end{figure}
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 5 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Meerdere kruiscovariantie testen
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 642 \\
+	Totaal aantal foutief & 6 \\
+	Slaagpercentage & 99\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Het resultaat dat verkregen wordt wanneer het algoritme vijf maal wordt uitgevoerd staat in groot contrast met vorig resultaat. Een slaagpercentage van 99\% is zeker aanvaardbaar voor deze toepassing.
+
+\section*{Test 4}
+
+\subsection*{Instellingen}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 20 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Nauwkeurigheid & $0.1ms$ \\
+	Opmerking & Een groot aantal kruiscovariantie testen
+\end{tabular}\\
+
+\subsection*{Resultaten}
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 648 \\
+	Totaal aantal foutief & 0 \\
+	Slaagpercentage & 100\% \\
+\end{tabular}\\
+
+\subsection*{Conclusie}
+
+Een optimaal resultaat wordt bereikt door de test 20 maal uit te voeren.
