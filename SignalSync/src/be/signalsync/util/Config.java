@@ -122,9 +122,6 @@ public class Config {
 			e.printStackTrace();
 		}
 		configrationFileName = new File(new File(decodedPath).getParent(), "config.properties").getAbsolutePath();		
-		System.err.println("path: " + path);
-		System.err.println("decodedPath: " + path);
-		System.err.println("configFileName: " + path);
 		configrationStore = new HashMap<Key, String>();
 		if (!new File(configrationFileName).exists()) {
 			writeDefaultConfigration();

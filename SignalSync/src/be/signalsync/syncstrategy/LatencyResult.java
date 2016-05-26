@@ -86,6 +86,9 @@ public class LatencyResult {
 			sb.append(String.format("Latency in seconds: %.3f\n", this.getLatencyInSeconds()));
 			sb.append(String.format("Latency in samples: %d\n", this.getLatencyInSamples()));
 		}
+		else {
+			sb.append("No latency found!");
+		}
 		if(this.hasTimestamp()) {
 			sb.append(String.format("Timestamp: %.3f\n", this.getTimestamp()));
 		}

@@ -1,4 +1,113 @@
 \chapter{Gebruikershandleiding}
 \label{appendix-f}
 
-\section{title}
+Deze handleiding is bedoeld voor mensen (onderzoekers, ontwikkelaars,...) die gebruik willen maken van de ontwikkelde toepassing zonder de broncode te wijzigen of te analyseren. Na het doorlopen van deze handleiding zal het mogelijk zijn om gebruik te maken van de klassen uit de softwarebibliotheek in een IDE zoals eclipse. Ook zal worden uitgelegd hoe de Max/MSP modules gebruikt kunnen worden.
+
+\section*{De softwarebibliotheek importeren in Eclipse}
+
+Vooraleer er van start kan worden gegaan moeten moet het zip-bestand met de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC bibliotheek worden gedownload van het volgende (publieke) GitHub repository:
+\url{https://github.com/wardva/SignalSync/tree/master/Dist}. Pak vervolgens het zip-bestand uit.
+
+Maak vervolgens het Java-project aan in Eclipse dat gebruik zal maken van de softwarebibliotheek. Ga hierna naar de properties van het project, selecteer links \textbf{Java Build Path} en klik op de tab \textbf{Libraries}. Klik vervolgens op de knop \textbf{Add External JARs}. Ga nu op zoek naar \texttt{signalsync.jar} en \texttt{jssc.jar} en voeg ze toe aan het project. Let erop dat het configuratiebestand en de zich steeds in dezelfde map bevindt als \texttt{signalsync.jar}.
+
+\section*{Broncode en documentatie koppelen aan project}
+
+\texttt{signalsync.jar} bevat de broncode en Javadoc van de softwarebibliotheek. Deze bestanden kunnen aan een bestaand Eclipse project gekoppeld worden waardoor het mogelijk wordt om tijdens het ontwikkelen gebruik te maken van deze informatie. Dit kan worden verwezenlijkt door in de eerder besproken \textbf{Libraries} tab op zoek te gaan naar \texttt{signalsync.jar} en dit item uit te klappen. 
+
+\subsubsection{Koppelen van de broncode}
+
+Selecteer \textbf{Source attachment} en klik op \textbf{edit}. Selecteer \textbf{External location} en ga vervolgens op zoek naar \texttt{signalsync.jar}.
+
+\subsubsection{Koppelen van de Javadoc}
+
+Selecteer \textbf{Javadoc location} en klik op \textbf{edit}. Selecteer \textbf{Javadoc in archive}. Blader vervolgens bij \textbf{Archive path} naar de locatie van \texttt{signalsync.jar}. Blader bij \textbf{Path within archive} naar het mapje \textbf{doc} in het JAR bestand.
+
+\section*{Het configuratiebestand}
+
+Alle parameters van de algoritmen kunnen gewijzigd worden vanuit het configuratiebestand (\texttt{config.properties}). De betekenis van de parameters zijn al eerder besproken in deze scriptie en zullen daarom niet verder behandeld worden.
+
+\section*{Aanmaken en synchroniseren van streams}
+
+Hoe de streams aangemaakt en gesynchroniseerd kunnen worden in het gemakkelijkst uit te leggen aan de hand van een voorbeeld. In het volgende voorbeeld worden enkele streams aangemaakt en wordt de latency ertussen bepaald. Meer informatie over de TarsosDSP \texttt{AudioDispatchers} is te vinden in artikel \cite{six2014tarsosdsp}.
+
+Om te beginnen moeten er enkele streams worden aangemaakt. In dit voorbeeld zal gebruik gemaakt worden van \texttt{AudioDispatcherStreams}.
+
+\begin{lstlisting}[language=java, frame=single,basicstyle=\linespread{0.5}]
+//Een AudioDispatcher aanmaken van een microfoon
+AudioDispatcher micDispatcher =
+	AudioDispatcherFactory.fromDefaultMicrophone(512, 0);
+
+//AudioDispatcher wrappen in een Stream
+Stream micStream = 
+	new AudioDispatcherStream(micDispatcher);
+
+//Datastream koppelen aan microfoon
+Stream dataStreamAttachedToMicrophone = ...
+
+
+//Een AudioDispatcher aanmaken van een bestand
+File file = new File("recorded.wav");
+AudioDispatcher fileDispatcher = 
+AudioDispatcherFactory.fromFile(file, 512, 0);
+
+//AudioDispatcher wrapper in een Stream
+Stream fromFileStream = 
+new AudioDispatcherStream(fileDispatcher);	
+\end{lstlisting}
+
+Vervolgens moeten de streams gegroepeerd worden in \texttt{StreamGroup} objecten waarin wordt aangegeven welke audiostream gebruikt wordt voor de synchronisatie. Deze objecten worden verpakt in een \texttt{StreamSet}.
+
+\begin{lstlisting}[language=java, frame=single]
+//Per gekoppelde groep streams een StreamGroup aanmaken
+StreamGroup micGroup = new StreamGroup();
+micGroup.setDescription("The microphone streamgroup");
+micGroup.setAudioStream(micStream);
+micGroup.addDataStream(dataStreamAttachedToMicrophone);
+
+StreamGroup fileGroup = new StreamGroup();
+fileGroup.setDescription("The file streamgroup");
+fileGroup.setAudioStream(fromFileStream);
+
+//Van alle StreamGroups een StreamSet aanmaken
+StreamSet allStreams = new StreamSet();
+allStreams.addStreamGroup(micGroup);
+allStreams.addStreamGroup(fileGroup);
+\end{lstlisting}
+
+De \texttt{StreamSet} kan vervolgens worden meegegeven aan een \texttt{RealtimeSignalSync} object dat de synchronisatie (bepalen van de latency) op zich neemt. Ook wordt er een anonieme \texttt{SyncEventListener} aangemaakt. Op de allerlaatste lijn worden alle streams opgestart.
+
+\begin{lstlisting}[language=java, frame=single]
+RealtimeSignalSync syncer = new RealtimeSignalSync(allStreams);
+
+//Een anonieme inner-class registeren als SyncEventListener.
+syncer.addEventListener(new SyncEventListener() {
+   @Override
+   public void onSyncEvent(Map<StreamGroup, LatencyResult> l) {
+      //Resultaten afdrukken
+      for(Entry<StreamGroup, LatencyResult> entry : l.entrySet()) 
+      {
+         StreamGroup group = entry.getKey();
+         LatencyResult result = entry.getValue();
+         System.out.println(group.getDescription());
+         System.out.println(result.toString());
+      }
+   }
+});
+
+//Alle streams starten
+allStreams.start();
+\end{lstlisting}
+
+\section*{Synchroniseren van streams in Max/MSP 7}
+
+Vooraleer een module in Max/MSP kan worden ingeladen moet de locatie van de modules gespecificeerd worden. Het configuratiebestand bevindt zich onder windows in volgende map (dit kan variëren afhankelijk van eigen instellingen): \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}. De naam van het bestand is \texttt{max.java.config.txt}. Het is sterk aangeraden om hiervan een back-up te nemen want het bestand is erg foutgevoelig. Voeg in het bestand de volgende lijn toe: \texttt{max.dynamic.jar.dir <<Pad>>}. Vervolgens moet \texttt{<<pad>>} worden vervangen door het pad van de map waarin zich het \texttt{signalsync.jar}, de jSSC map en configuratiebestand bevinden. Nu zou het mogelijk moeten zijn om de Max/MSP modules beschreven te gebruiken.
+
+\subsection*{De TeensyReader module}
+
+Hoe deze module wordt aangemaakt is in sectie \ref{teensy-reader} al uitgebreid besproken. Toch moeten er nog enkele details worden toegelicht.
+
+\subsubsection{Kiezen van de Max/MSP samplefrequentie}
+
+
+
+\subsection*{De Sync module}

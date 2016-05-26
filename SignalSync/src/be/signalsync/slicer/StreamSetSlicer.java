@@ -20,8 +20,6 @@ import java.util.logging.Logger;
 import be.signalsync.stream.Stream;
 import be.signalsync.stream.StreamGroup;
 import be.signalsync.stream.StreamSet;
-import be.signalsync.util.Config;
-import be.signalsync.util.Key;
 
 /**
  * This class is a Slicer used to take slices of different streams
@@ -31,7 +29,7 @@ import be.signalsync.util.Key;
  * @author Ward Van Assche
  */
 public class StreamSetSlicer extends Slicer<Map<StreamGroup, float[]>> implements SliceListener<float[]> {
-	private static Logger Log = Logger.getLogger(Config.get(Key.APPLICATION_NAME));
+	private static Logger Log = Logger.getLogger("SignalSync");
 	//The streamset to slice
 	private final StreamSet streamSet;
 	private final ExecutorService collectExecutor;

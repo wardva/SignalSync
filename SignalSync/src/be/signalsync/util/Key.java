@@ -7,13 +7,9 @@ package be.signalsync.util;
  */
 public enum Key {
 	/**
-	 * Name used in log messages.
-	 */
-	APPLICATION_NAME("StreamSync"),
-	/**
 	 * The sample rate of the input signal.
 	 */
-	SAMPLE_RATE(8000),
+	SAMPLE_RATE(8000D),
 	/**
 	 * The size of the audio block and consequently the size (in samples) of the
 	 * FFT.
@@ -41,12 +37,12 @@ public enum Key {
 	 * Minium euclidean distance between event points. The value is expressed in
 	 * milliseconds cents
 	 */
-	NFFT_EVENT_POINT_MIN_DISTANCE(600),
+	NFFT_EVENT_POINT_MIN_DISTANCE(100),
 
 	/**
 	 * The maximum number of fingerpints per event points (fan-out).
 	 */
-	NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT(2),
+	NFFT_MAX_FINGERPRINTS_PER_EVENT_POINT(10),
 
 	/**
 	 * The synchronization algorithm only considers the match as valid if this
@@ -74,11 +70,11 @@ public enum Key {
 	/**
 	 * The type of the latency filter
 	 */
-	LATENCY_FILTER_TYPE("median"); 
+	LATENCY_FILTER_TYPE("none"); 
 
 	String defaultValue;
 
-	private Key(final float defaultValue) {
+	private Key(final double defaultValue) {
 		this(String.valueOf(defaultValue));
 	}
 

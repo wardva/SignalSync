@@ -74,6 +74,7 @@ public class Sync extends MSPPerformer implements SyncEventListener {
 	 * Preview: 		addddd,add,addd
 	 */
 	public Sync(String configString) {
+		post("Current running algorithm: " + Config.get(Key.LATENCY_ALGORITHM));
 		//Check the configuration String.
 		if(!Pattern.compile(STREAM_CONFIG_REGEX).matcher(configString).matches()) {
 			bail("Invalid stream configuration.");

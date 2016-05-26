@@ -115,8 +115,10 @@
 \contentsline {chapter}{\numberline {D}Testresultaten: toevoegen van een sinusgolf}{79}{Bijlage.a.D}
 \contentsline {chapter}{\numberline {E}Praktijktest: details}{84}{Bijlage.a.E}
 \contentsline {chapter}{\numberline {F}Gebruikershandleiding}{88}{Bijlage.a.F}
-\contentsline {section}{\numberline {F.1}title}{88}{section.a.F.1}
-\contentsline {chapter}{\numberline {G}Handleiding voor ontwikkelaars}{89}{Bijlage.a.G}
-\contentsline {chapter}{Referentielijst}{90}{chapter*.118}
-\contentsline {chapter}{L"yst van figuren}{93}{chapter*.119}
-\contentsline {chapter}{Lijst van figuren}{94}{chapter*.119}
+\contentsline {subsubsection}{Koppelen van de broncode}{89}{section*.120}
+\contentsline {subsubsection}{Koppelen van de Javadoc}{89}{section*.121}
+\contentsline {subsubsection}{Kiezen van de Max/MSP samplefrequentie}{92}{section*.126}
+\contentsline {chapter}{\numberline {G}Handleiding voor ontwikkelaars}{93}{Bijlage.a.G}
+\contentsline {chapter}{Referentielijst}{94}{chapter*.128}
+\contentsline {chapter}{L"yst van figuren}{97}{chapter*.129}
+\contentsline {chapter}{Lijst van figuren}{98}{chapter*.129}

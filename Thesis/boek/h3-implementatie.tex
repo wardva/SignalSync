@@ -501,9 +501,10 @@ Een heel flexibele manier om dit te doen is door het schrijven van één of meer
 Problematisch is het feit dat de streams afkomstig van Teensy microcontrollers standaard niet kunnen worden aangesproken vanuit een Max/MSP context. Aangezien dit voor dit onderzoek een vereiste is zal hier ook een module voor geschreven moeten worden.
 
 \subsection{Inlezen van de Teensy microcontroller}
+\label{teensy-reader}
 
 De klasse \texttt{TeensyReader} bevat de implementatie van een Max/MSP module waarmee signalen afkomstig van Teensy microcontrollers kunnen worden ingelezen. Het aanmaken van het object kan met volgende code:\\
-\mbox{\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader <<parameters>>}}.\\Er zijn 5 parameters vereist:
+\mbox{\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader <<parameters>>}}.\\De module verwacht 1 optionele en 4 verplichte parameters:
 
 \begin{description}	
 	\item\textbf{Poort} \hfill \\
