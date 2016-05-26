@@ -1,0 +1,17 @@
+diff a/Scriptie/boek/appendix-a.aux b/Scriptie/boek/appendix-a.aux	(rejected hunks)
+@@ -1,12 +1,12 @@
+ \relax 
+ \providecommand\hyper@newdestlabel[2]{}
+ \citation{dixon2005match}
+-\@writefile{toc}{\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{42}{B"ylage.a.A}}
++\@writefile{toc}{\contentsline {chapter}{\numberline {A}Resultaten DTW experiment}{46}{B"ylage.a.A}}
+ \@writefile{lof}{\addvspace {10\p@ }}
+ \@writefile{lot}{\addvspace {10\p@ }}
+-\newlabel{appendix-a}{{A}{42}{Resultaten DTW experiment}{B"ylage.a.A}{}}
++\newlabel{appendix-a}{{A}{46}{Resultaten DTW experiment}{B"ylage.a.A}{}}
+ \@setckpt{appendix-a}{
+-\setcounter{page}{44}
++\setcounter{page}{48}
+ \setcounter{equation}{0}
+ \setcounter{enumi}{0}
+ \setcounter{enumii}{0}

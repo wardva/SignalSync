@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-//import java.io.UnsupportedEncodingException;
-//import java.net.URL;
-//import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.prefs.Preferences;
@@ -115,19 +112,19 @@ public class Config {
 	 * defaults.
 	 */
 	public Config() {
-		//final String path = Config.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		//String decodedPath = "";
+		final String path = Config.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		
+		String decodedPath = "";
 		preferenceStore = Preferences.userNodeForPackage(Config.class);
-/*
 		try {
 			decodedPath = URLDecoder.decode(path, "UTF-8");
 		} catch (final UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}*/
-		//configrationFileName = new File(new File(decodedPath).getParent(), "config.properties").getAbsolutePath();
-		//TODO: fixen!!!
-		configrationFileName = "D:\\Documenten\\School\\Master\\Masterproef\\Git\\SignalSync\\config.properties";
-		
+		}
+		configrationFileName = new File(new File(decodedPath).getParent(), "config.properties").getAbsolutePath();		
+		System.err.println("path: " + path);
+		System.err.println("decodedPath: " + path);
+		System.err.println("configFileName: " + path);
 		configrationStore = new HashMap<Key, String>();
 		if (!new File(configrationFileName).exists()) {
 			writeDefaultConfigration();

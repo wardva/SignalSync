@@ -19,3 +19,12 @@ SignalSync/Slices/
 .project
 /bin/
 Scriptie/boek/appendix-a.aux.rej
+Thesis/pgf-umlcd-manual.pdf
+Thesis/bronnen/*.pdf
+*.aux
+*.bbl
+*.blg
+*.lof
+*.lol
+*.lot
+*.out

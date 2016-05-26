@@ -1,0 +1,194 @@
+\documentclass[12pt,a4paper,oneside]{book}
+
+\usepackage{a4wide}                     % Iets meer tekst op een bladzijde
+\usepackage[dutch,english]{babel}       % Voor nederlandstalige hyphenatie (woordsplitsing)
+\usepackage{amsmath}                    % Uitgebreide wiskundige mogelijkheden
+\usepackage{amssymb}                    % Voor speciale symbolen zoals de verzameling Z, R...
+\usepackage{url}                        % Om url's te verwerken
+\usepackage{graphicx}                  % Om figuren te kunnen verwerken
+\usepackage[small,bf]{caption}    % Om de captions wat te verbeteren
+\usepackage{xspace}                     % Magische spaties na een commando
+\usepackage[utf8]{inputenc}           	% Om niet ascii karakters rechtstreeks te kunnen typen
+\usepackage{float}                      % Om nieuwe float environments aan te maken. Ook optie H!
+\usepackage{flafter}                    % Opdat floats niet zouden voorsteken
+\usepackage{listings}                   % Voor het weergeven van letterlijke text en codelistings
+\usepackage{marvosym}                   % Om het euro symbool te krijgen
+\usepackage{textcomp}                   % Voor onder andere graden celsius
+\newcommand{\textapprox}{\raisebox{0.5ex}{\texttildelow}}
+\usepackage{fancyhdr}                   % Voor fancy headers en footers.
+\usepackage{graphics}					% Om figuren te verwerken.
+\usepackage[nottoc]{tocbibind} 			% Bibliografie in ToC; zie tocbibind.dvi
+%\usepackage{pstricks}
+\usepackage{longtable}
+\usepackage{pdfpages}  					% pdf pagina's importeren
+\usepackage[numbers]{natbib}			% Extra citeer mogelijkheden
+\usepackage{parskip}					% Geen indentatie bij begin paragraaf
+\usepackage[hang,flushmargin,bottom]{footmisc} % Voetnoten beter weergeven (niet laten splitsen)
+\usepackage{enumitem} 					%Betere opsommingen
+\usepackage{sidecap}  					%Caption lang
+\usepackage[toc,page]{appendix} 		%Appendices toevoegen
+\usepackage{tikz}						%Toevoegen van tikz figuren
+\usepackage{pgfplots}					%Grafieken plotten in tikz figuren
+\usepackage{amsmath}
+\usepackage{tikzscale}
+\usepackage{environ}
+\usepackage{authblk} 
+\usetikzlibrary{arrows}
+\usepackage{wrapfig}					%Figuren wrappen
+\usepackage{subfig}                     %Figuren naast elkaar floaten
+\usepackage[simplified]{pgf-umlcd}					%Uml diagrammen maken
+\include{pgf-umlcd-extensions}
+%Better underlining
+\usepackage{soul}
+%pseudocode tonen
+\usepackage{algorithm,algpseudocode}
+\usepackage{setspace}
+
+%Marge onderaan wat vergroten
+\setlength{\textheight}{660pt}
+
+%Package om geometrie overzicht van document te tonen.
+%\usepackage{layout}
+
+\interfootnotelinepenalty=10000
+
+\newcommand{\npar}{\par \vspace{2.3ex plus 0.3ex minus 0.3ex} \noindent}	% Om witruimte te krijgen tussen paragrafen
+\graphicspath{{figuren/}}               % De plaats waar latex zijn figuren gaat halen.
+%\usepackage[bf]{caption2}				% Mooiere captions
+\usepackage[a4paper,plainpages=false]{hyperref}    % Om hyperlinks te hebben in het pdfdocument.
+
+\newcommand{\command}[1]{\lstinline[basicstyle=\tt]{#1}\xspace} %Voor commando's
+\hyphenation{tijd-as audio-stream} 							% Splitsing van woorden
+
+\renewcommand{\chaptermark}[1]{\markright{\MakeUppercase{#1}}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection~#1}}
+
+\newcommand{\headerfmt}[1]{\textsl{\textsf{#1}}}
+\newcommand{\headerfmtpage}[1]{\textsf{#1}}
+
+\fancyhf{}
+\fancyhead[LE,RO]{\headerfmtpage{\thepage}}
+\fancyhead[LO]{\headerfmt{\rightmark}}
+\fancyhead[RE]{\headerfmt{\leftmark}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{ % eerste bladzijde van een hoofdstuk
+	\fancyhf{}
+	\fancyhead[LE,RO]{\headerfmtpage{\thepage}}
+	\fancyhead[LO]{\headerfmt{\rightmark}}
+	\fancyhead[RE]{\headerfmt{\leftmark}}
+	\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\footrulewidth}{0pt}
+}
+
+\renewcommand{\lstlistoflistings}{\begingroup
+	\tocfile{\lstlistlistingname}{lol}
+	\endgroup}
+
+
+% anderhalve interlinie (opm: titelblad gaat uit van 1.5)
+\renewcommand{\baselinestretch}{1.5}
+
+
+%Pdf instellen, links, meta info
+\hypersetup {
+	pdfauthor = {Ward Van Assche},
+	pdftitle = {Realtime signaal synchronisatie	met acoustic fingerprinting},
+	pdfsubject = {Masterproef ingediend tot het behalen van de academische graad van Master of Science in de industriële wetenschappen: informatica, juni 2016},
+	colorlinks = False,
+%	pdfborder = {0 0 0}
+}
+
+%Titels wijzigen in correcte Nederlandse term
+\renewcommand\lstlistlistingname{Lijst van codefragmenten}
+\renewcommand\lstlistingname{Codefragment}
+\addto{\captionsdutch}{
+	\renewcommand{\bibname}{Referentielijst}
+	\renewcommand\appendixname{Bijlage}
+	\renewcommand\appendixpagename{Bijlagen}
+	\renewcommand\appendixtocname{Bijlagen}
+}
+
+\begin{document}
+\selectlanguage{dutch}
+
+%officieel Plato titelblad
+\includepdf[pages=-]{./titelblad.pdf}
+
+% titelblad (voor kaft)
+\include{titel}
+
+% Invoegen van layout testpagina
+% \layout
+
+% lege pagina (!!)
+
+% titelblad (!!)
+
+% geen paginanummering tot we aan de inhoudsopgave komen
+\pagestyle{empty}
+
+% voorwoord met dankwoord en toelating tot bruikleen (ondertekend)
+\include{voorwoord}
+
+% overzicht
+\include{overzicht}
+
+% abstract pdf toevoegen
+\addcontentsline{toc}{chapter}{Extended abstract}
+\includepdf[pages=-]{../abstract/abstract.pdf}
+\pagestyle{fancy}
+
+\frontmatter
+
+% inhoudstafel
+\tableofcontents
+
+% afkortingen
+\input{afkortingen}
+
+% hoofdstukken
+\mainmatter
+
+
+% hier worden de hoofdstukken ingevoegd (\includes)
+\include{h1-inleiding}
+\include{h2-methode}
+\include{h3-implementatie}
+\include{h4-evaluatie}
+\include{h5-conclusie}
+
+% appendices
+\begin{appendices}
+	\include{appendix-a}
+	\include{appendix-b}
+	\include{appendix-c}
+	\include{appendix-d}
+	\include{appendix-e}
+	\include{appendix-f}
+	\include{appendix-g}
+\end{appendices}
+% Bibliografie toevoegen
+\bibliographystyle{plainnat}
+\bibliography{../bronnen/bronnen}
+
+\backmatter
+
+%Lijst van figuren toevoegen, en toevoegen aan inhoudstabel
+\listoffigures
+\addcontentsline{toc}{chapter}{Lijst van figuren}
+
+%Lijst van tabellen toevoegen, en toevoegen aan inhoudstabel
+%\listoftables
+%\addcontentsline{toc}{chapter}{Lijst van tabellen}
+
+%Lijst van codefragmenten toevoegen, en toevoegen aan inhoudstabel
+%\lstlistoflistings
+%\addcontentsline{toc}{chapter}{Lijst van codefragmenten}
+
+% lege pagina (!!)
+
+% kaft
+
+\end{document}
