@@ -117,8 +117,7 @@
 \contentsline {chapter}{\numberline {F}Gebruikershandleiding}{88}{Bijlage.a.F}
 \contentsline {subsubsection}{Koppelen van de broncode}{89}{section*.120}
 \contentsline {subsubsection}{Koppelen van de Javadoc}{89}{section*.121}
-\contentsline {subsubsection}{Kiezen van de Max/MSP samplefrequentie}{92}{section*.126}
-\contentsline {chapter}{\numberline {G}Handleiding voor ontwikkelaars}{93}{Bijlage.a.G}
-\contentsline {chapter}{Referentielijst}{94}{chapter*.128}
-\contentsline {chapter}{L"yst van figuren}{97}{chapter*.129}
-\contentsline {chapter}{Lijst van figuren}{98}{chapter*.129}
+\contentsline {chapter}{\numberline {G}Handleiding voor ontwikkelaars}{94}{Bijlage.a.G}
+\contentsline {chapter}{Referentielijst}{95}{chapter*.127}
+\contentsline {chapter}{L"yst van figuren}{98}{chapter*.128}
+\contentsline {chapter}{Lijst van figuren}{99}{chapter*.128}

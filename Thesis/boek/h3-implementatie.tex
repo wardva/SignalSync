@@ -547,6 +547,7 @@ Een Max/MSP module kan in Java geschreven worden door een klasse te laten overer
 Een klasse die overerft van \texttt{MSPPerformer} moet de methode \texttt{perform} implementeren. In deze methode worden de samples uit de buffers gehaald, geresamplet naar de Max/MSP samplefrequentie en verstuurd door de outlets.
 
 \subsection{De synchronisatiemodule}
+\label{sync-module}
 
 De tweede module zal de synchronisatie van de streams verzorgen en is geïmplementeerd in de klasse \texttt{Sync}. De module maakt gebruik van \texttt{RealtimeSignalSync} om de latencies tussen de audiostreams te bepalen. De module kan in Max/MSP met volgende code worden aangemaakt: \texttt{mxj\textapprox\  be.signalsync.msp.Sync <<parameter>>}
 

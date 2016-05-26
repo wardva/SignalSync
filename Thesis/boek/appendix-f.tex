@@ -5,10 +5,10 @@ Deze handleiding is bedoeld voor mensen (onderzoekers, ontwikkelaars,...) die ge
 
 \section*{De softwarebibliotheek importeren in Eclipse}
 
-Vooraleer er van start kan worden gegaan moeten moet het zip-bestand met de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC bibliotheek worden gedownload van het volgende (publieke) GitHub repository:
+Vooraleer er van start kan worden gegaan moeten moet het zip-bestand met de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC JAR bestanden worden gedownload van het volgende (publieke) GitHub repository:
 \url{https://github.com/wardva/SignalSync/tree/master/Dist}. Pak vervolgens het zip-bestand uit.
 
-Maak vervolgens het Java-project aan in Eclipse dat gebruik zal maken van de softwarebibliotheek. Ga hierna naar de properties van het project, selecteer links \textbf{Java Build Path} en klik op de tab \textbf{Libraries}. Klik vervolgens op de knop \textbf{Add External JARs}. Ga nu op zoek naar \texttt{signalsync.jar} en \texttt{jssc.jar} en voeg ze toe aan het project. Let erop dat het configuratiebestand en de zich steeds in dezelfde map bevindt als \texttt{signalsync.jar}.
+Maak vervolgens het Java-project aan in Eclipse dat gebruik zal maken van de softwarebibliotheek. Ga hierna naar de properties van het project, selecteer links \textbf{Java Build Path} en klik op de tab \textbf{Libraries}. Klik vervolgens op de knop \textbf{Add External JARs}. Ga nu op zoek naar \texttt{signalsync.jar}, \texttt{jssc.jar} en \texttt{jssc-2.7.0-src.jar} en voeg ze toe aan het project. Let erop dat het configuratiebestand en de zich steeds in dezelfde map bevindt als \texttt{signalsync.jar}.
 
 \section*{Broncode en documentatie koppelen aan project}
 
@@ -100,14 +100,13 @@ allStreams.start();
 
 \section*{Synchroniseren van streams in Max/MSP 7}
 
-Vooraleer een module in Max/MSP kan worden ingeladen moet de locatie van de modules gespecificeerd worden. Het configuratiebestand bevindt zich onder windows in volgende map (dit kan variëren afhankelijk van eigen instellingen): \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}. De naam van het bestand is \texttt{max.java.config.txt}. Het is sterk aangeraden om hiervan een back-up te nemen want het bestand is erg foutgevoelig. Voeg in het bestand de volgende lijn toe: \texttt{max.dynamic.jar.dir <<Pad>>}. Vervolgens moet \texttt{<<pad>>} worden vervangen door het pad van de map waarin zich het \texttt{signalsync.jar}, de jSSC map en configuratiebestand bevinden. Nu zou het mogelijk moeten zijn om de Max/MSP modules beschreven te gebruiken.
+Vooraleer een module in Max/MSP kan worden ingeladen moet de locatie van de modules gespecificeerd worden. Het configuratiebestand bevindt zich onder windows in volgende map (dit kan variëren afhankelijk van eigen instellingen): \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}. De naam van het bestand is \texttt{max.java.config.txt}. Het is sterk aangeraden om hiervan een back-up te nemen want het bestand is erg foutgevoelig. Voeg in het bestand de volgende lijn toe: \texttt{max.dynamic.jar.dir <<Pad>>}. Vervolgens moet \texttt{<<pad>>} worden vervangen door het pad van de map waarin zich de \texttt{signalsync.jar}, de jSSC JAR bestanden en configuratiebestand bevinden. Nu zou het mogelijk moeten zijn om de Max/MSP modules beschreven te gebruiken.
 
 \subsection*{De TeensyReader module}
 
-Hoe deze module wordt aangemaakt is in sectie \ref{teensy-reader} al uitgebreid besproken. Toch moeten er nog enkele details worden toegelicht.
-
-\subsubsection{Kiezen van de Max/MSP samplefrequentie}
-
+Hoe deze module wordt aangemaakt is in sectie \ref{teensy-reader} al uitgebreid besproken. Wanneer deze module gebruikt wordt is het aangeraden (maar zeker niet verplicht) om de samplefrequentie van Max/MSP in te stellen op een veelvoud van de samplefrequentie van de Teensy. Dit vereenvoudigt het resampleproces. Soms ontstaat er namelijk drift wanneer de frequenties niet eenvoudig kunnen worden omgezet.
 
 
 \subsection*{De Sync module}
+
+Deze module is ook al uitgebreid besproken (sectie \ref{sync-module}). Net zoals bij de vorige module moeten de streams worden geresamplet. Het is daarom aangeraden om er voor te zorgen dat de samplefrequentie van Max/MSP een veelvoud is van de samplefrequentie gebruikt in de softwarebibliotheek (\texttt{SAMPLE\_RATE} in het configuratiebestand).
