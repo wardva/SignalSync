@@ -1,4 +1,4 @@
-\chapter{Gebruikershandleiding}
+\chapter{Handleiding voor gebruikers}
 \label{appendix-f}
 
 Deze handleiding is bedoeld voor mensen (onderzoekers, ontwikkelaars,...) die gebruik willen maken van de ontwikkelde toepassing zonder de broncode te wijzigen of te analyseren. Na het doorlopen van deze handleiding zal het mogelijk zijn om gebruik te maken van de klassen uit de softwarebibliotheek in een IDE zoals eclipse. Ook zal worden uitgelegd hoe de Max/MSP modules gebruikt kunnen worden.
@@ -30,9 +30,11 @@ Alle parameters van de algoritmen kunnen gewijzigd worden vanuit het configurati
 
 Hoe de streams aangemaakt en gesynchroniseerd kunnen worden in het gemakkelijkst uit te leggen aan de hand van een voorbeeld. In het volgende voorbeeld worden enkele streams aangemaakt en wordt de latency ertussen bepaald. Meer informatie over de TarsosDSP \texttt{AudioDispatchers} is te vinden in artikel \cite{six2014tarsosdsp}.
 
-Om te beginnen moeten er enkele streams worden aangemaakt. In dit voorbeeld zal gebruik gemaakt worden van \texttt{AudioDispatcherStreams}.
+Om te beginnen moeten er enkele streams worden aangemaakt. In dit voorbeeld zal gebruik gemaakt worden van \texttt{AudioDispatcherStreams}. \\
 
-\begin{lstlisting}[language=java, frame=single,basicstyle=\linespread{0.5}]
+\lstset{basicstyle=\footnotesize,style=javaStyle}
+
+\begin{lstlisting}
 //Een AudioDispatcher aanmaken van een microfoon
 AudioDispatcher micDispatcher =
 	AudioDispatcherFactory.fromDefaultMicrophone(512, 0);
@@ -44,7 +46,6 @@ Stream micStream =
 //Datastream koppelen aan microfoon
 Stream dataStreamAttachedToMicrophone = ...
 
-
 //Een AudioDispatcher aanmaken van een bestand
 File file = new File("recorded.wav");
 AudioDispatcher fileDispatcher = 
@@ -54,10 +55,10 @@ AudioDispatcherFactory.fromFile(file, 512, 0);
 Stream fromFileStream = 
 new AudioDispatcherStream(fileDispatcher);	
 \end{lstlisting}
+\newpage
+Vervolgens moeten de streams gegroepeerd worden in \texttt{StreamGroup} objecten waarin wordt aangegeven welke audiostream gebruikt wordt voor de synchronisatie. Deze objecten worden verpakt in een \texttt{StreamSet}. \\
 
-Vervolgens moeten de streams gegroepeerd worden in \texttt{StreamGroup} objecten waarin wordt aangegeven welke audiostream gebruikt wordt voor de synchronisatie. Deze objecten worden verpakt in een \texttt{StreamSet}.
-
-\begin{lstlisting}[language=java, frame=single]
+\begin{lstlisting}
 //Per gekoppelde groep streams een StreamGroup aanmaken
 StreamGroup micGroup = new StreamGroup();
 micGroup.setDescription("The microphone streamgroup");
@@ -74,9 +75,9 @@ allStreams.addStreamGroup(micGroup);
 allStreams.addStreamGroup(fileGroup);
 \end{lstlisting}
 
-De \texttt{StreamSet} kan vervolgens worden meegegeven aan een \texttt{RealtimeSignalSync} object dat de synchronisatie (bepalen van de latency) op zich neemt. Ook wordt er een anonieme \texttt{SyncEventListener} aangemaakt. Op de allerlaatste lijn worden alle streams opgestart.
+De \texttt{StreamSet} kan vervolgens worden meegegeven aan een \texttt{RealtimeSignalSync} object dat de synchronisatie (bepalen van de latency) op zich neemt. Ook wordt er een anonieme \texttt{SyncEventListener} aangemaakt. Op de allerlaatste lijn worden alle streams opgestart.  \\
 
-\begin{lstlisting}[language=java, frame=single]
+\begin{lstlisting}
 RealtimeSignalSync syncer = new RealtimeSignalSync(allStreams);
 
 //Een anonieme inner-class registeren als SyncEventListener.
@@ -93,20 +94,26 @@ syncer.addEventListener(new SyncEventListener() {
       }
    }
 });
-
 //Alle streams starten
 allStreams.start();
 \end{lstlisting}
 
+\section*{De Teensy microcontroller}
+\label{read-teensy}
+
+Om data of audio van een Teensy in te lezen in Max/MSP moet er een programma op de Teensy worden uitgevoerd.
+De volgende Github map bevat twee Arduino sketches die op de Teensy kunnen worden uitgevoerd: \url{https://github.com/wardva/SignalSync/tree/master/Teensy\%20Arduino\%20sketches}. Op volgende webpagina wordt uitgelegd hoe Arduino sketches op een Teensy kunnen worden uitgevoerd: \url{https://www.pjrc.com/teensy/td_download.html}. 
+
+De map \textbf{TeensyAnalogRead} bevat een sketch waarmee de analoge pinnen van een standaard Teensy met een frequentie van $8000Hz$ kunnen worden uitgelezen. In de map \textbf{MicToUSB} bevindt zich de code voor het inlezen van een Teensy uitgerust met een \textit{Audio Adaptor Board} aan een samplefrequentie van $11025Hz$. De geluidskwaliteit van een Teensy uitgerust met dergelijke apparatuur is opmerkelijk beter. Meer informatie hierover is te vinden op volgende pagina: \url{https://www.pjrc.com/store/teensy3_audio.html}.
+
 \section*{Synchroniseren van streams in Max/MSP 7}
 
-Vooraleer een module in Max/MSP kan worden ingeladen moet de locatie van de modules gespecificeerd worden. Het configuratiebestand bevindt zich onder windows in volgende map (dit kan variëren afhankelijk van eigen instellingen): \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}. De naam van het bestand is \texttt{max.java.config.txt}. Het is sterk aangeraden om hiervan een back-up te nemen want het bestand is erg foutgevoelig. Voeg in het bestand de volgende lijn toe: \texttt{max.dynamic.jar.dir <<Pad>>}. Vervolgens moet \texttt{<<pad>>} worden vervangen door het pad van de map waarin zich de \texttt{signalsync.jar}, de jSSC JAR bestanden en configuratiebestand bevinden. Nu zou het mogelijk moeten zijn om de Max/MSP modules beschreven te gebruiken.
+Vooraleer een module in Max/MSP kan worden ingeladen moet de locatie van de modules gespecificeerd worden. Het configuratiebestand bevindt zich onder windows in volgende map (dit kan variëren afhankelijk van eigen instellingen): \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}. De naam van het bestand is \texttt{max.java.config.txt}. Het is sterk aangeraden om hiervan een back-up te nemen want het bestand is erg foutgevoelig. Voeg in het bestand de volgende lijn toe: \texttt{max.dynamic.jar.dir <<pad>>}. Vervolgens moet \texttt{<<pad>>} worden vervangen door het pad van de map waarin zich de JAR bestanden en het configuratiebestand bevinden. Backslashes moeten met een backslash geëscapet worden. Hierna zou het mogelijk moeten zijn om de eigen Max/MSP modules te gebruiken.
 
 \subsection*{De TeensyReader module}
-
-Hoe deze module wordt aangemaakt is in sectie \ref{teensy-reader} al uitgebreid besproken. Wanneer deze module gebruikt wordt is het aangeraden (maar zeker niet verplicht) om de samplefrequentie van Max/MSP in te stellen op een veelvoud van de samplefrequentie van de Teensy. Dit vereenvoudigt het resampleproces. Soms ontstaat er namelijk drift wanneer de frequenties niet eenvoudig kunnen worden omgezet.
+Hoe deze module wordt aangemaakt is in sectie \ref{teensy-reader} al uitgebreid besproken. Bij het inladen van deze module is het aangeraden (maar zeker niet verplicht) om de samplefrequentie van Max/MSP in te stellen op een veelvoud van de samplefrequentie van de Teensy. Dit vereenvoudigt het resampleproces. Soms ontstaat er namelijk drift wanneer de frequenties niet eenvoudig kunnen worden omgezet.
 
 
 \subsection*{De Sync module}
 
-Deze module is ook al uitgebreid besproken (sectie \ref{sync-module}). Net zoals bij de vorige module moeten de streams worden geresamplet. Het is daarom aangeraden om er voor te zorgen dat de samplefrequentie van Max/MSP een veelvoud is van de samplefrequentie gebruikt in de softwarebibliotheek (\texttt{SAMPLE\_RATE} in het configuratiebestand).
+Deze module is in sectie \ref{sync-module} al in detail besproken. Net zoals bij de vorige module moeten de streams worden geresamplet. Het is daarom aangeraden om er voor te zorgen dat de samplefrequentie van Max/MSP een veelvoud is van de samplefrequentie gebruikt in de softwarebibliotheek (\texttt{SAMPLE\_RATE} in het configuratiebestand).

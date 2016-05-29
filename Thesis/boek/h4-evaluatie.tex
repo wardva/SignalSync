@@ -3,11 +3,9 @@
 
 Om de kwaliteit van de softwarebibliotheek te kunnen garanderen zijn er verschillende soorten testen uitgevoerd. 
 
-De eerste soort testen zijn geschreven voor het bepalen en analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaalt moet worden. Met behulp van onder meer deze test zijn de optimale parameterwaarden bepaalt.
+De eerste soort testen zijn geschreven voor het analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaalt moet worden. Met behulp van onder meer deze test zijn de optimale parameterwaarden bepaalt.
 
-Buiten het testen van de algoritmes zijn er ook enkele unit testen geschreven voor het testen van enkele cruciale elementen van de softwarebibliotheek. Deze testen zijn cruciaal om het aantal bugs in de softwarelogica te beperken.
-
-Het laatste deel van dit hoofdstuk zal dieper ingaan op de zaken die niet geïmplementeerd zijn maar die in de toekomst zeker een meerwaarde kunnen betekenen.
+Buiten het testen van de algoritmes zijn er ook enkele unit testen geschreven voor het testen van enkele cruciale elementen van de softwarebibliotheek. 
 
 \section{Testen van de algoritmes}
 \label{algoritme-test}
@@ -19,14 +17,16 @@ Het testen van de algoritmes wordt uitgevoerd met behulp de JUnit testcase \text
 Bij het uitvoeren van deze test is het de bedoeling om enkel de algoritmes te testen. Om niet afhankelijk te zijn van andere softwareonderdelen wordt de dataset op voorhand aangemaakt. Het aanmaken van deze dataset gebeurt in twee stappen. Eerst wordt het originele audiofragment gewijzigd door er bijvoorbeeld latency aan toe te voegen. Dit gebeurt met behulp van een Perl script. Vervolgens worden de verschillende audiofragmenten in slices geknipt en opgeslagen. In de testcase worden de algoritmes rechtstreeks op deze slices uitgevoerd zonder andere softwareonderdelen aan te roepen.
 
 \subsection{Toevoegen van latency}
+\label{latency-test}
 
-In het meest eenvoudige scenario wordt de latency berekend tussen twee identieke audiofragmenten waarbij er één audiofragment bewerkt is door stilte toe te voegen of een stukje weg te knippen. Aangezien de audiofragmenten buiten deze wijziging identiek zijn zouden de algoritmes in theorie geen enkele fout mogen maken.
+In het meest eenvoudige scenario wordt de latency berekend tussen twee identieke audiofragmenten. Eén audiofragment is hierbij bewerkt door het toevoegen van stilte of het wegknippen van een stukje audio. Aangezien de audiofragmenten buiten deze wijziging identiek zijn zouden de algoritmes in theorie geen enkele fout mogen maken.
 
 Voor de test worden 13 varianten voorzien van een audiofragment. Het originele audiofragment is de referentie. Er zijn zowel varianten met een positieve latency als varianten met een negatieve latency voorzien.
 
-De resultaten van de test bevinden zich in bijlage \ref{appendix-c}. Het accoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten wanneer de test maar eenmaal wordt uitgevoerd. Dit is logisch te verklaren. Het kruiscovariantie wordt namelijk uitgevoerd op een zeer klein stukje audio. Wanneer de test maar eenmaal wordt uitgevoerd kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0 en wordt er hoogst waarschijnlijk een fout resultaat teruggegeven. Dit probleem kan gemakkelijk opgelost worden door het algoritme minstens 2 keer uit te voeren (zie \ref{crosscovariance-repeated}).
+De resultaten van de test bevinden zich in bijlage \ref{appendix-c}. Het acoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten wanneer de test maar eenmaal wordt uitgevoerd. Dit is logisch te verklaren. Het kruiscovariantie wordt namelijk uitgevoerd op een zeer klein stukje audio. Wanneer de test maar eenmaal wordt uitgevoerd kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0. De kans is groot dat er dan een fout resultaat wordt teruggegeven. Dit probleem kan gemakkelijk opgelost worden door het algoritme minstens 2 keer uit te voeren (zie \ref{crosscovariance-repeated}).
 
 \subsection{Toevoegen van een sinusgolf}
+\label{sine-test}
 
 In sectie \ref{crosscovariance-repeated} is geschreven dat het kruiscovariantie algoritme het moeilijk krijgt wanneer de te matchen geluidsgolven visueel erg van elkaar verschillen. Dit wordt gesimuleerd door het toevoegen van een lage toon (sinusgolf van $50Hz$ en $100Hz$) aan één van de audiofragmenten. Door het kruiscovariantie algoritme verschillende keren uit te voeren wordt de invloed van dit probleem beperkt.
 
@@ -76,7 +76,3 @@ De klasse \texttt{StreamSlicerTest} bevat de vereiste testlogica. De test maakt 
 
 
 Deze testen bevinden zich in de klasse \texttt{DataFilterTest}. De test bevat een hardgecodeerde opeenvolging van latencies. Van deze latencies zijn handmatig de verwachte waarden na toepassing van verschillende soorten datafilters berekend. In de test worden de datafilters op de originele reeks latencies toegepast. De resultaten worden vergeleken met de handmatig berekende waarden.
-
-\section{Mogelijke verbeteringen}
-
-De belangrijkste mogelijke verbetering is het implementeren van de daadwerkelijke synchronisatie in Max/MSP. Dit is vereist om het systeem in productie te kunnen gebruiken.

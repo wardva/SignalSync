@@ -91,6 +91,21 @@
 % anderhalve interlinie (opm: titelblad gaat uit van 1.5)
 \renewcommand{\baselinestretch}{1.5}
 
+% omgeving om alles in \texttt te schrijven
+\newenvironment{allintypewriter}{\ttfamily}{\par}
+
+%Java listing style
+\lstdefinestyle{javaStyle}{
+	language=Java,
+	numbers=left,
+	stepnumber=1,
+	numbersep=10pt,
+	tabsize=4,
+	showspaces=false,
+	showstringspaces=false,
+	frame=single
+}
+
 
 %Pdf instellen, links, meta info
 \hypersetup {

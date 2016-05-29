@@ -1,6 +1,6 @@
 \chapter{Conclusie}
 
-In dit hoofdstuk zal worden teruggeblikt naar wat er in dit onderzoek precies verwezenlijkt is. In sectie \ref{doel-masterproef} is er omschreven welke zaken er ontwikkeld zouden moeten worden om deze masterproef als geslaagd te kunnen beschouwen. In sectie \ref{evaluatie-criteria} worden de vereisten omtrent de snelheid en precisie van de algoritmes verder uitgediept. Elk omschreven doel of criteria zal in dit hoofdstuk worden getoetst aan de op dit moment beschikbare implementatie.
+In dit hoofdstuk zal worden teruggeblikt naar wat er in dit onderzoek precies verwezenlijkt is. In sectie \ref{doel-masterproef} is er omschreven welke zaken er ontwikkeld zouden moeten worden om deze masterproef als geslaagd te kunnen beschouwen. In sectie \ref{evaluatie-criteria} werden de vereisten omtrent snelheid en precisie van de algoritmes omschreven. Het ontwikkelde systeem zal in de hoofdstuk worden getoetst aan de omschreven doelen en criteria.
 
 \section{Doelen}
 
@@ -8,14 +8,19 @@ Het eerste doel uit \ref{doel-masterproef} stelt dat de algoritmes aangepast en/
 
 Het tweede doel is de implementatie van de softwarebibliotheek. Met behulp van deze bibliotheek moet het mogelijk zijn om programmatisch streams te kunnen aanmaken en synchroniseren. Het ontwerp van deze softwarebibliotheek is omschreven in \ref{ontwerp}. Dit toont aan dat het doel ook is verwezenlijkt.
 
-Het derde doel is ook succesvol voltooid. De gebruikersinterface kan door musicologen zelf worden samengesteld door gebruik te maken van Max/MSP. In de praktijktest is aangetoond dat het mogelijk is om streams in te lezen en de latency tussen de streams te bepalen. Met behulp van deze latency kan de module de streams synchroniseren.
+Het derde doel is ook succesvol voltooid. De gebruikersinterface kan door musicologen zelf worden samengesteld in Max/MSP. In de praktijktest is aangetoond dat het mogelijk is om streams in te lezen en de latency tussen de streams te bepalen. Met behulp van deze latency kan de module de streams synchroniseren.
 
-\section{Beoordelingscriteria algoritmes}
+\section{Beoordeling algoritmes}
 
-In \ref{evaluatie-criteria} werden enkele meer specifieke criteria opgelegd waaraan de synchronisatie moet voldoen.
+In \ref{evaluatie-criteria} werden enkele meer specifieke criteria opgelegd waaraan de algoritmes moet voldoen.
 
 Het eerste criterium stelt dat het mogelijk moet zijn om met een buffergrootte (de grootte van de slices) van maximaal 10 seconden de synchronisatie uit te voeren. De testen omschreven in \ref{algoritme-test} en \ref{praktijktest} zijn uitgevoerd met de vooropgestelde buffergrootte en zijn geslaagd. Het huidige systeem voldoet dus aan dit criterium.
 
 Het tweede criterium bepaalt de snelheid waarmee gedropte samples gedetecteerd kunnen worden. In de fase van het onderzoek waarin deze criteria zijn opgesteld was het nog onduidelijk welke factoren hier allemaal invloed op hebben. In sectie \ref{streambuffers} is onder meer omschreven welke invloed de grootte en stapgrootte van de buffers hebben op de detectiesnelheid. Ook het eventueel filteren van de resultaten (beschreven in \ref{filtering}) heeft een invloed op de detectiesnelheid. De testen die in hoofdstuk \ref{evaluatie} omschreven werden voldoen aan de vooropgestelde maximale detectiesnelheid van 10 seconden. Er werd namelijk een slicegrootte van 10 seconden en stapgrootte van 5 seconde gehanteerd. Deze maximale detectiesnelheid kan met deze instellingen niet worden bereikt indien er aan foutcorrectie wordt gedaan.
 
-Het laatste criterium stelt dat het mogelijk moet zijn om drift te detecteren. De detectiesnelheid hiervan is gelijk aan de snelheid waarmee gedropte samples gedetecteerd kunnen worden. In de praktijktest trad dit verschijnsel op. Het is bijgevolg bewezen dat dit mogelijk is.
+Volgens het laatste criterium moet het mogelijk moet zijn om drift te detecteren. De detectiesnelheid hiervan is gelijk aan de snelheid waarmee gedropte samples gedetecteerd kunnen worden. In de praktijktest trad dit verschijnsel op. Het is dus bewezen dat dit mogelijk is.
+
+Het is duidelijk dat van de besproken algoritmen uit de introductie (sectie \ref{bestaande-methoden}) acoustic fingerprinting kruiscovariantie het meest geschikt waren voor het onderzochte probleem. Dat het systeem zo goed presteert is grotendeels te danken aan de robuuste fundamenten waarop alles gebouwd is.
+
+\section{Mogelijke verbeteringen en uitbreiding}
+

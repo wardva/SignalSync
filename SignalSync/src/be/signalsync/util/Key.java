@@ -9,7 +9,7 @@ public enum Key {
 	/**
 	 * The sample rate of the input signal.
 	 */
-	SAMPLE_RATE(8000D),
+	SAMPLE_RATE(8000),
 	/**
 	 * The size of the audio block and consequently the size (in samples) of the
 	 * FFT.

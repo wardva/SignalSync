@@ -12,13 +12,11 @@ import java.util.Map.Entry;
  * the crosscovariance algorithm.
  * Some modifications were made to the algorithm to fit this use case.
  * 
- * @see <a href="http://panako.be">http://panako.be</a>
  * @author Joren Six, Ward Van Assche
- *
  */
 public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private final FingerprintSyncStrategy fingerprinter;
-	private final double sampleRate;
+	private final int sampleRate;
 	private final int nfftBufferSize;
 	private final int stepSize;
 	private final int nrOfTests;

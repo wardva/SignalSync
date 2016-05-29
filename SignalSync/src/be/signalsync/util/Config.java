@@ -113,7 +113,6 @@ public class Config {
 	 */
 	public Config() {
 		final String path = Config.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		
 		String decodedPath = "";
 		preferenceStore = Preferences.userNodeForPackage(Config.class);
 		try {
@@ -121,7 +120,8 @@ public class Config {
 		} catch (final UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		configrationFileName = new File(new File(decodedPath).getParent(), "config.properties").getAbsolutePath();		
+		//configrationFileName = new File(new File(decodedPath).getParent(), "config.properties").getAbsolutePath();		
+		configrationFileName = "D:\\Documenten\\School\\Master\\Masterproef\\Git\\SignalSync\\config.properties";
 		configrationStore = new HashMap<Key, String>();
 		if (!new File(configrationFileName).exists()) {
 			writeDefaultConfigration();
