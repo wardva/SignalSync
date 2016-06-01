@@ -31,7 +31,7 @@ public class SynchronizationTest {
 	
 	//The latencies in milliseconds, latency in samples: multiply by 8
 	private final static int[] LATENCIES = {20, 80, 90, 300, 2000, 6000, -20, -80, -90, -300, -2000, -6000};
-	private final static int[] FREQUENCIES = {50, 100};
+	private final static int[] FREQUENCIES = {50,100};
 	private final static double MILLIS_TO_SECONDS = 0.001;
 	private final List<float[]> streams;
 	private final double latencyInSeconds;
@@ -47,15 +47,15 @@ public class SynchronizationTest {
 				SAMPLE_RATE, 		//Sample rate
 				NFFT_BUFFER_SIZE, 	//Buffer size
 				NFFT_STEP_SIZE, 	//Buffer step size
-				100, 				//Minimum distance between fingerprints
-				10,					//Max number of fingerprints for each event point
+				10, 				//Minimum distance between fingerprints
+				50,					//Max number of fingerprints for each event point
 				2);					//Minimum aligned matchess
 		
 		this.crossCovarianceStrategy = new CrossCovarianceSyncStrategy(this.fingerprintSyncStrategy, 
 				SAMPLE_RATE, 		//Sample rate
 				NFFT_BUFFER_SIZE, 	//Buffer size
 				NFFT_STEP_SIZE, 	//Buffer step size
-				20, 				//Number of tests
+				30, 				//Number of tests
 				1);					//Success threshold
 	}
 
@@ -105,7 +105,7 @@ public class SynchronizationTest {
 				latencyInSamples, latencies.get(0).getLatencyInSamples(), 1);
 	}
 
-	@Test
+	/*@Test
 	public void testFingerprint() {
 		final List<LatencyResult> latencies = fingerprintSyncStrategy.findLatencies(streams);
 		Assert.assertEquals("The result should contain 1 latency", 1, latencies.size());
@@ -115,5 +115,5 @@ public class SynchronizationTest {
 				latencyInSeconds, latencies.get(0).getLatencyInSeconds(), 0.032);
 		Assert.assertEquals(String.format("Fingerprinting failed when latency (in samples): %d, frequency: %d", latencyInSamples, frequency), 
 				latencyInSamples, latencies.get(0).getLatencyInSamples(), 256);
-	}
+	}*/
 }

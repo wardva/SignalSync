@@ -15,21 +15,21 @@
 			\operation{- emitSyncEvent(data : Map\textless StreamGroup, Double\textgreater) : void}
 		\end{class}
 		
-		\begin{interface}[text width=8cm]{SyncEventListener}{0,-11}
+		\begin{interface}[text width=8cm]{SyncEventListener}{0,-10}
 			\operation[0]{onSyncEvent(data : Map\textless StreamGroup, Double\textgreater) : void}
 		\end{interface}
 		
-		\begin{abstractclass}[text width=4cm]{SyncStrategy}{-4,-8}
+		\begin{abstractclass}[text width=4cm]{SyncStrategy}{-4,-7}
 		\end{abstractclass}
 		
-		\begin{class}[text width=4cm]{StreamSetSlicer}{4,-8}
+		\begin{class}[text width=4cm]{StreamSetSlicer}{4,-7}
 		\end{class}
 		
-		\begin{class}[text width=4cm]{StreamSet}{2.5,-10}
+		\begin{class}[text width=4cm]{StreamSet}{2.5,-9}
 		\end{class}
 				
 		
-		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\[-0.7em] T $\rightarrow$ Map\textless StreamGroup,float\lbrack \rbrack\textgreater}] (D) at (2.4,-2.0);
+		\coordinate [label={[align=center]\guillemotleft \textbf{bind}\guillemotright \\ T $\rightarrow$ Map\textless StreamGroup,float\lbrack \rbrack\textgreater}] (D) at (2.4,-2.0);
 		
 		\unidirectionalAssociation{RealtimeSignalSync}{\hspace{-1.8cm}listeners}{\hspace{-0.9cm}0..*}{SyncEventListener}
 		

@@ -1,92 +1,77 @@
-\chapter{Praktijktest: details}
+\chapter{Handleiding voor ontwikkelaars}
 \label{appendix-e}
 
-\section*{Teensy}
+Deze handleiding is bedoeld voor mensen die de code van synchronisatiebibliotheek of de Max/MSP modules willen analyseren of wijzigen. Het volledige project is openbaar beschikbaar op \url{https://github.com/wardva/SignalSync}. Het Java-project bevindt zich in de map \textbf{SignalSync}.
 
-Op de Teensy microcontroller (figuur \ref{teensy-test}) wordt een microfoon aangesloten op pin A0. Het programma \texttt{TeensyAnalogRead} wordt op de Teensy uitgevoerd. Dit programma is afkomstig van het TeensyDAQ project (IPEM software). Hierdoor worden er maximum 5 analoge waarden aan een frequentie van $8000Hz$ ingelezen.
+\section*{Project importeren in Eclipse}
 
-\begin{figure}[!h]
-	\captionsetup{width=0.7\textwidth}
-	\caption[Teensy testopstelling]{De Teensy microcontroller verbonden met een microfoon op pin A0.}
+Na het binnenhalen van het project kan de map \textbf{SignalSync} geïmporteerd worden in Eclipse. Maak hiervoor een nieuw Java project aan en wijzig de \textit{default location} in het pad van \textbf{SignalSync}. Na het importeren zullen enkele foutmeldingen te zien zijn wegens gebroken afhankelijkheden. 
+
+Het project is afhankelijk van volgende softwarebibliotheken: TarsosDSP, Panako en TeensyDAQ. De TarsosDSP broncode kan gedownload worden van \url{https://github.com/JorenSix/TarsosDSP}, de Panako broncode van \url{http://panako.be/releases/Panako-latest/readme.html} en de TeensyDAQ broncode van \url{https://github.com/JorenSix/TeensyDAQ}. 
+
+Na het importeren van deze projecten in eclipse en het instellen van de projecten als \textit{reference project} moeten er nog enkele JAR bestanden worden toegevoegd. 
+\newpage
+\textbf{jssc-2.7.0.jar}, deze bibliotheek is te downloaden van: \url{https://code.google.com/archive/p/java-simple-serial-connector/downloads}.
+
+\textbf{max.jar}, deze bibliotheek bevindt zich in de Max/MSP installatiemap standaard onder Windows: \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash \\ java-classes\textbackslash lib}
+
+Na het toevoegen van de \textit{references} en JAR bestanden zouden de foutmeldingen moeten verdwijnen.
+
+\section*{Het project koppelen aan Max/MSP}
+
+Het zou vrij omslachtig zijn om telkens een JAR bestand te moeten genereren vooraleer een bepaalde module in Max/MSP uitgetest kan worden. Daarom is het ook mogelijk om Max/MSP te koppelen aan een map met classfiles. Hiervoor moet het configuratiebestand \texttt{max.java.config.txt} uit de Max/MSP installatiemap worden aangepast. Onder Windows bevindt het bestand zich standaard in volgende map: \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}.
+
+Met volgende lijn wordt er verwezen naar een map met classfiles: \texttt{max.dynamic.class.dir <<pad>>}. Hierbij moet \texttt{<<pad>>} worden vervangen door het pad van de map (backslashes escapen met een backslash). Er moet ook naar elke afhankelijkheid verwezen worden. Verwijs dus ook naar de map met classfiles van TarsosDSP en Panako. Ten slotte moet ook de jSSC JAR worden opgenomen in het bestand. Voeg daarom volgende lijn toe waarbij \texttt{<<pad>>} staat voor de map waarin zich de JAR bevindt: \texttt{max.dynamic.jar.dir <<pad>>}.
+
+\section*{Debuggen van Max/MSP modules}
+
+Het is mogelijk om de broncode in Eclipse te debuggen terwijl een module in Max/MSP wordt uitgevoerd. Deze handige feature vereist wel wat configuratie.
+
+Ten eerste moeten volgende lijnen aan het Max/MSP configuratiebestand (zie vorige sectie) worden toegevoegd:
+
+\begin{allintypewriter}
+max.jvm.option -Xdebug \\
+max.jvm.option -Xnoagent \\
+max.jvm.option -Xrunjdwp:transport=dt\_socket\textbackslash ,address=8074\textbackslash,server=y\textbackslash,suspend=n \\
+max.jvm.option -XX:-UseSharedSpaces
+\end{allintypewriter}
+Het is mogelijk dat deze lijnen in het standaard configuratiebestand in commentaar staan. Indien dit het geval zou zijn dan is het voldoende om de puntkomma's voor en achter de regel te verwijderen.
+
+\begin{figure}[!tbph]
 	\centering
-	\advance\parskip0.3cm
-	\includegraphics[width=0.4\textwidth]{teensy2.jpg}
-	\label{teensy-test}
+	\subfloat{\includegraphics[width=0.3\textwidth]{debugconf.png}}
+	\hfill
+	\subfloat{\includegraphics[width=0.3\textwidth]{debugremote.png}}
+	\hfill
+	\subfloat{\includegraphics[width=0.3\textwidth]{debugnew.png}}
+	\captionsetup{width=0.7\textwidth}
+	\caption{Nieuwe debug configuration aanmaken in Eclipse}
+	\label{debugconf}
 \end{figure}
 
-\section*{Microfoon}
+Ga hierna naar \textbf{Debug Configurations} in Eclipse. Selecteer \textbf{Remote Java Application} en klik vervolgens op het icoon van \textbf{new launch configuration}. Deze stappen worden verduidelijkt in figuur \ref{debugconf}.
 
-De andere audiostream is afkomstig van een laptopmicrofoon. Alle mogelijke verbeteringen die worden ondersteund (ruisonderdrukking en onderdrukking van akoestische echo) zijn uitgeschakeld.
-
-\section*{Max/MSP patch}
-
-\begin{figure}[!h]
+\begin{figure}[!tbph]
 	\captionsetup{width=0.7\textwidth}
-	\caption[Max/MSP testopstelling]{De Max/MSP patch waarmee de test is uitgevoerd.}
-	\centering
-	\advance\parskip0.3cm
-	\includegraphics[width=0.6\textwidth]{maxtest.png}
-	\label{max-test}
-\end{figure}
-
-De laptopmicrofoon wordt ingelezen met behulp van de \texttt{ezadc\textapprox} module. Deze module is standaard aanwezig in Max/MSP. De audiostream afkomstig van de Teensy microcontroller wordt en ingelezen met behulp van de \texttt{TeensyReader} module (geschreven voor dit onderzoek). De module is aangemaakt met volgende code:
-\begin{center}
-	\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader 8000 0 0 1}
-\end{center}
-Het synchroniseren gebeurd met de \texttt{Sync} module. Er worden geen datastreams gekoppeld aan de audiostreams. Dit is de code voor het aanmaken van de module:
-\begin{center}
-	\texttt{mxj\textapprox\ be.signalsync.msp.Sync a,a}
-\end{center}
-Aangezien deze module nog niet volledig is afgewerkt vindt de daadwerkelijke synchronisatie nog niet plaats. De latencies worden uitgeprint in de Max/MSP console. Figuur \ref{max-test} toont een screenshot van de patch en de console.
-
-\section*{Instellingen}
-
-De slechte geluidskwaliteit heeft als gevolg dat de parameters extremer moeten worden ingesteld.\\
-
-\begin{tabular}{ l  l}
-	\hline
-	\textbf{Instelling} & \textbf{Waarde} \\
-	\hline
-	Algoritme & Kruiscovariantie \\
-	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 10 \\
-	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 50 \\
-	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
-	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 30 \\
-	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
-	Nauwkeurigheid & $0.1ms$ \\
-\end{tabular}\\
-
-\section*{Uitvoering en resultaten}
-
-Tijdens het uitvoeren van de test worden enkele liedjes afgespeeld op een normaal volume. Tijdens de test wordt er ook gesproken. De test duurt ongeveer 4 minuten. De latencies worden niet gefilterd.
-
-Onderstaande resultaten tonen de latency van de Teensy ten opzichte van de laptopmicrofoon. De algoritmes zijn er in geslaagd om alle latencies te bepalen. De resultaten bevatten dus geen gaten. Tabel \ref{results-table} bevat de opeenvolgende latencies. De resultaten worden ook grafisch weergegeven in figuur \ref{test-latency-graph}.
-
-\begin{table}[h!]
-	\caption{Tabel met de opeenvolgende latencies (in seconden) uit de test.}
-	\centering
-	\begin{tabular}{l l|l l|l l|l l|l l}
-		1 & 0.250621 & 11 & 0.249121 & 21 & 0.247121 & 31 & 0.245371 & 41 & 0.24337 \\
-		2 & 0.250501 & 12 & 0.248991 & 22 & 0.247001 & 32 & 0.245121 & 42 & 0.24337 \\
-		3 & 0.250371 & 13 & 0.248501 & 23 & 0.246741 & 33 & 0.244741 & 43 & 0.24299 \\
-		4 & 0.250121 & 14 & 0.248251 & 24 & 0.246501 & 34 & 0.244741 & 44 & 0.24287 \\
-		5 & 0.250121 & 15 & 0.248121 & 25 & 0.246241 & 35 & 0.244491 & 45 & 0.24275 \\
-		6 & 0.249991 & 16 & 0.247991 & 26 & 0.246121 & 36 & 0.244491 & 46 & 0.24262 \\
-		7 & 0.249621 & 17 & 0.247751 & 27 & 0.246001 & 37 & 0.244121 & 47 & 0.24262 \\
-		8 & 0.249621 & 18 & 0.247491 & 28 & 0.245741 & 38 & 0.243991 & 48 & 0.24237 \\
-		9 & 0.249371 & 19 & 0.247491 & 29 & 0.245501 & 39 & 0.243871 & 49 & 0.24250 \\
-		10 & 0.249241 & 20 & 0.247121 & 30 & 0.245501 & 40 & 0.243751 & 50 & 0.24187 \\
-	\end{tabular}
-	\label{results-table}
-\end{table}
-
-
-\begin{figure}[h!]
-	\captionsetup{width=0.7\textwidth}
-	\caption[Praktijktest resultaten]{Grafische voorstelling van het verloop van de latency.}
+	\caption{De debug configuratie in Eclipse}
 	\begin{center}
 		\advance\parskip0.3cm
-		\input{figuren/testlatencygraph}
+		\includegraphics[width=0.5\textwidth]{debugsettings.png}
 	\end{center}
-	\label{test-latency-graph}
+	
+	\label{debugsettings}
 \end{figure}
+
+Geef vervolgens de configuratie een naam en blader bij \textbf{Project} naar het te debuggen project (SignalSync). Kies bij \textbf{Connection Type} voor \textbf{Standard (Socket Attach)}. Bij \textbf{Connection Properties} moet de poort worden opgegeven die in het Max/MSP configuratiebestand gespecificeerd is (standaard 8074). Aangezien de applicatie lokaal draait moet bij \textbf{Host} \texttt{localhost} of \texttt{127.0.0.1} worden opgegeven. Met \textbf{Allow termination of remote VM} kan worden ingesteld of de Max/MSP VM vanuit Eclipse mag worden afgesloten. Figuur \ref{debugsettings} toont een screenshot van de instellingen.
+
+Het debuggen wordt gestart door eerst de Max/MSP patch te openen en vervolgens het debuggen in Eclipse te starten met de zojuist aangemaakt debug configuratie. Bij het starten van de patch is het nu mogelijk om via breakpoints door de code navigeren.
+
+\section*{Genereren van testdata}
+
+De bestanden die vereist zijn voor het uitvoeren van de testen bevinden zich niet in het GitHub repository maar moeten nog gegenereerd worden. 
+
+De eerste stap voor het genereren van de bestanden is het uitvoeren van het Perl script \texttt{TestSetGenerator.pl}. Dit script kan gedownload worden van de map \textbf{Scripts} in het GitHub repository. Het script maakt van een groep mp3-bestanden verschillende varianten aan (zie \ref{latency-test} en \ref{sine-test}). In het script moet de bron- en doelmap worden opgegeven.
+
+Met behulp van de Java applicatie \texttt{SlicerApp} uit de package \texttt{be.signalsync.app} kunnen de gegenereerde bestanden worden omgezet in slices. Deze slices dienen als input voor enkele testen.
+
+

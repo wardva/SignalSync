@@ -3,43 +3,187 @@
 
 Om de kwaliteit van de softwarebibliotheek te kunnen garanderen zijn er verschillende soorten testen uitgevoerd. 
 
-De eerste soort testen zijn geschreven voor het analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaalt moet worden. Met behulp van onder meer deze test zijn de optimale parameterwaarden bepaalt.
+De eerste soort testen zijn geschreven voor het analyseren van de kwaliteit van de algoritmes. De algoritmes worden hierbij blootgesteld aan audiofragmenten waartussen de latency bepaald moet worden. Door te kijken naar het foutenpercentage en de performantie zijn de optimale parameterwaarden voor de geteste situatie bepaald. In dit hoofdstuk zullen enkele illustratieve testen omschreven worden.
 
-Buiten het testen van de algoritmes zijn er ook enkele unit testen geschreven voor het testen van enkele cruciale elementen van de softwarebibliotheek. 
+Buiten de testen voor de algoritmes zijn er ook enkele unit testen geschreven voor het testen van enkele cruciale elementen van de softwarebibliotheek.
+
+De performantie wordt uitgedrukt in het aantal keer dat het algoritme sneller is dan realtime. Een algoritme met een performantie van $ 2 \times \textrm{realtime} $ verwerkt $ n $ seconden audio in $ n/2 $ seconden. De testen zijn uitgevoerd op een \textit{Intel Core i7-4510 2.0 GHz} processor. Het is aangeraden om de performantie resultaten relatief te bekijken. Deze zijn namelijke erg afhankelijk van de processor waarop de testen zijn uitgevoerd.
+
+Het is vereist dat de performantie boven $ 1 \times \textrm{realtime} $ blijft. Bij een lagere performantie komt de audio sneller binnen dan de verwerkingssnelheid van de algoritmen. Het bepalen van de latency zal dan vertraging oplopen wat kan leiden tot slechte resultaten.
+
+
 
 \section{Testen van de algoritmes}
 \label{algoritme-test}
 
-Het testen van de algoritmes wordt uitgevoerd met behulp de JUnit testcase \texttt{SynchronizationTest} uit het package \texttt{be.signalsync.test}. Deze testcase laat toe om de slices van verschillende audiofragmenten met elkaar te matchen en te analyseren waar de algoritmes precies in de fout gaan.
+Het testen van de algoritmes werd uitgevoerd door de JUnit testcase \texttt{SynchronizationTest} uit de package \texttt{be.signalsync.test}. Deze testcase laat toe om de slices van verschillende audiofragmenten met elkaar te matchen en te analyseren waar de algoritmes precies in de fout gaan. De volgende tabel toont de instellingen die in alle testen van toepassing zijn:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1 \\
+	Fingerprinting nauwkeurigheid & $32ms$ \\
+	Kruiscovariantie nauwkeurigheid & $0.1ms$
+\end{tabular}
 
 \subsection{Aanmaken van de dataset}
 
-Bij het uitvoeren van deze test is het de bedoeling om enkel de algoritmes te testen. Om niet afhankelijk te zijn van andere softwareonderdelen wordt de dataset op voorhand aangemaakt. Het aanmaken van deze dataset gebeurt in twee stappen. Eerst wordt het originele audiofragment gewijzigd door er bijvoorbeeld latency aan toe te voegen. Dit gebeurt met behulp van een Perl script. Vervolgens worden de verschillende audiofragmenten in slices geknipt en opgeslagen. In de testcase worden de algoritmes rechtstreeks op deze slices uitgevoerd zonder andere softwareonderdelen aan te roepen.
+Bij het uitvoeren van deze testen is het de bedoeling om enkel de algoritmes te testen. Om niet afhankelijk te zijn van andere softwareonderdelen wordt de dataset op voorhand aangemaakt. Het aanmaken van deze dataset gebeurt in twee stappen. Eerst wordt het originele audiofragment gewijzigd door er latency en eventueel een ander geluid aan toe te voegen. Dit gebeurt met behulp van een Perl script. Vervolgens worden de verschillende audiofragmenten in slices geknipt en opgeslagen. In de testcase worden de algoritmes rechtstreeks op deze slices uitgevoerd zonder andere softwareonderdelen aan te roepen.
 
 \subsection{Toevoegen van latency}
 \label{latency-test}
 
 In het meest eenvoudige scenario wordt de latency berekend tussen twee identieke audiofragmenten. Eén audiofragment is hierbij bewerkt door het toevoegen van stilte of het wegknippen van een stukje audio. Aangezien de audiofragmenten buiten deze wijziging identiek zijn zouden de algoritmes in theorie geen enkele fout mogen maken.
 
-Voor de test worden 13 varianten voorzien van een audiofragment. Het originele audiofragment is de referentie. Er zijn zowel varianten met een positieve latency als varianten met een negatieve latency voorzien.
+Voor de test worden 12 varianten voorzien van een audiofragment. Het originele audiofragment is de referentie. Er zijn zowel varianten met een positieve als met een negatieve latency voorzien.
 
-De resultaten van de test bevinden zich in bijlage \ref{appendix-c}. Het acoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten wanneer de test maar eenmaal wordt uitgevoerd. Dit is logisch te verklaren. Het kruiscovariantie wordt namelijk uitgevoerd op een zeer klein stukje audio. Wanneer de test maar eenmaal wordt uitgevoerd kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0. De kans is groot dat er dan een fout resultaat wordt teruggegeven. Dit probleem kan gemakkelijk opgelost worden door het algoritme minstens 2 keer uit te voeren (zie \ref{crosscovariance-repeated}).
+Dit is de verzameling van de geteste latencies:
+\begin{center}
+	\{$20ms$, $-20ms$, $80ms$, $-80ms$, $90ms$, $-90ms$, $300ms$,\\ $-300ms$, $2000ms$, $-2000ms$, $6000ms$, $-6000ms$ \}
+\end{center}
+
+Van elk audiofragment (referentie en elke variant) worden (ongeveer) 55 slices aangemaakt (lengte: 10s, overlap: 5s). Elke slice wordt gematcht met de corresponderende slice van het referentie audiofragment.
+
+\subsubsection{Acoustic fingerprinting}
+
+Bij het testen van het acoustic fingerprinting algoritme werden de volgende parameters gehanteerd:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 
+\end{tabular}\\
+
+Dit waren de resultaten:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 324 \\
+	Totaal aantal geslaagd & 324 \\
+	Slaagpercentage & 100\% \\
+	Uitvoeringstijd & $55 \times \textrm{realtime}$
+\end{tabular}
+
+\subsubsection{Kruiscovariantie}
+
+De hierboven vermelde parameters blijven gelijk. \texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} wordt wel gewijzigd. Het eenmalig uitvoeren van het algoritme resulteerde in volgende resultaten:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 324 \\
+	Totaal geslaagd & 306 \\
+	Slaagpercentage & 94\% \\
+	Uitvoeringstijd & $53 \times \textrm{realtime}$ \\
+\end{tabular}\\
+
+Bij het 5 maal uitvoeren zijn dit de resultaten:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 324 \\
+	Totaal geslaagd & 324 \\
+	Slaagpercentage & 100\% \\
+	Uitvoeringstijd & $53 \times \textrm{realtime}$ \\
+\end{tabular}\\
+
+\subsubsection{Bespreking}
+
+Het acoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten bij het eenmalig uitvoeren van het algoritme. Dit is logisch te verklaren. Het kruiscovariantie werd namelijk op een zeer klein stukje audio uitgevoerd. Bij het eenmalig uitvoeren kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0. De latency kan dus niet bepaald worden. Aangezien het toch aangeraden is om het algoritme meerdere malen op verschillende plaatsen uit te voeren vormt dit niet echt een probleem (zie \ref{crosscovariance-repeated}).
+
+De performantie van de algoritmen is zeker aanvaardbaar. Het 5 maal uitvoeren van het kruiscovariantie algoritme heeft amper invloed op de uitvoeringstijd.
 
 \subsection{Toevoegen van een sinusgolf}
 \label{sine-test}
 
-In sectie \ref{crosscovariance-repeated} is geschreven dat het kruiscovariantie algoritme het moeilijk krijgt wanneer de te matchen geluidsgolven visueel erg van elkaar verschillen. Dit wordt gesimuleerd door het toevoegen van een lage toon (sinusgolf van $50Hz$ en $100Hz$) aan één van de audiofragmenten. Door het kruiscovariantie algoritme verschillende keren uit te voeren wordt de invloed van dit probleem beperkt.
+In sectie \ref{crosscovariance-repeated} is geschreven dat het kruiscovariantie algoritme het moeilijk krijgt wanneer de te matchen geluidsgolven visueel erg van elkaar verschillen. Dit wordt gesimuleerd door het toevoegen van een lage toon aan één van de audiofragmenten. Door het kruiscovariantie algoritme verschillende keren uit te voeren wordt de invloed van dit probleem beperkt.
 
-De resultaten uit bijlage \ref{appendix-d} tonen aan dat het meerdere malen uitvoeren van het algoritme wel degelijk betere resultaten levert. Bij het laatste experiment (waarbij het algoritme 20 maal werd uitgevoerd) werden alle latencies correct bepaald.
+Bij dit experiment wordt de eerder beschreven dataset uitgebreid. Van elke latency worden twee varianten voorzien. Aan elke variant wordt één van deze sinusgolven toegevoegd waardoor de golfvorm er helemaal anders gaat uitzien:
+
+\begin{center}
+	\{ $50Hz$, $100Hz$ \}
+\end{center}
+
+Van deze aangepaste audiofragmenten worden op voorhand opnieuw slices aangemaakt. 
+
+\subsubsection{Acoustic fingerprinting}
+
+Bij het uitvoeren van het acoustic fingerprinting algoritme op de gemodificeerde dataset werden volgende parameters gehanteerd:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Instelling} & \textbf{Waarde} \\
+	\hline
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 100 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 10 
+\end{tabular}\\
+
+Dit waren de resultaten:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	Totaal aantal geslaagd & 648 \\
+	Slaagpercentage & 100\% \\
+	Uitvoeringstijd & $55 \times \textrm{realtime}$
+\end{tabular}
+
+\subsubsection{Kruiscovariantie}
+
+De hierboven vermelde parameters blijven gelijk. \texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} werd wel gewijzigd. Er zijn 3 testen uitgevoerd waarbij het aantal kruiscovariantie uitvoeringen werd ingesteld op respectievelijk 1, 5 en 20 maal. Dit zijn de resultaten:
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Resultaat} & \textbf{Waarde} \\
+	\hline
+	Totaal aantal testen & 648 \\
+	\textbf{1 uitvoering} & \\
+	\hspace{0.5cm}Totaal aantal geslaagd & 465 \\
+	\hspace{0.5cm}Slaagpercentage & 72\% \\
+	\hspace{0.5cm}Uitvoeringstijd & $55 \times \textrm{realtime}$ \\
+	\textbf{5 uitvoeringen} & \\
+	\hspace{0.5cm}Totaal aantal geslaagd & 642 \\
+	\hspace{0.5cm}Slaagpercentage & 99\% \\
+	\hspace{0.5cm}Uitvoeringstijd & $53 \times \textrm{realtime}$ \\
+	\textbf{20 uitvoeringen} & \\
+	\hspace{0.5cm}Totaal aantal geslaagd & 648 \\
+	\hspace{0.5cm}Slaagpercentage & 100\% \\
+	\hspace{0.5cm}Uitvoeringstijd & $52 \times \textrm{realtime}$ \\
+\end{tabular}
+
+\subsubsection{Bespreking}
+
+Het valt op dat het kruiscovariantie algoritme in moeilijkheden komt na het toevoegen van de sinusgolf. Het meerdere malen uitvoeren van het algoritmen vangt dit probleem goed op. Na 5 uitvoeringen zijn de meeste resultaten al correct. Wanneer dit aantal tot 20 wordt opgetrokken werkt het algoritme foutloos. 
+
+Het meerdere malen uitvoeren van het algoritme heeft een zeer beperkte invloed op de performantie.
+
+\subsection{Conclusie}
+
+Deze testen tonen aan dat de algoritmen in staat zijn om zelf gemodificeerde audiofragmenten te synchroniseren. De resultaten geven een beeld van hoe de algoritmes presteren onder welke parameters.
+
+Een heel belangrijke vaststelling is dat de uitvoeringstijd relatief constant blijft ondanks grote wijzigingen aan de parameters. De oorzaak hiervan is dat de parameters weinig invloed hebben op het asymptotische gedrag van de algoritmen. Het kruiscovariantie algoritme heeft als tijdscomplexiteit $ O(n^{2}) $. Het wijzigen van het aantal uitvoeringen wijzigt niets aan $ n $. Aangezien de grootte van $ n $ standaard heel beperkt is blijft het algoritme goed presteren.
+
+De wijzigingen aan de parameters van het acoustic fingerprinting algoritme hebben ook geen grote invloed op de uitvoeringstijd. Het zoeken naar matchen van fingerprints gebeurt namelijk met behulp van hashes in een hashtabel. Aangezien zoeken in een hashtabel een $ O(1) $ operatie is, is de tijdscomplexiteit lineair met het aantal fingerprints.
 
 \section{Praktijktest: bepalen van de latency}
 \label{praktijktest}
 
-De ontwikkelde toepassing zal door het IPEM gebruikt worden tijdens experimenten om de datastreams afkomstig van sensoren te synchroniseren. Meestal worden de sensoren samen met een microfoon aangesloten op één of meerdere Teensy microcontrollers. Het is dus belangrijk om uit te testen dat het mogelijk is om de latency te bepalen bij een geluidsopname afkomstig van een Teensy.
+De ontwikkelde toepassing zal door het IPEM gebruikt worden tijdens experimenten om de datastreams afkomstig van sensoren te synchroniseren. Meestal worden de sensoren samen met een microfoon aangesloten op één of meerdere Teensy microcontrollers. Het is dus belangrijk om uit te testen dat het mogelijk is om de latency tot op één milliseconde nauwkeurig te bepalen bij een geluidsopname afkomstig van een Teensy.
 
 \subsection{Opstelling}
 
-Bij deze test zullen de algoritmes niet rechtstreeks worden aangeroepen. Het bepalen van de latency zal gebeuren met behulp van de reeds besproken Max/MSP modules. De werking van volgende componenten zal hierdoor gecontroleerd worden:
+Bij deze test zullen de algoritmes niet rechtstreeks worden aangeroepen. Het bepalen van de latency gebeurt met behulp van de reeds besproken Max/MSP modules. De werking van volgende componenten wordt hierdoor gecontroleerd:
 \begin{itemize}[noitemsep]
 	\item De synchronisatie algoritmes
 	\item De slicers
@@ -49,11 +193,45 @@ Bij deze test zullen de algoritmes niet rechtstreeks worden aangeroepen. Het bep
 
 In deze test zal één audiostream worden ingelezen van een Teensy microcontroller. De andere audiostream is afkomstig van de standaard microfoon van een laptop. Beide opnames zijn van relatief slechte kwaliteit. Daarom is dit een goede test om te bepalen of de volledige toepassing voldoende robuust is.
 
-De gedetailleerde opstelling en de resultaten worden beschreven in bijlage \ref{appendix-e}
+De gedetailleerde opstelling en de resultaten worden beschreven in bijlage \ref{appendix-c}
+
+\subsection{Instellingen}
+
+Door de slechte geluidskwaliteit moeten de parameters extremer worden ingesteld. De volgende tabel bevat de gewijzigde instellingen.
+
+\begin{tabular}{ l  l}
+	\hline
+	\textbf{Parameter} & \textbf{Waarde} \\
+	\hline
+	Algoritme & Kruiscovariantie \\
+	\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} & 10 \\
+	\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} & 50 \\
+	\texttt{MIN\_ALIGNED\_MATCHES} & 2 \\
+	\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} & 30 \\
+	\texttt{CROSS\_COVARIANCE\_THRESHOLD} & 1
+\end{tabular}
+
+\subsection{Uitvoering en resultaten}
+
+Tijdens het uitvoeren van de test worden enkele liedjes afgespeeld op een normaal volume. Tijdens de test wordt er ook gesproken. De test duurt ongeveer 4 minuten. De latencies worden niet gefilterd.
+
+Grafiek \ref{test-latency-graph} toont de latency van de Teensy ten opzichte van de laptopmicrofoon. Het valt op dat er drift is opgetreden. De oorzaak hiervan is niet verder onderzocht. De uitvoeringstijd is vastgesteld op $ 44 \times \textrm{realtime} $.
+
+\begin{figure}[h!]
+	\captionsetup{width=0.7\textwidth}
+	\caption[Praktijktest resultaten]{Grafische voorstelling van het verloop van de latency.}
+	\begin{center}
+		\advance\parskip0.3cm
+		\input{figuren/testlatencygraph}
+	\end{center}
+	\label{test-latency-graph}
+\end{figure}
 
 \subsection{Conclusie}
 
-De belangrijkste conclusie die kan worden getrokken is dat alles werkt. De latency wordt in de Max/MSP console geprint en vertoont geen afwijkende resultaten. Het valt wel op dat er drift is opgetreden. De oorzaak hiervan is niet verder onderzocht. 
+De belangrijkste conclusie die kan worden getrokken is dat alles werkt. De latency wordt in de Max/MSP console geprint en vertoont geen afwijkende resultaten. Ook heeft de drift bewezen dat het mogelijk is om dit verschijnsel te detecteren.
+
+De uitvoeringstijd toont aan dat er nog veel marge is om de parameters eventueel nog extremer in te stellen bij het synchroniseren van audiofragmenten van nog slechtere kwaliteit.
 
 \section{Praktijktest: synchroniseren van streams}
 
@@ -61,15 +239,15 @@ Met deze test is getracht te bepalen dat de streams daadwerkelijk correct gesync
 
 \subsection{Conclusie}
 
-Deze test heeft aangetoond dat de synchronisatie correct wordt uitgevoerd. De gesynchroniseerde streams kunnen bij bepaalde samplefrequenties in Max/MSP een afwijking van enkele milliseconden bevatten. Hoogstwaarschijnlijk wordt dit veroorzaakt door een afrondingsfout in de programmacode.
+Deze test heeft aangetoond dat de synchronisatie correct wordt uitgevoerd. De gesynchroniseerde streams kunnen bij bepaalde samplefrequenties in Max/MSP een afwijking van enkele milliseconden bevatten. Deze fout ontstaat wanneer de samplefrequentie niet mooi kan worden omgezet. In de gebruikershandleiding wordt er uitgelegd hoe hiermee moet worden omgegaan.
 
 \section{Testen van de softwarecomponenten}
 
-Buiten de synchronisatiealgoritmes bevat de geschreven software nog enkele componenten met vrij complexe logica. Om de kwaliteit van de software te garanderen zijn er enkele unittesten geschreven.
+Buiten de synchronisatiealgoritmes bevat de geschreven software nog enkele componenten met vrij complexe logica. Om de kwaliteit van de software te garanderen zijn er enkele unittesten geschreven. Deze testen zijn met succes uitgevoerd.
 
 \subsection{Testen van de StreamSlicer}
 
-De klasse \texttt{StreamSlicerTest} bevat de vereiste testlogica. De test maakt gebruik van een verzonnen stream. Van deze stream zijn handmatige de groottes van de slices berekend. Deze worden vergeleken met de slices die de \texttt{StreamSlicer} teruggeeft. De samples van de stream zijn de afgeronde timestamps, hierdoor kan ook de inhoud van de slices getest worden.
+De klasse \texttt{StreamSlicerTest} bevat de vereiste testlogica. De test gebruikt een verzonnen stream waarvan handmatig de groottes van de slices zijn berekend. Deze worden vergeleken met de slices die de \texttt{StreamSlicer} teruggeeft. De samples van de stream zijn de afgeronde timestamps, hierdoor kan ook de inhoud van de slices getest worden.
 
 
 \subsection{Testen van de Datafilters}

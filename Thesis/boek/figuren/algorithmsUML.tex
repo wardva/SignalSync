@@ -2,23 +2,32 @@
 \tikzstyle{every node}=[font=\scriptsize]
 	\begin{package}[StreamPackage]{be.signalsync.syncstrategy}
 		\setul{1pt}{.4pt}
-		\begin {abstractclass}[text width=8cm]{SyncStrategy}{0,0}
+		\begin {abstractclass}[text width=9cm]{SyncStrategy}{0,0}
 			\operation{+ \ul{createDefault}() : SyncStrategy}
 			\operation{+ \ul{createFingerprintStrategy}() : FingerprintSyncStrategy}
 			\operation{+ \ul{createCrossCovariance}() : CrossCovarianceSyncStrategy}
-			\operation[0]{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless Double\textgreater}
+			\operation[0]{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless LatencyResult\textgreater}
 		\end {abstractclass}
 		
-		\begin {class}[text width=8cm]{FingerprintSyncStrategy}{-1,-6}
+		\begin {class}[text width=9cm]{FingerprintSyncStrategy}{-1,-5}
 			\inherit{SyncStrategy}
-			\operation{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless Double\textgreater}
-			\operation{+ getResults(sliceSet : List\textless float[]\textgreater) : List\textless int[]\textgreater}
+			\operation{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless LatencyResult\textgreater}
 			\operation{//private methode's voor de werking van het algoritme}
 		\end {class}
 		
-		\begin {class}[text width=8cm]{CrossCovarianceSyncStrategy}{1,-12}
+		\begin {class}[text width=3.7cm]{LatencyResult}{10,-4}
+			\attribute{- latencyInSeconds : double}
+			\attribute{- latencyInSamples : double}
+			\attribute{- timestamp : double}
+			\attribute{- latencyFound : boolean}
+			\attribute{- refined : boolean}
+			\attribute{- hasTimestamp : boolean}
+			\operation{//getters en setters}
+		\end {class}
+		
+		\begin {class}[text width=9cm]{CrossCovarianceSyncStrategy}{1,-10}
 			\inherit{SyncStrategy}
-			\operation{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless Double\textgreater}
+			\operation{+ findLatencies(sliceSet : List\textless float[]\textgreater) : List\textless LatencyResult\textgreater}
 			\operation{//private methode's voor de werking van het algoritme}
 		\end {class}
 		

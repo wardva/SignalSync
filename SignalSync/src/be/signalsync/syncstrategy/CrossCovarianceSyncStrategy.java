@@ -69,7 +69,7 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 				Integer refined = findBestCrossCovarianceResult(latencyInSamples, reference, other);
 				if(refined != null) {
 					//A result is found, adding it to the results.
-					results.add(LatencyResult.refinedResult(refined/sampleRate, refined));
+					results.add(LatencyResult.refinedResult(((double) refined)/sampleRate, refined));
 				}
 				else {
 					//No result found, getting the fingerprint offset and adding it to the resuls.
@@ -98,7 +98,6 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 		Map<Integer, Integer> allLags = new HashMap<Integer, Integer>();	
 		//The step size we have use to perform `nrOfTests` tests.
 		int bufferStepSize = reference.length / nrOfTests;
-		
 		//Calculate the start position
 		int start = fingerPrintLatencyInSamples < 0 ? -fingerPrintLatencyInSamples : 0;
 		//Calculate the stop position

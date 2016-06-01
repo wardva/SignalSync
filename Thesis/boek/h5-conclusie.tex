@@ -1,10 +1,10 @@
 \chapter{Conclusie}
 
-In dit hoofdstuk zal worden teruggeblikt naar wat er in dit onderzoek precies verwezenlijkt is. In sectie \ref{doel-masterproef} is er omschreven welke zaken er ontwikkeld zouden moeten worden om deze masterproef als geslaagd te kunnen beschouwen. In sectie \ref{evaluatie-criteria} werden de vereisten omtrent snelheid en precisie van de algoritmes omschreven. Het ontwikkelde systeem zal in de hoofdstuk worden getoetst aan de omschreven doelen en criteria.
+Het ontwikkelde systeem zal in dit hoofdstuk worden getoetst aan de doelen en criteria beschreven in hoofdstuk \ref{introductie}. Ook zullen enkele mogelijke toekomstige verbeteringen besproken worden.
 
 \section{Doelen}
 
-Het eerste doel uit \ref{doel-masterproef} stelt dat de algoritmes aangepast en/of geoptimaliseerd moeten worden zodat ze de latency tussen audiofragmenten opgenomen met een basic microfoon kunnen bepalen tot op minstens één milliseconde nauwkeurig. De praktijktest beschreven in \ref{praktijktest} toont aan dat dit mogelijk is.
+Het eerste doel was dat de algoritmes aangepast en/of geoptimaliseerd moeten worden zodat ze de latency tussen audiofragmenten opgenomen met een basic microfoon kunnen bepalen tot op minstens één milliseconde nauwkeurig. De praktijktest beschreven in \ref{praktijktest} toont aan dat dit mogelijk is.
 
 Het tweede doel is de implementatie van de softwarebibliotheek. Met behulp van deze bibliotheek moet het mogelijk zijn om programmatisch streams te kunnen aanmaken en synchroniseren. Het ontwerp van deze softwarebibliotheek is omschreven in \ref{ontwerp}. Dit toont aan dat het doel ook is verwezenlijkt.
 
@@ -24,3 +24,12 @@ Het is duidelijk dat van de besproken algoritmen uit de introductie (sectie \ref
 
 \section{Mogelijke verbeteringen en uitbreiding}
 
+Het experiment uit de probleemschets maakte gebruik van een accelerometer, een videocamera en afgespeelde muziek. Met het huidige systeem is het mogelijk om de datastream van de accelerometer te synchroniseren met de afgespeelde muziek. Deze signalen kunnen namelijk verwerkt worden in Max/MSP. 
+
+Hoewel het geluid van de beelden als Max/MSP signaal verwerkt kan worden is dit niet het geval voor de bijhorende beelden. Een mogelijke uitbreiding van het huidige systeem omvat het ontwikkelen van een Jitter variant van de huidige synchronisatiemodule. Jitter is een uitbreiding van Max waarmee realtime video verwerkt kan worden. Ondanks dat er nog geen verder onderzoek gedaan is naar de haalbaarheid hiervan kan het ontwikkelen van een Jitter module eventueel een oplossing bieden voor het hierboven beschreven probleem.
+
+Een ander soort data dat bij bepaalde experimenten gebruikt wordt is MIDI. In de huidige implementatie wordt dit nog niet ondersteund. Het ontwikkelen van een Max/MSP omzetmodule die MIDI gegevens van en naar Max/MSP signalen converteert zou dit probleem kunnen oplossen. Artikel \cite{mspmidi} legt uit hoe MIDI naar een Max/MSP signaal gemapt kan worden.
+
+%\section{Terugblik}
+
+%Persoonlijk ben ik tevreden met wat ik in deze masterproef heb kunnen realiseren. Het vooropgestelde doel (het ontwikkelen van een Max/MSP module die de synchronisatie in realtime kan uitvoeren) heb ik bereikt. Ik vind dit wel een prestatie voor iemand die drie maand voor het starten aan deze masterproef nog geen enkele kennis had over de verwerking van digitale audio. Buiten het aanleren van technische skills heb ik het gevoel dat deze masterproef mij ook op het vlak van taal (schrijven, presenteren, citeren,...) enorm heeft vooruitgeholpen.

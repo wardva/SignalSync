@@ -47,7 +47,7 @@ Buiten het algoritme bevat de bibliotheek ook verschillende toepassingen die hie
 	\label{fingerprint_visualiser}
 \end{figure}
 
-Er is ook een applicatie beschikbaar (SyncSink) om verschillende geluidsfragmenten te synchroniseren. Deze applicatie gebruikt naast het acoustic fingerprinting algoritme ook het kruiscovariantie algoritme. 
+Er is ook een applicatie beschikbaar (SyncSink) om verschillende geluidsfragmenten (niet in realtime) te synchroniseren. Deze applicatie gebruikt naast het acoustic fingerprinting algoritme ook het kruiscovariantie algoritme. 
 
 Na het bepalen van de latency tussen de verschillende audiofragmenten kan de applicatie een shell script genereren dat met behulp van \textit{FFmpeg} stukjes van de geluidsbestanden wegknipt of er stilte aan toevoegt. Het resultaat is dat na het uitvoeren van het script de geluidsbestanden gesynchroniseerd zijn.
 
@@ -182,26 +182,25 @@ Bij het acoustic fingerprinting algoritme is er een groot verschil tussen de mee
 	\item\texttt{SAMPLE\_RATE} \hfill \\
 	Bij deze parameter is het van belang om een goede balans te vinden zodat de geluidskwaliteit aanvaardbaar blijft zonder een hypotheek te plaatsen op de performantie van het algoritme. De praktijk heeft uitgewezen dat bij een samplefrequentie van $ 8000Hz $ het algoritme goed presteert. Deze waarde wordt bevestigd in artikel \cite{six2015multimodal}.
 	\item\texttt{NFFT\_BUFFER\_SIZE} en \texttt{NFFT\_STEP\_SIZE} \hfill \\
-	De ingesteld waarden van de samplefrequentie, buffergrootte en stapgrootte zijn afhankelijk van elkaar. Om een goede werking van het FFT algoritme te garanderen bij een samplefrequentie van $ 8000Hz $ worden de buffergrootte en stapgrootte respectievelijk ingesteld op 512 en 128 (of 256) samples. Deze waarden worden eveneens vermeld in artikel \cite{six2015multimodal}.
+	De ingestelde waarden van de samplefrequentie, buffergrootte en stapgrootte zijn afhankelijk van elkaar. Om een goede werking van het FFT algoritme te garanderen bij een samplefrequentie van $ 8000Hz $ worden de buffergrootte en stapgrootte respectievelijk ingesteld op 512 en 128 (of 256) samples. Deze waarden worden eveneens vermeld in artikel \cite{six2015multimodal}.
 	\item\texttt{MIN\_ALIGNED\_MATCHES} \hfill \\
-	In een toepassing zoals het detecteren van liedjes ten opzichte van een database is het secuur instellen van deze parameter erg belangrijk. Deze parameter heeft namelijk een grote invloed op het voorkomen van \textit{false positives} of \textit{false negatives}. 
+	In een toepassing zoals het detecteren van liedjes ten opzichte van een database is het secuur instellen van deze parameter erg belangrijk. Deze parameter heeft namelijk een grote invloed op het voorkomen van \textit{false positives} of \textit{false negatives}. De standaardwaarde in Panako is 7.
 	
 	Bij het synchroniseren van streams is de situatie echter helemaal anders. Het binnenkrijgen van een false positive (=foute latency) is veel minder erg dan het helemaal niet binnenkrijgen van (mogelijk correcte) resultaten. Aangezien het algoritme per buffer enkel het beste resultaat teruggeeft is de kans dat bij geluidsfragmenten van behoorlijke kwaliteit eenzelfde foute latency meer voorkomt dan de correcte latency zéér klein.
 	
 	Bij geluidsfragmenten van mindere kwaliteit kan het gebeuren dat er toch foute resultaten door de mazen van het net glippen. Om dit te vermijden is het mogelijk om nog een extra filtering toe te passen. In deze extra stap worden eventuele uitschieters geëlimineerd.
 	
-	Bovenstaande argumenten stellen duidelijk dat het beter is om deze parameter een lage waarde te geven. In deze toepassing is gekozen voor de waarde 2 in plaats van het absolute minimum 1: hierdoor wordt pure willekeur bij het matchen van audiofragmenten van extreem slechte kwaliteit vermeden. Dit is laag in vergelijking met Panako waar 7 de standaard waarde is van deze parameter.
+	Bovenstaande argumenten stellen duidelijk dat het beter is om deze parameter een lagere waarde te geven dan de standaardwaarde. In deze toepassing is gekozen voor de waarde 2 in plaats van het absolute minimum 1: hierdoor wordt pure willekeur bij het matchen van audiofragmenten van extreem slechte kwaliteit vermeden.
 	
 	\item\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} \hfill \\
 	In Panako is het standaard dat een event point uitmaakt van maximaal 2 fingerprints. Het hanteren van deze waarde leidt ertoe dat het matchen van audiofragmenten van behoorlijke kwaliteit zeer snel kan worden uitgevoerd. 
 	
 	In deze toepassing is het aantal te vergelijken audiofragmenten meestal erg beperkt. Ook is de kwaliteit van deze fragmenten vaak van ondermaats (bv. de opnames op microcontrollers). Daarom is het in dit geval een goed idee om de waarde van deze parameter zéér hoog in te stellen. Hierdoor verhoogt de kans sterk dat er bij zeer slechte audiofragmenten toch enkele overeenkomende fingerprints gevonden worden. Testen hebben uitgewezen dat de negatieve invloed op de performantie beperkt blijft en dat de resultaten sterk verbeteren. 
 	
-	Bij het zoeken naar matches tussen geluidsopnames opgenomen op microcontrollers heeft de praktijk uitgewezen dat het toelaten van maximaal 50 fingerprints per event point degelijke resultaten oplevert.
-	%TODO: refereren naar testresultaen
+	Bij het zoeken naar matches tussen geluidsopnames opgenomen op microcontrollers heeft de praktijk uitgewezen dat het toelaten van 50 fingerprints per event point degelijke resultaten oplevert. De testresultaten uit sectie \ref{praktijktest} bevestigen dit.
 	
 	\item\texttt{NFFT\_EVENT\_POINT\_MIN\_DISTANCE} \hfill \\
-	In tegenstelling tot vorige parameter zorgt het verhogen van deze waarde ervoor dat er minder fingerprints worden gecreëerd. De argumenten die bij vorige parameter zijn aangehaald gelden bijgevolg in omgekeerde zin ook voor deze parameter. Hoewel de Panako standaard 600 is leveren waardes rond het getal 20 in deze toepassing de beste resultaten zonder de performantie sterk te beperken.
+	In tegenstelling tot vorige parameter zorgt het verhogen van deze waarde ervoor dat er minder fingerprints worden gecreëerd. De argumenten die bij vorige parameter zijn aangehaald gelden bijgevolg in omgekeerde zin ook voor deze parameter. Hoewel de Panako standaard 600 is leveren waardes rond het getal 10 in deze toepassing de beste resultaten zonder de performantie sterk te beperken.
 	
 	
 \end{description}
@@ -216,9 +215,9 @@ Net zoals het acoustic fingerprinting algoritme is de code overgenomen in het pr
 \subsection{Integratie met acoustic fingerprinting}
 \label{integratie-acoustic-fingerprinting}
 
-In sectie \ref{toepasbaarheid} is er geschreven dat de latency zeer nauwkeurig kan bepaald worden door het berekenen van de kruiscovariantie. Vanwege de performantie is het wel noodzakelijk om eerst de ruwe latency met acoustic fingerprinting te bepalen. Hoe deze algoritmes geïntegreerd worden zal hier worden besproken. 
+In sectie \ref{toepasbaarheid} is er geschreven dat de latency zeer nauwkeurig kan bepaald worden door het berekenen van de kruiscovariantie. Vanwege de performantie is het wel noodzakelijk om eerst de ruwe latency met acoustic fingerprinting te bepalen. 
 
-Onderstel twee geluidsopnames: de tweede opname heeft een vertraging van 90 ms ten opzichte van de eerste referentieopname. Het uitvoeren van het acoustic fingerprinting algoritme met standaard parameters (tot op $ 32 ms $ nauwkeurig) kan twee resultaten opleveren: $ 64 ms $ of $ 96 ms $. Na het berekenen van de kruiscovariantie kan bepaald worden of er zich een onderschatting (eerste waarde) of overschatting (tweede waarde) heeft voorgedaan, dit is van belang om het resultaat correct te verfijnen. Figuur \ref{crosscovariance1} toont de mogelijke resultaten van het algoritme.
+Ter illustratie twee geluidsopnames waarbij de tweede opname een vertraging heeft van 90 ms ten opzichte van de eerste referentieopname. Het uitvoeren van het acoustic fingerprinting algoritme met standaard parameters (tot op $ 32 ms $ nauwkeurig) kan twee resultaten opleveren: $ 64 ms $ of $ 96 ms $. Na het berekenen van de kruiscovariantie kan bepaald worden of er zich een onderschatting (eerste waarde) of overschatting (tweede waarde) heeft voorgedaan, dit is van belang om het resultaat correct te verfijnen. Figuur \ref{crosscovariance1} toont de mogelijke resultaten van het algoritme, in dit voorbeeld $32ms$.
 
 Als de ruw bepaalde latency positief is wordt deze waarde van het tweede fragment weggeknipt. Na deze stap is de latency tussen de resterende audiofragmenten zeker minder dan de minimale nauwkeurigheid van het acoustic fingerprinting algoritme. 
 
@@ -237,7 +236,7 @@ Vervolgens worden een aantal samples van elk audiofragment gekopieerd naar een b
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
-	\caption[Kruiscovariantie buffers]{Kruiscovariantie buffers na het wegknippen van de $ 96 ms $ latency bepaald door het acoustic fingerprinting algoritme. Hier heeft de referentie audio $ 6 ms $ latency ten opzichte van het andere audiofragment.   }
+	\caption[Kruiscovariantie buffers]{Kruiscovariantie buffers na het wegknippen van de $ 96 ms $ latency bepaald door het acoustic fingerprinting algoritme. Nu heeft de referentie audio $ 6 ms $ latency ten opzichte van het andere audiofragment.   }
 	\begin{center}
 		\advance\parskip0.3cm
 		\input{figuren/crosscovariance2}
@@ -257,7 +256,7 @@ Om in een dergelijke situatie de verfijnde latency te berekenen moet men van de 
 
 \subsubsection{Bugfixes}
 
-In de originele versie van het algoritme werd geen rekening gehouden met het feit dat het acoustic fingerprinting algoritme het de werkelijke latency kan overschatten of onderschatten. De latency bepaalt door het kruiscovariantie algoritme werd telkens opgeteld bij de ruwe latency bepaald door het acoustic fingerprinting algoritme. In 50\% van de gevallen leidde dit probleem tot foutieve resultaten.
+In de originele Panako implementatie van het algoritme werd geen rekening gehouden met het feit dat het acoustic fingerprinting algoritme het de werkelijke latency kan overschatten of onderschatten. De latency bepaald door het kruiscovariantie algoritme werd telkens opgeteld bij de ruwe latency bepaald door het acoustic fingerprinting algoritme. In 50\% van de gevallen leidde dit probleem tot foutieve resultaten.
 
 \subsubsection{Meerdere malen uitvoeren van het algoritme}
 \label{crosscovariance-repeated}
@@ -276,7 +275,7 @@ Hoewel bij acoustic fingerprinting mogelijk storende factoren (een zoemende toon
 	\label{zoemtoon}
 \end{figure}
 
-Dergelijke storende elementen hebben veel meer invloed op het kruiscovariantie algoritme. Een ongewenste zoemende bastoon zorgt voor een grote verandering van de geluidsgolf van het audiofragment. Aangezien de kruiscovariantie rechtstreeks tussen twee geluidsgolven berekent wordt kan dit serieuze gevolgen hebben. In figuur \ref{zoemtoon} wordt dit probleem visueel verduidelijkt.
+Dergelijke storende elementen hebben veel meer invloed op het kruiscovariantie algoritme. Een ongewenste zoemende bastoon zorgt voor een grote verandering van de geluidsgolf van het audiofragment. Aangezien de kruiscovariantie rechtstreeks tussen twee geluidsgolven berekend wordt kan dit serieuze gevolgen hebben. In figuur \ref{zoemtoon} wordt dit probleem visueel verduidelijkt.
 
 De invloed van storende factoren zoals zoemende tonen en ruis is gemakkelijk te beperken. Aangezien het kruiscovariantie algoritme over een zéér klein deeltje van het audiofragment wordt uitgevoerd is het zeer eenvoudig om het algoritme tientallen keren, maar telkens op een andere plaats, uit te voeren. Na elke iteratie wordt de latency in het geheugen opgeslagen. Ten slotte wordt er gezocht naar de latency die het meeste voorkomt. Die latency wordt gebruikt om het resultaat van het acoustic fingerprinting algoritme te verfijnen.
 
@@ -292,7 +291,7 @@ De parameters van het kruiscovariantie algoritme zijn net zoals die van het acou
 	Deze parameter bepaalt het aantal keren dat het kruiscovariantie algoritme per slice (zie \ref{streambuffers}) zal worden uitgevoerd. De meest voorkomende latency wordt als resultaat teruggegeven.
 	
 	\item\texttt{CROSS\_COVARIANCE\_THRESHOLD} \hfill \\
-	Deze parameter bepaalt het minimum aantal keer dat een latency moet voorkomen om als geldig beschouwd te mogen worden.	Stel dat het algoritme 50 keer wordt uitgevoerd maar elke keer een verschillend resultaat teruggeeft, dan zal er geen latency worden teruggegeven indien deze parameter staat ingesteld op een waarde groter dan 1.
+	Deze parameter bepaalt het minimum aantal keer dat een latency moet voorkomen om als geldig beschouwd te mogen worden.
 	
 \end{description}
 
@@ -304,12 +303,14 @@ De parameters van het kruiscovariantie algoritme zijn net zoals die van het acou
 	\item\texttt{CROSS\_COVARIANCE\_NUMBER\_OF\_TESTS} \hfill \\
 	Bij audiofragmenten van goede kwaliteit is het niet noodzakelijk om deze parameter een hoge waarde te geven. Als het algoritme 5 à 10 keer wordt uitgevoerd zal de correcte latency hoogst waarschijnlijk al verschillende malen gevonden zijn. 
 	
-	Bij audiofragmenten van slechte kwaliteit is het van belang om deze parameter zo hoog mogelijk in te stellen. Aangezien het kruiscovariantie algoritme vrij intensief is hangt de waarde wat af van de beschikbare rekenkracht. De praktijk heeft uitgewezen dat de waarde 50 een goed evenwicht biedt tussen correctheid en performantie.
+	Bij audiofragmenten van slechte kwaliteit is het van belang om deze parameter zo hoog mogelijk in te stellen. De praktijk heeft uitgewezen waardes vanaf 30 zorgt voor correcte resultaten.
 	
-	Deze parameter heeft als bovengrens ($ N_B $) het aantal keren dat een kruiscovariantie buffer (bepaald door \texttt{NFFT\_BUFFER\_SIZE}) past in een streambuffer (zie \ref{streambuffers}) waarin de streams worden ingelezen (bepaald door \texttt{SLICE\_SIZE\_S}). Dit kan worden berekend met volgende formule:
+	De praktische bovengrens van deze parameter ($ N_B $) is het aantal keren dat een kruiscovariantie buffer (bepaald door \texttt{NFFT\_BUFFER\_SIZE}) past in een streambuffer (zie \ref{streambuffers}) waarin de streams worden ingelezen (bepaald door \texttt{SLICE\_SIZE\_S}). Dit kan worden berekend met volgende formule:
 	\begin{equation}
-		N_B = \frac{\texttt{SLICE\_SIZE\_S}}{\texttt{NFFT\_BUFFER\_SIZE} \cdot \texttt{SAMPLE\_RATE}}
+		N_B = \frac{\texttt{SLICE\_SIZE\_S}}{\texttt{NFFT\_BUFFER\_SIZE} / \texttt{SAMPLE\_RATE}}
 	\end{equation}
+	
+	De parameter kan hoger worden ingesteld maar dan zullen opeenvolgende kruiscovariantie buffers overlappen, wat vrij nutteloos is.
 	
 	\item\texttt{CROSS\_COVARIANCE\_THRESHOLD} \hfill \\
 	Het hoog instellen van deze waarde heeft enkel nut als het van belang is dat het kruiscovariantie algoritme zeker een correct resultaat teruggeeft. In de huidige implementatie wordt het ruwe resultaat gebruikt als het aantal gelijke waarden niet boven deze drempel komt. Daarom wordt deze waarde meestal op 1 ingesteld. De best mogelijke verfijning van het resultaat wordt dan toegepast, ongeacht het aantal keer dat het resultaat voorkomt. 
@@ -324,13 +325,13 @@ Deze eigenschappen laten toe om toch een bepaalde vorm van ``foutherstelling'' t
 
 \subsection{Werking}
 
-Het afvlakken van pieken kan in realtime geïmplementeerd worden door gebruik te maken van verschillende \textit{sliding windows}. Per audiostream wordt een buffer bijgehouden met daarin de opeenvolgende latencies ten opzichte van de referentie audiostream. Wanneer een buffer haar maximumcapaciteit heeft bereikt gaat het toevoegen van een nieuwe latency gepaard met het verwijderen van de oudste latency.
+Het afvlakken van pieken kan in realtime geïmplementeerd worden door gebruik te maken van verschillende \textit{sliding windows}. Per audiostream wordt een wachtrij bijgehouden met daarin een aantal opeenvolgende latencies. Wanneer een wachtrij haar maximumcapaciteit heeft bereikt gaat het toevoegen van een nieuwe latency gepaard met het verwijderen van de oudste latency.
 
 Het afvlakken van pieken wordt verwezenlijkt door in plaats van de meest recente latency het gemiddelde of de mediaan van de buffer te gebruiken. De mate waarin pieken worden afgevlakt hangt af van de grootte van de buffer en de gebruikte methode (gemiddelde of mediaan).
 
 \subsection{Voorbeelden}
 
-De effectiviteit van de verschillende parameters (buffergrootte en filtermethode) zal in dit gedeelte worden weergegeven aan de hand van enkele voorbeelden. Er zullen verschillende soorten filters worden toegepast op een verloop van 35 latencies. In het ongefilterde verloop (zie figuur \ref{latencydata}) komen twee grote en drie kleine (waarschijnlijk foutieve) pieken voor. Na het vijftiende resultaat doet er zich een blijvende (correcte) verhoging van de latency voor.
+In het ongefilterde verloop van 32 latencies (zie figuur \ref{latencydata}) doet er zich één blijvende correcte verhoging van de latency voor. De twee grote en drie kleine pieken zijn (waarschijnlijk) foutief.
 
 \input{figuren/datafiltergraph}
 
@@ -344,9 +345,11 @@ De effectiviteit van de verschillende parameters (buffergrootte en filtermethode
 	\label{latencydata}
 \end{figure}
 
+De filter moet foute pieken wegfilteren en elke juiste wijziging intact laten.
+
 \subsubsection{Moving average filter}
 
-De eerste twee voorbeelden tonen het verschil tussen de ongefilterde latencies en de latencies die gefilterd zijn door het gemiddelde van een buffer te nemen. Bij het eerste voorbeeld bevat de buffer maximum 3 latencies, bij het tweede voorbeeld kan de buffer maximum 5 latencies bevatten.
+Deze methode berekent de gemiddelde latency van de wachtrij. Figuur \ref{average-graphs} toont het resultaat voor een wachtrij met maximumgrootte 3 en 5.
 
 \begin{figure}[!tbph]
 	\centering
@@ -355,15 +358,16 @@ De eerste twee voorbeelden tonen het verschil tussen de ongefilterde latencies e
 	\subfloat[Buffergrootte 5]{\datafiltergraph{avg5data}}
 	\captionsetup{width=0.7\textwidth}
 	\caption{Het verloop van de latencies na het toepassen van een moving average filter.}
+	\label{average-graphs}
 \end{figure}
 
-Ondanks het toepassen van de filter blijven de grootste pieken nog steeds zichtbaar. De oorzaak hiervan is dat deze pieken door hun grootte toch sterk doorwegen op het gemiddelde. Om er voor te zorgen dat grote pieken nog meer worden weggefilterd zou de maximumgrootte moeten worden verhoogd. In \ref{filter-gevolgen} zal duidelijk worden waarom dit geen goed idee is.
+De kleinste pieken zijn weggefilterd maar de grootste pieken zijn nog steeds zichtbaar. De oorzaak hiervan is dat deze pieken door hun grootte toch sterk doorwegen op het gemiddelde. Om er voor te zorgen dat grote pieken nog meer worden weggefilterd zou de grootte van de wachtrij nog moeten worden verhoogd. In \ref{filter-gevolgen} zal duidelijk worden waarom dit geen goed idee is.
 
 In de gefilterde resultaten valt ook op dat de hellingshoek van de latencyverhoging vermindert naarmate een grotere buffer gehanteerd wordt. Dit is geen goede eigenschap: het duurt namelijk veel langer tot er na een wijziging terug een stabiele latency bereikt wordt.
 
 \subsubsection{Moving median filter}
 
-In de volgende voorbeelden zal de mediaan van elke buffer berekend worden. Om de resultaten goed met elkaar te kunnen vergelijken worden dezelfde buffergroottes gehanteerd.
+De filter berekent de mediaan van elke wachtrij. Figuur \ref{median-graphs} toont het resultaat voor een wachtrij met maximumgrootte 3 en 5.
 
 \begin{figure}[!tbph]
 	\centering
@@ -372,9 +376,10 @@ In de volgende voorbeelden zal de mediaan van elke buffer berekend worden. Om de
 	\subfloat[Buffergrootte 5]{\datafiltergraph{median5data}}
 	\captionsetup{width=0.7\textwidth}
 	\caption{Het verloop van de latencies na het toepassen van een moving median filter.}
+	\label{median-graphs}
 \end{figure}
 
-De grafieken tonen een duidelijk verschil tussen de moving median filter en de moving average filter. De pieken veroorzaakt door 1 (eventueel) foute latency worden bij de moving median filter onmiddellijk weggefilterd. In de grafiek is er geen enkel spoor meer van te vinden. De piek veroorzaakt door 2 (eventueel) foute latencies wordt enkel volledig weggefilterd wanneer buffergrootte 5 gehanteerd wordt.
+De pieken veroorzaakt door 1 (eventueel) foute latency worden bij de moving median filter onmiddellijk weggefilterd. In de grafiek is er geen enkel spoor meer van te vinden. De piek veroorzaakt door 2 (eventueel) foute latencies wordt enkel volledig weggefilterd wanneer buffergrootte 5 gehanteerd wordt.
 
 De wijziging van de latency wordt niet afgevlakt zoals bij de moving average filter. De hellingshoek blijft onaangetast.
 
@@ -385,22 +390,22 @@ De wijziging van de latency wordt niet afgevlakt zoals bij de moving average fil
 	Deze parameter bepaalt welke soort filter zal worden toegepast op de binnenkomende latencies. Mogelijke waarden zijn: \texttt{average}, \texttt{median} en \texttt{none}.
 	
 	\item\texttt{LATENCY\_FILTER\_BUFFER\_SIZE} \hfill \\
-	Dit is de grootte van de buffer waarin de meest recente latencies zullen worden opgeslagen. Het aangeraden is om als waarde een oneven getal te kiezen.
+	Dit is de grootte van de buffer waarin de meest recente latencies zullen worden opgeslagen.
 
 \end{description}
 
 \subsection{Gevolgen}
 \label{filter-gevolgen}
 
-Het filteren van de latency heeft een negatief effect op de snelheid waarmee wijzigingen van de latency gedetecteerd kunnen worden. Zowel de grootte van de latency filter buffer als de slicegrootte hebben invloed op de snelheid waarmee nieuwe latencies gedetecteerd zullen worden. De grootte van de streambuffers (parameter \texttt{SLICE\_SIZE\_S}) bepaalt namelijk met welk interval nieuwe latencies binnenkomen. 
+Het filteren van de latency heeft een negatief effect op de snelheid waarmee wijzigingen van de latency gedetecteerd kunnen worden. Zowel de grootte van wachtrij als de slicegrootte heeft invloed op de snelheid waarmee nieuwe latencies gedetecteerd worden. De grootte van de streambuffers (parameter \texttt{SLICE\_SIZE\_S}) bepaalt namelijk met welk interval nieuwe latencies binnenkomen. 
 
-Een verhoging van de latency zal bij de moving average filter een onmiddellijke maar beperkte invloed hebben op het gefilterde resultaat. De tijd die nodig is om tot een stabiel resultaat te komen kan berekent worden met volgende formule:
+Een verhoging van de latency zal bij de moving average filter een onmiddellijke maar beperkte invloed hebben op het gefilterde resultaat. De tijd die nodig is om tot een stabiel resultaat te komen kan berekend worden met volgende formule:
 
 \begin{equation}
 	(\texttt{SLICE\_SIZE\_S}) \cdot (\texttt{LATENCY\_FILTER\_BUFFER\_SIZE})
 \end{equation}
 
-Bij de moving median filter wordt een wijziging van de latency gedetecteerd wanneer meer dan de helft van de buffer de gewijzigde latency bevat. De tijd tot wanneer een detectie plaatsvindt kan met volgende formule berekent worden:
+Bij de moving median filter wordt een wijziging van de latency gedetecteerd wanneer meer dan de helft van de buffer de gewijzigde latency bevat. De tijd tot wanneer een detectie plaatsvindt kan met volgende formule berekend worden:
 
 \begin{equation}
 \frac{(\texttt{SLICE\_SIZE\_S}) \cdot (\texttt{LATENCY\_FILTER\_BUFFER\_SIZE})}{2}
@@ -437,7 +442,7 @@ De complete bespreking van het ontwerp is vrij droog en uitgebreid. Enkel het on
 \subsection{Streams}
 \label{streams-design}
 
-Streams kunnen van verschillende bronnen afkomstig zijn: van een microfoon, van een bestand, van een virtuele Max/MSP patchkabel,... Streams afkomstig van een microfoon of bestand kunnen met behulp van de klasse \texttt{AudioDispatcher} worden ingelezen (besproken in sectie \ref{tarsos}). Deze klasse laat op eenvoudige wijze verdere verwerking toe. Het inlezen van data uit Max/MSP gebeurt op een fundamenteel andere manier die niet door de klasse \texttt{AudioDispatcher} ondersteund wordt. Daarom wordt er nog een extra abstractielaag voorzien waarmee het mogelijk wordt om zowel \texttt{AudioDispatchers} als Max/MSP streams op dezelfde manier aan te spreken en te verwerken. Figuur \ref{StreamUml} toont de \texttt{Stream} interface en de klassen die deze interface implementeren. De methodes van de interface worden in de concrete klassen niet herhaald maar zijn uiteraard wel aanwezig.
+Streams kunnen van verschillende bronnen afkomstig zijn: een microfoon, een bestand, een virtuele Max/MSP patchkabel,... Streams afkomstig van een microfoon of bestand kunnen met behulp van de TarsosDSP klasse \texttt{AudioDispatcher} worden ingelezen (besproken in sectie \ref{tarsos}). Deze klasse laat op eenvoudige wijze verdere verwerking toe. Het inlezen van data uit Max/MSP gebeurt op een fundamenteel andere manier die niet door de klasse \texttt{AudioDispatcher} ondersteund wordt. Daarom is er in dit onderzoek nog een extra abstractielaag ontwikkeld waarmee het mogelijk wordt om zowel \texttt{AudioDispatchers} als Max/MSP streams op dezelfde manier aan te spreken en te verwerken. Figuur \ref{StreamUml} toont de \texttt{Stream} interface en de klassen die deze interface implementeren. De methodes van de interface worden in de concrete klassen niet herhaald maar zijn uiteraard wel aanwezig.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
@@ -495,23 +500,23 @@ Figuur \ref{streamStorage} toont een klassendiagram van hoe de streams intern wo
 
 In de introductie van deze thesis (sectie \ref{target-ui}) is er geschreven dat er voor het volledige synchronisatieproces een gebruiksvriendelijke interface ontwikkeld zal worden. Deze interface moet het voor musicologen/onderzoekers mogelijk maken om \texttt{StreamSets} aan te maken en te synchroniseren zonder het schrijven van één lijn code.
 
-Een heel flexibele manier om dit te doen is door het schrijven van één of meerdere Max/MSP modules. Hierbij wordt de gebruiker niet in een hokje geduwd van wat een stream precies moet zijn of hoe het moet worden ingelezen. Bij deze benadering is het een garantie dat elk Max/MSP signaal vergezelt van een synchrone audiostream gesynchroniseerd kan worden. Max/MSP ondersteund standaard het inlezen van bestanden en microfoons.
+Een heel flexibele manier om dit te doen is door het schrijven van één of meerdere Max/MSP modules. Hierbij wordt de gebruiker niet in een hokje geduwd van wat een stream precies moet zijn of hoe het moet worden ingelezen. Bij deze benadering is het een garantie dat elk Max/MSP signaal vergezeld van een synchrone audiostream gesynchroniseerd kan worden. Max/MSP ondersteunt standaard het inlezen van bestanden en microfoons.
 
-Problematisch is het feit dat de streams afkomstig van Teensy microcontrollers standaard niet kunnen worden aangesproken vanuit een Max/MSP context. Aangezien dit voor dit onderzoek een vereiste is zal hier ook een module voor geschreven moeten worden.
+Problematisch is het feit dat de streams afkomstig van Teensy microcontrollers standaard niet kunnen worden aangesproken vanuit een Max/MSP context. Aangezien dit voor dit onderzoek een vereiste werd hiervoor een module geschreven.
 
 \subsection{Inlezen van de Teensy microcontroller}
 \label{teensy-reader}
 
 De klasse \texttt{TeensyReader} bevat de implementatie van een Max/MSP module waarmee signalen afkomstig van Teensy microcontrollers kunnen worden ingelezen. Het aanmaken van het object kan met volgende code:\\
-\mbox{\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader <<parameters>>}}.\\De module verwacht 1 optionele en 4 verplichte parameters:
+\mbox{\texttt{mxj\textapprox\ be.signalsync.msp.TeensyReader <<parameters>>}}.\\De module verwacht één optionele en vier verplichte parameters:
 
 \begin{description}	
 	\item\textbf{Poort} \hfill \\
-	De COM-poort waarmee de Teensy microcontroller communiceert met de computer. Wanneer de naam van de poort bekend is kan deze hier letterlijk worden opgegeven. Het is ook mogelijk om een index (vanaf 0) op te geven die. Indien er 3 microcontrollers zijn aangesloten kan er 0, 1 of 2 worden opgegeven. Deze parameter kan ook worden weggelaten. In dat geval wordt automatisch de Teensy met index 0 gekozen.
+	De COM-poort waarmee de Teensy microcontroller communiceert met de computer. Wanneer de naam van de poort bekend is kan deze hier letterlijk worden opgegeven. Het is ook mogelijk om een index (vanaf 0) op te geven. Indien er 3 microcontrollers zijn aangesloten kan er 0, 1 of 2 worden opgegeven. Deze parameter kan ook worden weggelaten. In dat geval wordt automatisch de Teensy met index 0 gekozen.
 	\item\textbf{Samplefrequentie} \hfill \\
 	Dit is de samplefrequentie in Hertz waaraan de Teensy microcontroller met de computer communiceert. Alle binnenkomende signalen worden geresampled naar de samplefrequentie van Max/MSP. De meest courante waarden zijn 8000 of 11025. 
 	
-	Het is aangeraden (maar geen vereiste) om de Max/MSP samplefrequentie in te stellen op een veelvoud van de Teensy samplefrequentie. Dit vereenvoudigd het resamplingproces en heeft een positieve invloed op de geluidskwaliteit.
+	Het is aangeraden (maar geen vereiste) om de Max/MSP samplefrequentie in te stellen op een veelvoud van de Teensy samplefrequentie. Dit vereenvoudigt het resamplingproces en heeft een positieve invloed op de geluidskwaliteit.
 	
 	\item\textbf{Startkanaal} \hfill \\
 	De index van de eerste analoge pin waarvan het signaal moet worden ingelezen. Indien het eerste in te lezen signaal zich op pin A3 bevindt, dan moet deze parameter worden ingesteld met waarde 3.
@@ -523,11 +528,11 @@ De klasse \texttt{TeensyReader} bevat de implementatie van een Max/MSP module wa
 	Deze parameter stelt het aantal in te lezen kanalen in.
 \end{description}
 
-De parameters dienen als een door spaties gescheiden lijst te worden meegegeven aan de module. Na het valideren van de parameters wordt de module aangemaakt. Het aantal uitgaande verbindingen van deze module wordt bepaald door de laatste parameter.
+Na het valideren van de parameters wordt de module aangemaakt. Het aantal uitgaande verbindingen van deze module wordt bepaald door de laatste parameter.
 
 \begin{figure}[h!]
 	\captionsetup{width=0.8\textwidth}
-	\caption{Screenshot van de TeensyReader in Max/MSP.}
+	\caption{Screenshot van de \texttt{TeensyReader} in Max/MSP.}
 	\begin{center}
 		\advance\parskip0.3cm
 		\includegraphics[width=0.4\textwidth]{TeensyReader.png}
@@ -535,13 +540,13 @@ De parameters dienen als een door spaties gescheiden lijst te worden meegegeven 
 	\label{teensyReader}
 \end{figure}
 
-Figuur \ref{teensyReader} toont de TeensyReader waarbij de Teensy samplet aan een frequentie van $8000Hz$. De microfoon is aangesloten op pin A1, de infraroodsensor is aangesloten op pin A0. De links scope module toont het signaal van de infraroodsensor, de rechtse module toont de geluidsgolf.
+Figuur \ref{teensyReader} toont de \texttt{TeensyReader} waarbij de Teensy samplet aan een frequentie van $8000Hz$. De microfoon is aangesloten op pin A1, de infraroodsensor is aangesloten op pin A0. De links scope module toont het signaal van de infraroodsensor, de rechtse module toont de geluidsgolf.
 
 \subsubsection{Implementatie}
 
 Een Max/MSP module kan in Java geschreven worden door een klasse te laten overerven van \texttt{MSPPerformer}. Bij de constructie worden de \textit{outlets} (de uitgaande verbindingen) geïnitialiseerd en wordt er een \texttt{TeensyDAQ} object aangemaakt. Dit is een object uit afkomstig uit de \texttt{TeensyDAQ} bibliotheek ontwikkeld aan het IPEM. Deze bibliotheek biedt een low-level interface naar de Teensy microcontroller aan. Na het aanmaken van dit object registreert de module zich als \textit{handler}. Om dit mogelijk te maken wordt de methode \texttt{handle} van de interface \texttt{DAQDataHandler} geïmplementeerd. Na het registreren wordt deze methode consequent opgeroepen met samples afkomstig van de Teensy microcontroller. Deze samples worden vervolgens gebufferd.
 
-Een klasse die overerft van \texttt{MSPPerformer} moet de methode \texttt{perform} implementeren. In deze methode worden de samples uit de buffers gehaald, geresamplet naar de Max/MSP samplefrequentie en verstuurd naar de outlets.
+Een klasse die overerft van \texttt{MSPPerformer} moet de methode \texttt{perform} implementeren. In deze methode worden de samples uit de buffers gehaald, geresampled naar de Max/MSP samplefrequentie en verstuurd naar de outlets.
 
 \subsection{De synchronisatiemodule}
 \label{sync-module}
@@ -550,9 +555,9 @@ De tweede module zal de synchronisatie van de streams verzorgen en is geïmpleme
 
 \subsubsection{Instellen van de stream structuur}
 
-De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters 'a' en 'd'. Elk door komma's gesplitst deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters 'a' en 'd' respectievelijk voor audiostream en datastream staan. Per deel mag maar eenmaal de letter 'a' voorkomen. De volledige tekenreeks  (de verzameling van alle \texttt{StreamGroups}) stelt de structuur van een \texttt{StreamSet} voor onderverdeeld in \texttt{StreamGroups}.
+De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters 'a' en 'd'. Elk door komma's gesplitst deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters 'a' en 'd' respectievelijk voor audiostream en datastream staan. Per deel mag maar eenmaal de letter 'a' voorkomen.
 
-Dit zou een mogelijke parameter voor deze module kunnen zijn: \texttt{addd,dad}. De eerste \texttt{StreamGroup} bestaat uit 4 streams waarbij de synchronisatie met de eerste stream zal worden uitgevoerd. De tweede \texttt{StreamGroup} bestaat uit 3 streams. De tweede stream stelt hierbij de audiostream voor.
+Een mogelijke waarde voor de parameter is \texttt{addd,dad}. De eerste \texttt{StreamGroup} bestaat uit 4 streams waarbij de synchronisatie met de eerste stream zal worden uitgevoerd. De tweede \texttt{StreamGroup} bestaat uit 3 streams met de tweede stream als audiostream. De volledige tekenreeks  (de verzameling van alle \texttt{StreamGroups}) stelt de structuur van een \texttt{StreamSet} voor onderverdeeld in \texttt{StreamGroups}.
 
 Figuur \ref{maxStreamSync} toont hoe deze module gebruikt moet worden in combinatie met de \texttt{TeensyReader}. De audiostream \textit{outlets} (bepaald door de vierde parameter van de twee \texttt{TeensyReaders}) worden verbonden met de audiostream \textit{inlets} van de \texttt{Sync} module (bepaald door de letters 'a' van de parameter).
 

@@ -37,7 +37,7 @@ Zoals in de figuur te zien is bevat \texttt{Slicer} een verzameling van geïnter
 	\label{streamSlicer}
 \end{figure}
 
-Een \texttt{StreamSlicer} is een subklasse van \texttt{Slicer} die de data afkomstig van een stream opdeelt in \texttt{float} arrays van een welbepaalde lengte. Om toegang te krijgen tot de data van een \texttt{Stream} implementeert de \texttt{StreamSlicer} de interface \texttt{StreamProcessor}. Via \texttt{process} krijgt deze klasse opeenvolgende \texttt{float} arrays met samples binnen die worden opgeslagen in buffers. Wanneer er een slice gereed is worden de buffers samengevoegd tot één float array en wordt \texttt{emitSliceEvent} van de superklasse \texttt{Slicer} opgeroepen. Wanneer \texttt{processingFinished} wordt opgeroepen en de stream dus geen data meer beschikbaar heeft, dan wordt \texttt{emitDoneEvent} zodat alle \texttt{StreamListeners} hiervan op de hoogte zijn.
+Een \texttt{StreamSlicer} is een subklasse van \texttt{Slicer} die de data afkomstig van een stream opdeelt in \texttt{float} arrays van een welbepaalde lengte. Om toegang te krijgen tot de data van een \texttt{Stream} implementeert de \texttt{StreamSlicer} de interface \texttt{StreamProcessor}. Via \texttt{process} krijgt deze klasse opeenvolgende \texttt{float} arrays met samples binnen die worden opgeslagen in buffers. Wanneer er een slice gereed is worden de buffers samengevoegd tot één float array en wordt \texttt{emitSliceEvent} van de superklasse \texttt{Slicer} opgeroepen. Wanneer \texttt{processingFinished} wordt opgeroepen en de stream dus geen data meer beschikbaar heeft, dan wordt \texttt{emitDoneEvent} opgeroepen zodat alle \texttt{StreamListeners} hiervan op de hoogte zijn.
 
 Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en interfaces. Sommige low-level methoden en attributen zijn hierbij weggelaten. 
 
@@ -66,7 +66,7 @@ Figuur \ref{streamSetSlicer} toont een vrij abstract klassendiagram van de \text
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram van de klassen met de synchronisatiealgoritmen.}
+	\caption{UML diagram van de klassen met synchronisatiealgoritmen.}
 	\begin{center}
 		\advance\parskip0.3cm
 		\input{figuren/algorithmsUML}
@@ -74,17 +74,15 @@ Figuur \ref{streamSetSlicer} toont een vrij abstract klassendiagram van de \text
 	\label{SyncStrategyUML}
 \end{figure}
 
-De synchronisatiealgoritmen bevinden zich in subklassen van \texttt{SyncStrategy}. Deze klasse bevat een abstracte methode \texttt{findLatencies}. Deze methode ontvangt als parameter een lijst van \texttt{float} arrays waarbij elke array de samples bevat van één slice bevat. Na het uitvoeren geeft de methode een lijst terug met daarin de latencies in seconden ten opzichte van de eerste slice uit de lijst.
+De synchronisatiealgoritmen bevinden zich in subklassen van \texttt{SyncStrategy}. Deze klasse bevat een abstracte methode \texttt{findLatencies}. Deze methode ontvangt als parameter een lijst van \texttt{float} arrays waarbij elke array de samples bevat van één slice bevat. Na het uitvoeren geeft de methode een lijst met \texttt{LatencyResults} terug.
 
-\texttt{SyncStrategy} bevat ook enkele statische methodes waarmee de verschillende mogelijke strategieën gemakkelijk kunnen worden aangemaakt. De parameters die aan de constructoren moeten worden meegegeven worden uit het configuratiebestand gehaald.
+\texttt{SyncStrategy} bevat ook enkele statische methodes waarmee de verschillende mogelijke strategieën gemakkelijk kunnen worden aangemaakt. De parameters die aan de constructoren moeten worden meegegeven worden uit het configuratiebestand gehaald. 
 
-Figuur \ref{SyncStrategyUML} toont het UML diagram van deze klasse en haar subtypen. 
+De klasse \texttt{CrossCovarianceSyncStrategy} bevat een instantie van \texttt{FingerprintSyncStrategy} om de geleverde resultaten te kunnen verfijnen. Beide klassen erven over van \texttt{SyncStrategy}.
 
-\subsubsection{Het fingerprinting algoritme}
-Het fingerprinting algoritme wordt geïmplementeerd in de klasse \texttt{FingerprintSyncStrategy}. Buiten de implementatie van \texttt{findLatencies} bevat deze klasse nog een andere publieke methode namelijk \texttt{getResults}. Deze methode is vergelijkbaar met \texttt{findLatencies} maar geeft de resultaten in een meer low-level formaat terug. In volgend paragraaf zal duidelijk worden waarvoor deze methode gebruikt wordt.
+De klasse \texttt{CrossCovarianceSyncStrategy} bevat informatie over de bepaalde latency.
 
-\subsubsection{Het kruiscovariantie algoritme}
-De klasse \texttt{CrossCovarianceSyncStrategy} bevat een implementatie van het kruiscovariantie algoritme. De klasse bevat een instantie van \texttt{FingerprintSyncStrategy} waarmee de ruwe latency wordt berekend. Eerst wordt de methode \texttt{getResults} opgeroepen, deze methode geeft een lijst terug met per stream de ruwe verschuiving in aantal samples. Het kruiscovariantie algoritme heeft deze informatie nodig om op efficiënte wijze het resultaat te kunnen verfijnen.
+Figuur \ref{SyncStrategyUML} toont het UML diagram van de besproken klassen.
 
 \section*{Bepalen van de latency}
 
@@ -102,7 +100,7 @@ De klasse \texttt{RealtimeSignalSync} is verantwoordelijk voor het aanroepen van
 
 Een \texttt{RealtimeSignalSync} object wordt aangemaakt door aan de constructor een \texttt{StreamSet} object mee te geven dat de te synchroniseren streams bevat. Vervolgens wordt er met behulp van de methode \texttt{createSlicer} een \texttt{StreamSetSlicer} object aangemaakt. Aangezien \texttt{SliceListener} geïmplementeerd wordt kan \texttt{RealtimeSignalSync} zich registreren als geïnteresseerd object.
 
-Wanneer er voor elke \texttt{StreamGroup} een slice beschikbaar is wordt de methode \texttt{onSliceEvent} opgeroepen. In deze methode wordt het \texttt{SyncStrategy} object gebruikt om de latencies te bepalen. Optioneel kunnen deze resultaten ook nog gefilterd worden (het ontwerp hiervan wordt in \ref{filterontwerp} besproken). Ten slotte worden de resultaten naar alle geregistreerde \texttt{SyncEventListeners} verstuurd via de private methode \texttt{emitSyncEvent}. Geïnteresseerden kunnen zich registreren via de \texttt{addEventListener} methode. Deze werkwijze leunt net zoals het \textit{slice event} mechanisme aan bij het \textit{observer} ontwerppatroon.
+Wanneer er voor elke \texttt{StreamGroup} een slice beschikbaar is wordt de methode \texttt{onSliceEvent} opgeroepen. In deze methode wordt het \texttt{SyncStrategy} object gebruikt om de latencies te bepalen. Optioneel kunnen deze resultaten ook nog gefilterd worden. Ten slotte worden de resultaten naar alle geregistreerde \texttt{SyncEventListeners} verstuurd via de private methode \texttt{emitSyncEvent}. Geïnteresseerden kunnen zich registreren via de \texttt{addEventListener} methode. Deze werkwijze leunt net zoals het \textit{slice event} mechanisme aan bij het \textit{observer} ontwerppatroon.
 
 \subsubsection{Het starten van de synchronisatie}
 
