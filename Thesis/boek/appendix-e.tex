@@ -1,7 +1,7 @@
 \chapter{Handleiding voor ontwikkelaars}
 \label{appendix-e}
 
-Deze handleiding is bedoeld voor ontwikkelaars en bestaat uit twee delen. Het eerste deel is bedoeld voor mensen die de synchronisatiebibliotheek willen gebruiken in eigen projecten zonder de broncode te wijzigen. Het tweede deel legt uit hoe de bibliotheek aangepast kan worden. In dit deel wordt er ook aandacht besteedt aan hoe er bijvoorbeeld gedebugd kan worden.
+Deze handleiding is bedoeld voor ontwikkelaars en bestaat uit twee delen. Het eerste deel is bedoeld voor mensen die de synchronisatiebibliotheek willen gebruiken in eigen projecten zonder de broncode te wijzigen. Het tweede deel legt uit hoe de bibliotheek aangepast kan worden.
 
 Het volledige project is openbaar beschikbaar op \url{https://github.com/wardva/SignalSync}. Het Java-project bevindt zich in de map \textbf{SignalSync}.
 
@@ -9,7 +9,7 @@ Het volledige project is openbaar beschikbaar op \url{https://github.com/wardva/
 
 \subsection*{De softwarebibliotheek importeren in Eclipse}
 
-Vooraleer er van start kan worden gegaan moeten moet het zip-bestand met de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC JAR bestanden worden gedownload van het volgende (publieke) GitHub repository: \url{https://github.com/wardva/SignalSync/tree/master/Dist}. Pak vervolgens het zip-bestand uit.
+Vooraleer er van start kan worden gegaan moeten de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC JAR bestanden worden gedownload van het volgende (publieke) GitHub repository: \url{https://github.com/wardva/SignalSync/tree/master/Dist}. Deze bestanden bevinden zich ook in een Zip bestand dat rechtstreeks gedownload van volgende URL: \url{https://github.com/wardva/SignalSync/raw/master/Dist/SignalSync.zip}
 
 Maak vervolgens het Java-project aan in Eclipse dat gebruik zal maken van de softwarebibliotheek. Ga hierna naar de properties van het project, selecteer links \textbf{Java Build Path} en klik op de tab \textbf{Libraries}. Klik vervolgens op de knop \textbf{Add External JARs}. Ga nu op zoek naar \texttt{signalsync.jar}, \texttt{jssc.jar} en \texttt{jssc-2.7.0-src.jar} en voeg ze toe aan het project. Let erop dat het configuratiebestand zich steeds in dezelfde map bevindt als de JAR bestanden.
 
@@ -36,11 +36,11 @@ Om te beginnen moeten er enkele streams worden aangemaakt. In dit voorbeeld zal 
 \begin{lstlisting}
 //Een AudioDispatcher aanmaken van een microfoon
 AudioDispatcher micDispatcher =
-AudioDispatcherFactory.fromDefaultMicrophone(512, 0);
+	AudioDispatcherFactory.fromDefaultMicrophone(512, 0);
 
 //AudioDispatcher wrappen in een Stream
 Stream micStream = 
-new AudioDispatcherStream(micDispatcher);
+	new AudioDispatcherStream(micDispatcher);
 
 //Datastream koppelen aan microfoon
 Stream dataStreamAttachedToMicrophone = ...
@@ -48,11 +48,11 @@ Stream dataStreamAttachedToMicrophone = ...
 //Een AudioDispatcher aanmaken van een bestand
 File file = new File("recorded.wav");
 AudioDispatcher fileDispatcher = 
-AudioDispatcherFactory.fromFile(file, 512, 0);
+	AudioDispatcherFactory.fromFile(file, 512, 0);
 
 //AudioDispatcher wrapper in een Stream
 Stream fromFileStream = 
-new AudioDispatcherStream(fileDispatcher);	
+	new AudioDispatcherStream(fileDispatcher);	
 \end{lstlisting}
 \newpage
 Vervolgens moeten de streams gegroepeerd worden in \texttt{StreamGroup} objecten waarin wordt aangegeven welke audiostream gebruikt wordt voor de synchronisatie. Deze objecten worden verpakt in een \texttt{StreamSet}. \\
@@ -100,6 +100,8 @@ allStreams.start();
 \section*{Wijzigen van de broncode}
 
 \subsection*{Project importeren in Eclipse}
+
+De gemakkelijkste manier om de broncode van het project binnen te halen is door het volledige GitHub repository te clonen. De kans is wel groot dat hierbij ook heel wat onnodige bestanden gedownload worden (zoals de broncode van deze thesis). De StackOverflow post \url{http://stackoverflow.com/a/13738951/1264345} beschrijft een methode om dit te omzeilen. 
 
 Na het binnenhalen van het project kan de map \textbf{SignalSync} geïmporteerd worden in Eclipse. Maak hiervoor een nieuw Java project aan en wijzig de \textit{default location} in het pad van \textbf{SignalSync}. Na het importeren zullen enkele foutmeldingen te zien zijn wegens gebroken afhankelijkheden. 
 

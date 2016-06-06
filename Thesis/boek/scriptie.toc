@@ -121,9 +121,8 @@
 \contentsline {subsubsection}{Gebufferde filters}{79}{section*.83}
 \contentsline {chapter}{\numberline {C}Praktijktest: opstelling}{80}{Bijlage.a.C}
 \contentsline {chapter}{\numberline {D}Gebruikershandleiding}{83}{Bijlage.a.D}
-\contentsline {section}{\numberline {D.1}Downloaden van de bestanden}{83}{section.a.D.1}
 \contentsline {chapter}{\numberline {E}Handleiding voor ontwikkelaars}{86}{Bijlage.a.E}
 \contentsline {section}{\numberline {E.1}Gebruiken van de broncode}{86}{section.a.E.1}
-\contentsline {subsubsection}{Koppelen van de broncode}{87}{section*.98}
-\contentsline {subsubsection}{Koppelen van de Javadoc}{87}{section*.99}
-\contentsline {chapter}{Referentielijst}{94}{chapter*.108}
+\contentsline {subsubsection}{Koppelen van de broncode}{87}{section*.99}
+\contentsline {subsubsection}{Koppelen van de Javadoc}{87}{section*.100}
+\contentsline {chapter}{Referentielijst}{94}{chapter*.109}
