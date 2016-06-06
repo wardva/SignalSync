@@ -51,13 +51,13 @@
 \contentsline {subsection}{\numberline {3.1.6}SoX}{28}{subsection.3.1.6}
 \contentsline {subsection}{\numberline {3.1.7}Sonic Visualiser}{28}{subsection.3.1.7}
 \contentsline {subsection}{\numberline {3.1.8}Audacity}{29}{subsection.3.1.8}
-\contentsline {subsection}{\numberline {3.1.9}Max/MSP}{29}{subsection.3.1.9}
-\contentsline {subsection}{\numberline {3.1.10}Teensy}{31}{subsection.3.1.10}
+\contentsline {subsection}{\numberline {3.1.9}Max/MSP}{30}{subsection.3.1.9}
+\contentsline {subsection}{\numberline {3.1.10}Teensy}{30}{subsection.3.1.10}
 \contentsline {section}{\numberline {3.2}Acoustic fingerprinting}{31}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Optimalisaties}{32}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.1}Optimalisaties}{31}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Parameters en hun invloed op het algoritme}{32}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}Optimale instellingen}{34}{subsection.3.2.3}
-\contentsline {section}{\numberline {3.3}Kruiscovariantie}{36}{section.3.3}
+\contentsline {subsection}{\numberline {3.2.3}Optimale instellingen}{33}{subsection.3.2.3}
+\contentsline {section}{\numberline {3.3}Kruiscovariantie}{35}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Integratie met acoustic fingerprinting}{36}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Optimalisaties}{38}{subsection.3.3.2}
 \contentsline {subsubsection}{Bugfixes}{38}{section*.41}
@@ -65,25 +65,25 @@
 \contentsline {subsection}{\numberline {3.3.3}Parameters en hun invloed op het algoritme}{39}{subsection.3.3.3}
 \contentsline {subsection}{\numberline {3.3.4}Optimale instellingen}{40}{subsection.3.3.4}
 \contentsline {section}{\numberline {3.4}Filteren van de resultaten}{41}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Werking}{42}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.1}Werking}{41}{subsection.3.4.1}
 \contentsline {subsection}{\numberline {3.4.2}Voorbeelden}{42}{subsection.3.4.2}
-\contentsline {subsubsection}{Moving average filter}{43}{section*.45}
+\contentsline {subsubsection}{Moving average filter}{42}{section*.45}
 \contentsline {subsubsection}{Moving median filter}{43}{section*.47}
 \contentsline {subsection}{\numberline {3.4.3}Parameters}{44}{subsection.3.4.3}
 \contentsline {subsection}{\numberline {3.4.4}Gevolgen}{44}{subsection.3.4.4}
 \contentsline {section}{\numberline {3.5}Ontwerp van de softwarebibliotheek}{45}{section.3.5}
 \contentsline {subsection}{\numberline {3.5.1}Streams}{46}{subsection.3.5.1}
-\contentsline {subsubsection}{AudioDispatcherStream}{47}{section*.50}
-\contentsline {subsubsection}{MSPStream}{48}{section*.51}
+\contentsline {subsubsection}{AudioDispatcherStream}{46}{section*.50}
+\contentsline {subsubsection}{MSPStream}{47}{section*.51}
 \contentsline {subsubsection}{Het verwerken van streams}{48}{section*.52}
-\contentsline {subsubsection}{Het bijhouden van streams}{49}{section*.54}
+\contentsline {subsubsection}{Het bijhouden van streams}{48}{section*.54}
 \contentsline {section}{\numberline {3.6}Max/MSP modules}{50}{section.3.6}
-\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{51}{subsection.3.6.1}
+\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{50}{subsection.3.6.1}
 \contentsline {subsubsection}{Implementatie}{52}{section*.57}
 \contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{53}{subsection.3.6.2}
 \contentsline {subsubsection}{Instellen van de stream structuur}{53}{section*.58}
-\contentsline {subsubsection}{Implementatie}{54}{section*.60}
-\contentsline {subsection}{\numberline {3.6.3}Andere modules}{55}{subsection.3.6.3}
+\contentsline {subsubsection}{Implementatie}{53}{section*.60}
+\contentsline {subsection}{\numberline {3.6.3}Andere modules}{54}{subsection.3.6.3}
 \contentsline {chapter}{\numberline {4}Evaluatie}{56}{chapter.4}
 \contentsline {section}{\numberline {4.1}Testen van de algoritmes}{57}{section.4.1}
 \contentsline {subsection}{\numberline {4.1.1}Aanmaken van de dataset}{57}{subsection.4.1.1}

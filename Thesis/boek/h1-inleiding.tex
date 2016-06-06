@@ -92,7 +92,7 @@ De beperkte resources van een microcontroller kan voor problemen zorgen bij het 
 
 \subsubsection{Detecteren van drift}
 
-Elke stream heeft een eigen samplefrequentie. Het is belangrijk dat de samplefrequentie gekend is om de gegevens correct en precies te kunnen verwerken. Het kan echter voorvallen dat de samplefrequentie bij de verwerking op microcontrollers toch niet zo nauwkeurig bepaald is. Een stream waarbij de samplefrequentie $ 1Hz $ afwijkt van de theoretische waarde zal na 60 seconden een latency hebben opgebouwd van 60 samples. Bij een samplefrequentie van 8000 Hz komt dit overeen met $7.5 ms$.\footnote{Berekening: $ 60 / 8000 Hz = 0.0075 s = 7.5 ms $} Dit probleem mag zeker niet worden verwaarloosd. 
+Elke stream heeft een eigen samplefrequentie. Het is belangrijk dat de samplefrequentie gekend is om de gegevens correct en precies te kunnen verwerken. Het kan echter voorvallen dat de samplefrequentie bij de verwerking op microcontrollers toch niet zo nauwkeurig bepaald is. Een stream waarbij de samplefrequentie $ 1Hz $ afwijkt van de theoretische waarde zal na 60 seconden een latency hebben opgebouwd van 60 samples. Bij een samplefrequentie van $8000 Hz$ komt dit overeen met $7.5 ms$.\footnote{Berekening: $ 60 / 8000 Hz = 0.0075 s = 7.5 ms $} Dit probleem mag zeker niet worden verwaarloosd. 
 
 \section{Bestaande methoden}
 \label{bestaande-methoden}
