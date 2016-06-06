@@ -1,29 +1,125 @@
 \chapter{Handleiding voor ontwikkelaars}
 \label{appendix-e}
 
-Deze handleiding is bedoeld voor mensen die de code van synchronisatiebibliotheek of de Max/MSP modules willen analyseren of wijzigen. Het volledige project is openbaar beschikbaar op \url{https://github.com/wardva/SignalSync}. Het Java-project bevindt zich in de map \textbf{SignalSync}.
+Deze handleiding is bedoeld voor ontwikkelaars en bestaat uit twee delen. Het eerste deel is bedoeld voor mensen die de synchronisatiebibliotheek willen gebruiken in eigen projecten zonder de broncode te wijzigen. Het tweede deel legt uit hoe de bibliotheek aangepast kan worden. In dit deel wordt er ook aandacht besteedt aan hoe er bijvoorbeeld gedebugd kan worden.
 
-\section*{Project importeren in Eclipse}
+Het volledige project is openbaar beschikbaar op \url{https://github.com/wardva/SignalSync}. Het Java-project bevindt zich in de map \textbf{SignalSync}.
+
+\section{Gebruiken van de broncode}
+
+\subsection*{De softwarebibliotheek importeren in Eclipse}
+
+Vooraleer er van start kan worden gegaan moeten moet het zip-bestand met de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC JAR bestanden worden gedownload van het volgende (publieke) GitHub repository: \url{https://github.com/wardva/SignalSync/tree/master/Dist}. Pak vervolgens het zip-bestand uit.
+
+Maak vervolgens het Java-project aan in Eclipse dat gebruik zal maken van de softwarebibliotheek. Ga hierna naar de properties van het project, selecteer links \textbf{Java Build Path} en klik op de tab \textbf{Libraries}. Klik vervolgens op de knop \textbf{Add External JARs}. Ga nu op zoek naar \texttt{signalsync.jar}, \texttt{jssc.jar} en \texttt{jssc-2.7.0-src.jar} en voeg ze toe aan het project. Let erop dat het configuratiebestand zich steeds in dezelfde map bevindt als de JAR bestanden.
+
+\subsection*{Broncode en documentatie koppelen aan project}
+
+\texttt{signalsync.jar} bevat de broncode en Javadoc van de softwarebibliotheek. Deze bestanden kunnen aan een bestaand Eclipse project gekoppeld worden waardoor het mogelijk wordt om tijdens het ontwikkelen gebruik te maken van deze informatie. Dit kan worden verwezenlijkt door in de eerder besproken \textbf{Libraries} tab op zoek te gaan naar \texttt{signalsync.jar} en dit item uit te klappen. 
+
+\subsubsection{Koppelen van de broncode}
+
+Selecteer \textbf{Source attachment} en klik op \textbf{edit}. Selecteer \textbf{External location} en ga vervolgens op zoek naar \texttt{signalsync.jar}.
+
+\subsubsection{Koppelen van de Javadoc}
+
+Selecteer \textbf{Javadoc location} en klik op \textbf{edit}. Selecteer \textbf{Javadoc in archive}. Blader vervolgens bij \textbf{Archive path} naar de locatie van \texttt{signalsync.jar}. Blader en selecteer bij \textbf{Path within archive} het mapje \textbf{doc} in het JAR bestand.
+
+\section*{Aanmaken en synchroniseren van streams}
+
+Hoe de streams aangemaakt en gesynchroniseerd kunnen worden in het gemakkelijkst uit te leggen aan de hand van een voorbeeld. In het volgende voorbeeld worden enkele streams aangemaakt en wordt de latency ertussen bepaald. Meer informatie over de TarsosDSP \texttt{AudioDispatchers} is te vinden in artikel \cite{six2014tarsosdsp}.
+
+Om te beginnen moeten er enkele streams worden aangemaakt. In dit voorbeeld zal gebruik gemaakt worden van \texttt{AudioDispatcherStreams}. \\
+
+\lstset{basicstyle=\footnotesize,style=javaStyle}
+
+\begin{lstlisting}
+//Een AudioDispatcher aanmaken van een microfoon
+AudioDispatcher micDispatcher =
+AudioDispatcherFactory.fromDefaultMicrophone(512, 0);
+
+//AudioDispatcher wrappen in een Stream
+Stream micStream = 
+new AudioDispatcherStream(micDispatcher);
+
+//Datastream koppelen aan microfoon
+Stream dataStreamAttachedToMicrophone = ...
+
+//Een AudioDispatcher aanmaken van een bestand
+File file = new File("recorded.wav");
+AudioDispatcher fileDispatcher = 
+AudioDispatcherFactory.fromFile(file, 512, 0);
+
+//AudioDispatcher wrapper in een Stream
+Stream fromFileStream = 
+new AudioDispatcherStream(fileDispatcher);	
+\end{lstlisting}
+\newpage
+Vervolgens moeten de streams gegroepeerd worden in \texttt{StreamGroup} objecten waarin wordt aangegeven welke audiostream gebruikt wordt voor de synchronisatie. Deze objecten worden verpakt in een \texttt{StreamSet}. \\
+
+\begin{lstlisting}
+//Per gekoppelde groep streams een StreamGroup aanmaken
+StreamGroup micGroup = new StreamGroup();
+micGroup.setDescription("The microphone streamgroup");
+micGroup.setAudioStream(micStream);
+micGroup.addDataStream(dataStreamAttachedToMicrophone);
+
+StreamGroup fileGroup = new StreamGroup();
+fileGroup.setDescription("The file streamgroup");
+fileGroup.setAudioStream(fromFileStream);
+
+//Van alle StreamGroups een StreamSet aanmaken
+StreamSet allStreams = new StreamSet();
+allStreams.addStreamGroup(micGroup);
+allStreams.addStreamGroup(fileGroup);
+\end{lstlisting}
+
+De \texttt{StreamSet} kan vervolgens worden meegegeven aan een \texttt{RealtimeSignalSync} object dat de synchronisatie (bepalen van de latency) op zich neemt. Ook wordt er een anonieme \texttt{SyncEventListener} aangemaakt. Op de allerlaatste lijn worden alle streams opgestart.  \\
+
+\begin{lstlisting}
+RealtimeSignalSync syncer = new RealtimeSignalSync(allStreams);
+
+//Een anonieme inner-class registeren als SyncEventListener.
+syncer.addEventListener(new SyncEventListener() {
+	@Override
+	public void onSyncEvent(Map<StreamGroup, LatencyResult> l) {
+		//Resultaten afdrukken
+		for(Entry<StreamGroup, LatencyResult> entry : l.entrySet()) 
+		{
+			StreamGroup group = entry.getKey();
+			LatencyResult result = entry.getValue();
+			System.out.println(group.getDescription());
+			System.out.println(result.toString());
+		}
+	}
+});
+//Alle streams starten
+allStreams.start();
+\end{lstlisting}
+
+\section*{Wijzigen van de broncode}
+
+\subsection*{Project importeren in Eclipse}
 
 Na het binnenhalen van het project kan de map \textbf{SignalSync} geïmporteerd worden in Eclipse. Maak hiervoor een nieuw Java project aan en wijzig de \textit{default location} in het pad van \textbf{SignalSync}. Na het importeren zullen enkele foutmeldingen te zien zijn wegens gebroken afhankelijkheden. 
 
 Het project is afhankelijk van volgende softwarebibliotheken: TarsosDSP, Panako en TeensyDAQ. De TarsosDSP broncode kan gedownload worden van \url{https://github.com/JorenSix/TarsosDSP}, de Panako broncode van \url{http://panako.be/releases/Panako-latest/readme.html} en de TeensyDAQ broncode van \url{https://github.com/JorenSix/TeensyDAQ}. 
 
 Na het importeren van deze projecten in eclipse en het instellen van de projecten als \textit{reference project} moeten er nog enkele JAR bestanden worden toegevoegd. 
-\newpage
+
 \textbf{jssc-2.7.0.jar}, deze bibliotheek is te downloaden van: \url{https://code.google.com/archive/p/java-simple-serial-connector/downloads}.
 
 \textbf{max.jar}, deze bibliotheek bevindt zich in de Max/MSP installatiemap standaard onder Windows: \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash \\ java-classes\textbackslash lib}
 
 Na het toevoegen van de \textit{references} en JAR bestanden zouden de foutmeldingen moeten verdwijnen.
 
-\section*{Het project koppelen aan Max/MSP}
+\subsection*{Het project koppelen aan Max/MSP}
 
 Het zou vrij omslachtig zijn om telkens een JAR bestand te moeten genereren vooraleer een bepaalde module in Max/MSP uitgetest kan worden. Daarom is het ook mogelijk om Max/MSP te koppelen aan een map met classfiles. Hiervoor moet het configuratiebestand \texttt{max.java.config.txt} uit de Max/MSP installatiemap worden aangepast. Onder Windows bevindt het bestand zich standaard in volgende map: \texttt{C:\textbackslash Program Files\textbackslash Cycling '74\textbackslash Max 7\textbackslash resources\textbackslash packages\textbackslash max-mxj\textbackslash java-classes}.
 
 Met volgende lijn wordt er verwezen naar een map met classfiles: \texttt{max.dynamic.class.dir <<pad>>}. Hierbij moet \texttt{<<pad>>} worden vervangen door het pad van de map (backslashes escapen met een backslash). Er moet ook naar elke afhankelijkheid verwezen worden. Verwijs dus ook naar de map met classfiles van TarsosDSP en Panako. Ten slotte moet ook de jSSC JAR worden opgenomen in het bestand. Voeg daarom volgende lijn toe waarbij \texttt{<<pad>>} staat voor de map waarin zich de JAR bevindt: \texttt{max.dynamic.jar.dir <<pad>>}.
 
-\section*{Debuggen van Max/MSP modules}
+\subsection*{Debuggen van Max/MSP modules}
 
 Het is mogelijk om de broncode in Eclipse te debuggen terwijl een module in Max/MSP wordt uitgevoerd. Deze handige feature vereist wel wat configuratie.
 
@@ -66,7 +162,7 @@ Geef vervolgens de configuratie een naam en blader bij \textbf{Project} naar het
 
 Het debuggen wordt gestart door eerst de Max/MSP patch te openen en vervolgens het debuggen in Eclipse te starten met de zojuist aangemaakt debug configuratie. Bij het starten van de patch is het nu mogelijk om via breakpoints door de code navigeren.
 
-\section*{Genereren van testdata}
+\subsection*{Genereren van testdata}
 
 De bestanden die vereist zijn voor het uitvoeren van de testen bevinden zich niet in het GitHub repository maar moeten nog gegenereerd worden. 
 

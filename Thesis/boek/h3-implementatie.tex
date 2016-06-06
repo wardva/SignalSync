@@ -158,7 +158,7 @@ Deze parameter bepaalt de standaard samplefrequentie die gebruikt wordt tijdens 
 \item\texttt{NFFT\_BUFFER\_SIZE}\footnote{De letter N in NFFT heeft geen noemenswaardige betekenis. De naam is overgenomen van de gelijknamige parameter uit de Panako bibliotheek.} \hfill \\
 Dit is de grootte van de verschuivende buffer die gebruikt wordt in het FFT algoritme. Deze parameter is cruciaal aangezien de frequentiesterktes op een bepaalde plaats op de tijd\-as worden berekend per buffer. Deze parameter wordt uitgedrukt in aantal samples.
 \item\texttt{NFFT\_STEP\_SIZE} \hfill \\
-Dit is het aantal samples van elke verschuiving in het FFT algoritme. De stepsize beïnvloedt rechtstreeks de nauwkeurigheid van het acoustic fingerprinting algoritme. Wanneer deze parameter is ingesteld op 128 samples en een samplefrequentie van 8000hz dan is de maximale nauwkeurigheid $128/8000Hz = 0.016s = 16ms$.
+Dit is het aantal samples van elke verschuiving in het FFT algoritme. De stepsize beïnvloedt rechtstreeks de nauwkeurigheid van het acoustic fingerprinting algoritme. Wanneer deze parameter is ingesteld op 128 samples en een samplefrequentie van $8000Hz$ dan is de maximale nauwkeurigheid $128/8000Hz = 0.016s = 16ms$.
 \item\texttt{MIN\_ALIGNED\_MATCHES} \hfill \\
 Een match tussen twee audiofragmenten wordt pas als geldig beschouwd wanneer er een bepaald aantal matchende fingerprints met dezelfde offset gevonden zijn. Dit aantal wordt ingesteld met deze parameter.
 \item\texttt{NFFT\_MAX\_FINGERPRINTS\_PER\_EVENT\_POINT} \hfill \\
@@ -437,7 +437,7 @@ De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillend
 	
 \end{description}
 
-De complete bespreking van het ontwerp is vrij droog en uitgebreid. Enkel het ontwerp van de verschillende soorten streams zal behandeld worden. De bespreking van het volledige ontwerp van de softwarebibliotheek bevindt zich in bijlage \ref{appendix-b}.
+De complete bespreking van het ontwerp is vrij uitgebreid. Enkel het ontwerp van de verschillende soorten streams zal behandeld worden. De bespreking van het volledige ontwerp van de softwarebibliotheek bevindt zich in bijlage \ref{appendix-b}.
 
 \subsection{Streams}
 \label{streams-design}
@@ -455,7 +455,7 @@ Streams kunnen van verschillende bronnen afkomstig zijn: een microfoon, een best
 \end{figure}
 
 \subsubsection{AudioDispatcherStream}
-De klasse \texttt{AudioDispatcherStream} is een typisch voorbeeld van het \textit{Adapter} ontwerppatroon (meer informatie hierover: boek \cite{vlissides1995design}). Een bestaande klasse (\texttt{AudioDispatcher}) wordt namelijk verbonden met een nieuwe interface (\texttt{Stream}) met behulp van een adapter of \textit{wrapper} (\texttt{AudioDispatcherStream}). In de adapterklasse wordt er geen echte logica toegevoegd. De enige logica die de klasse bevat heeft als doel het mappen van de methode's van de \texttt{Stream} interface naar de klasse \texttt{AudioDispatcher}. Het attribuut \texttt{processormap} is bijvoorbeeld een \texttt{HashMap} die gebruikt wordt voor het mappen van \texttt{StreamProcessors} (eigen implementatie) naar AudioProcessors (TarsosDSP implementatie). De werking van \texttt{StreamProcessors} wordt verderop in sectie \ref{streamprocessing} besproken.
+De klasse \texttt{AudioDispatcherStream} is een typisch voorbeeld van het \textit{Adapter} ontwerppatroon \cite{vlissides1995design}. Een bestaande klasse (\texttt{AudioDispatcher}) wordt namelijk verbonden met een nieuwe interface (\texttt{Stream}) met behulp van een adapter of \textit{wrapper} (\texttt{AudioDispatcherStream}). In de adapterklasse wordt er geen echte logica toegevoegd. De enige logica die de klasse bevat heeft als doel het mappen van de methode's van de \texttt{Stream} interface naar de klasse \texttt{AudioDispatcher}. Het attribuut \texttt{processormap} is bijvoorbeeld een \texttt{HashMap} die gebruikt wordt voor het mappen van \texttt{StreamProcessors} (eigen implementatie) naar AudioProcessors (TarsosDSP implementatie). De werking van \texttt{StreamProcessors} wordt verderop in sectie \ref{streamprocessing} besproken.
 
 \subsubsection{MSPStream}
 
@@ -532,7 +532,7 @@ Na het valideren van de parameters wordt de module aangemaakt. Het aantal uitgaa
 
 \begin{figure}[h!]
 	\captionsetup{width=0.8\textwidth}
-	\caption{Screenshot van de \texttt{TeensyReader} in Max/MSP.}
+	\caption{Screenshot van de \texttt{TeensyReader} in Max/MSP aangesloten op een infraroodsensor en microfoon.}
 	\begin{center}
 		\advance\parskip0.3cm
 		\includegraphics[width=0.4\textwidth]{TeensyReader.png}
@@ -555,11 +555,11 @@ De tweede module zal de synchronisatie van de streams verzorgen en is geïmpleme
 
 \subsubsection{Instellen van de stream structuur}
 
-De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters 'a' en 'd'. Elk door komma's gesplitst deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters 'a' en 'd' respectievelijk voor audiostream en datastream staan. Per deel mag maar eenmaal de letter 'a' voorkomen.
+De module verwacht één parameter van het type \texttt{String} die beschrijft hoe de streams gestructureerd zijn. De structuur wordt voorgesteld als een door komma's gescheiden reeks van de letters '\texttt{a}' en '\texttt{d}'. Elk door komma's gesplitst deel bepaald de structuur van een \texttt{StreamGroup} waarin de letters '\texttt{a}' en '\texttt{d}' respectievelijk voor audiostream en datastream staan. Per deel mag maar eenmaal de letter '\texttt{a}' voorkomen.
 
 Een mogelijke waarde voor de parameter is \texttt{addd,dad}. De eerste \texttt{StreamGroup} bestaat uit 4 streams waarbij de synchronisatie met de eerste stream zal worden uitgevoerd. De tweede \texttt{StreamGroup} bestaat uit 3 streams met de tweede stream als audiostream. De volledige tekenreeks  (de verzameling van alle \texttt{StreamGroups}) stelt de structuur van een \texttt{StreamSet} voor onderverdeeld in \texttt{StreamGroups}.
 
-Figuur \ref{maxStreamSync} toont hoe deze module gebruikt moet worden in combinatie met de \texttt{TeensyReader}. De audiostream \textit{outlets} (bepaald door de vierde parameter van de twee \texttt{TeensyReaders}) worden verbonden met de audiostream \textit{inlets} van de \texttt{Sync} module (bepaald door de letters 'a' van de parameter).
+Figuur \ref{maxStreamSync} toont hoe deze module gebruikt moet worden in combinatie met de \texttt{TeensyReader}. De audiostream \textit{outlets} (bepaald door de vierde parameter van de twee \texttt{TeensyReaders}) worden verbonden met de audiostream \textit{inlets} van de \texttt{Sync} module (bepaald door de letters '\texttt{a}' van de parameter).
 
 \begin{figure}[h!]
 	\captionsetup{width=0.8\textwidth}

@@ -67,23 +67,23 @@
 \contentsline {section}{\numberline {3.4}Filteren van de resultaten}{41}{section.3.4}
 \contentsline {subsection}{\numberline {3.4.1}Werking}{42}{subsection.3.4.1}
 \contentsline {subsection}{\numberline {3.4.2}Voorbeelden}{42}{subsection.3.4.2}
-\contentsline {subsubsection}{Moving average filter}{42}{section*.45}
+\contentsline {subsubsection}{Moving average filter}{43}{section*.45}
 \contentsline {subsubsection}{Moving median filter}{43}{section*.47}
 \contentsline {subsection}{\numberline {3.4.3}Parameters}{44}{subsection.3.4.3}
 \contentsline {subsection}{\numberline {3.4.4}Gevolgen}{44}{subsection.3.4.4}
 \contentsline {section}{\numberline {3.5}Ontwerp van de softwarebibliotheek}{45}{section.3.5}
 \contentsline {subsection}{\numberline {3.5.1}Streams}{46}{subsection.3.5.1}
-\contentsline {subsubsection}{AudioDispatcherStream}{46}{section*.50}
-\contentsline {subsubsection}{MSPStream}{47}{section*.51}
+\contentsline {subsubsection}{AudioDispatcherStream}{47}{section*.50}
+\contentsline {subsubsection}{MSPStream}{48}{section*.51}
 \contentsline {subsubsection}{Het verwerken van streams}{48}{section*.52}
 \contentsline {subsubsection}{Het bijhouden van streams}{49}{section*.54}
 \contentsline {section}{\numberline {3.6}Max/MSP modules}{50}{section.3.6}
-\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{50}{subsection.3.6.1}
+\contentsline {subsection}{\numberline {3.6.1}Inlezen van de Teensy microcontroller}{51}{subsection.3.6.1}
 \contentsline {subsubsection}{Implementatie}{52}{section*.57}
 \contentsline {subsection}{\numberline {3.6.2}De synchronisatiemodule}{53}{subsection.3.6.2}
 \contentsline {subsubsection}{Instellen van de stream structuur}{53}{section*.58}
-\contentsline {subsubsection}{Implementatie}{53}{section*.60}
-\contentsline {subsection}{\numberline {3.6.3}Andere modules}{54}{subsection.3.6.3}
+\contentsline {subsubsection}{Implementatie}{54}{section*.60}
+\contentsline {subsection}{\numberline {3.6.3}Andere modules}{55}{subsection.3.6.3}
 \contentsline {chapter}{\numberline {4}Evaluatie}{56}{chapter.4}
 \contentsline {section}{\numberline {4.1}Testen van de algoritmes}{57}{section.4.1}
 \contentsline {subsection}{\numberline {4.1.1}Aanmaken van de dataset}{57}{subsection.4.1.1}
@@ -110,6 +110,7 @@
 \contentsline {section}{\numberline {5.1}Doelen}{66}{section.5.1}
 \contentsline {section}{\numberline {5.2}Beoordeling algoritmes}{67}{section.5.2}
 \contentsline {section}{\numberline {5.3}Mogelijke verbeteringen en uitbreiding}{68}{section.5.3}
+\contentsline {section}{\numberline {5.4}Terugblik}{68}{section.5.4}
 \contentsline {chapter}{Bijlagen}{69}{section*.68}
 \contentsline {chapter}{\numberline {A}Resultaten: DTW experiment}{70}{Bijlage.a.A}
 \contentsline {chapter}{\numberline {B}Ontwerp van de softwarebibliotheek}{72}{Bijlage.a.B}
@@ -119,10 +120,10 @@
 \contentsline {subsubsection}{Het starten van de synchronisatie}{78}{section*.80}
 \contentsline {subsubsection}{Gebufferde filters}{79}{section*.83}
 \contentsline {chapter}{\numberline {C}Praktijktest: opstelling}{80}{Bijlage.a.C}
-\contentsline {chapter}{\numberline {D}Handleiding voor gebruikers}{83}{Bijlage.a.D}
-\contentsline {subsubsection}{Koppelen van de broncode}{84}{section*.93}
-\contentsline {subsubsection}{Koppelen van de Javadoc}{84}{section*.94}
-\contentsline {chapter}{\numberline {E}Handleiding voor ontwikkelaars}{89}{Bijlage.a.E}
-\contentsline {chapter}{Referentielijst}{93}{chapter*.107}
-\contentsline {chapter}{L"yst van figuren}{96}{chapter*.108}
-\contentsline {chapter}{Lijst van figuren}{97}{chapter*.108}
+\contentsline {chapter}{\numberline {D}Gebruikershandleiding}{83}{Bijlage.a.D}
+\contentsline {section}{\numberline {D.1}Downloaden van de bestanden}{83}{section.a.D.1}
+\contentsline {chapter}{\numberline {E}Handleiding voor ontwikkelaars}{86}{Bijlage.a.E}
+\contentsline {section}{\numberline {E.1}Gebruiken van de broncode}{86}{section.a.E.1}
+\contentsline {subsubsection}{Koppelen van de broncode}{87}{section*.98}
+\contentsline {subsubsection}{Koppelen van de Javadoc}{87}{section*.99}
+\contentsline {chapter}{Referentielijst}{94}{chapter*.108}
