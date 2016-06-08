@@ -9,7 +9,7 @@ Buiten de testen voor de algoritmes zijn er ook enkele unit testen geschreven vo
 
 De performantie wordt uitgedrukt in het aantal keer dat het algoritme sneller is dan realtime. Een algoritme met een performantie van $ 2 \times \textrm{realtime} $ verwerkt $ n $ seconden audio in $ n/2 $ seconden. De testen zijn uitgevoerd op een \textit{Intel Core i7-4510 2.0 GHz} processor. Het is aangeraden om de performantie resultaten relatief te bekijken. Deze zijn namelijke erg afhankelijk van de processor waarop de testen zijn uitgevoerd.
 
-Het is vereist dat de performantie boven $ 1 \times \textrm{realtime} $ blijft. Bij een lagere performantie komt de audio sneller binnen dan de verwerkingssnelheid van de algoritmen. Het bepalen van de latency zal dan vertraging oplopen wat kan leiden tot slechte resultaten.
+Het is vereist dat de performantie boven $ 1 \times \textrm{realtime} $ blijft. Bij een lagere performantie komt de audio sneller binnen dan de verwerkingssnelheid van de algoritmes. Het bepalen van de latency zal dan vertraging oplopen wat kan leiden tot slechte resultaten.
 
 
 
@@ -100,7 +100,7 @@ Bij het 5 maal uitvoeren zijn dit de resultaten:
 
 Het acoustic fingerprinting heeft de verschillende testen foutloos doorstaan. Het kruiscovariantie algoritme maakte echter enkele fouten bij het eenmalig uitvoeren van het algoritme. Dit is logisch te verklaren. Het kruiscovariantie werd namelijk op een zeer klein stukje audio uitgevoerd. Bij het eenmalig uitvoeren kan het gebeuren dat één van de buffers toevallig enkel stilte bevat (alle samples hebben de waarde 0.0). In dat geval is de kruiscovariantie voor elke verschuiving 0. De latency kan dus niet bepaald worden. Aangezien het toch aangeraden is om het algoritme meerdere malen op verschillende plaatsen uit te voeren vormt dit niet echt een probleem (zie \ref{crosscovariance-repeated}).
 
-De performantie van de algoritmen is zeker aanvaardbaar. Het 5 maal uitvoeren van het kruiscovariantie algoritme heeft amper invloed op de uitvoeringstijd.
+De performantie van de algoritmes is zeker aanvaardbaar. Het 5 maal uitvoeren van het kruiscovariantie algoritme heeft amper invloed op de uitvoeringstijd.
 
 \subsection{Toevoegen van een sinusgolf}
 \label{sine-test}
@@ -164,15 +164,15 @@ De hierboven vermelde parameters blijven gelijk. \texttt{CROSS\_COVARIANCE\_NUMB
 
 \subsubsection{Bespreking}
 
-Het valt op dat het kruiscovariantie algoritme in moeilijkheden komt na het toevoegen van de sinusgolf. Het meerdere malen uitvoeren van het algoritmen vangt dit probleem goed op. Na 5 uitvoeringen zijn de meeste resultaten al correct. Wanneer dit aantal tot 20 wordt opgetrokken werkt het algoritme foutloos. 
+Het valt op dat het kruiscovariantie algoritme in moeilijkheden komt na het toevoegen van de sinusgolf. Het meerdere malen uitvoeren van het algoritme vangt dit probleem goed op. Na 5 uitvoeringen zijn de meeste resultaten al correct. Wanneer dit aantal tot 20 wordt opgetrokken werkt het algoritme foutloos. 
 
 Het meerdere malen uitvoeren van het algoritme heeft een zeer beperkte invloed op de performantie.
 
 \subsection{Conclusie}
 
-Deze testen tonen aan dat de algoritmen in staat zijn om zelf gemodificeerde audiofragmenten te synchroniseren. De resultaten geven een beeld van hoe de algoritmes presteren onder welke parameters.
+Deze testen tonen aan dat de algoritmes in staat zijn om zelf gemodificeerde audiofragmenten te synchroniseren. De resultaten geven een beeld van hoe de algoritmes presteren onder welke parameters.
 
-Een heel belangrijke vaststelling is dat de uitvoeringstijd relatief constant blijft ondanks grote wijzigingen aan de parameters. De oorzaak hiervan is dat de parameters weinig invloed hebben op het asymptotische gedrag van de algoritmen. Het kruiscovariantie algoritme heeft als tijdscomplexiteit $ O(n^{2}) $. Het wijzigen van het aantal uitvoeringen wijzigt niets aan $ n $. Aangezien de grootte van $ n $ standaard heel beperkt is blijft het algoritme goed presteren.
+Een heel belangrijke vaststelling is dat de uitvoeringstijd relatief constant blijft ondanks grote wijzigingen aan de parameters. De oorzaak hiervan is dat de parameters weinig invloed hebben op het asymptotische gedrag van de algoritmes. Het kruiscovariantie algoritme heeft als tijdscomplexiteit $ O(n^{2}) $. Het wijzigen van het aantal uitvoeringen wijzigt niets aan $ n $. Aangezien de grootte van $ n $ standaard heel beperkt is blijft het algoritme goed presteren.
 
 De wijzigingen aan de parameters van het acoustic fingerprinting algoritme hebben ook geen grote invloed op de uitvoeringstijd. Het zoeken naar matchen van fingerprints gebeurt namelijk met behulp van hashes in een hashtabel. Aangezien zoeken in een hashtabel een $ O(1) $ operatie is, is de tijdscomplexiteit lineair met het aantal fingerprints.
 

@@ -12,11 +12,11 @@ Bij een klassiek experiment wordt onderzocht wat de invloed is van muziek op de 
 
 Hierbij moeten drie datastreams worden geanalyseerd: de videobeelden, de data van de accelerometer en de afgespeelde audio. Een  uitdaging hierbij is de synchronisatie van deze verschillende datastreams. Om een goede analyse mogelijk te maken is het zeer gewenst dat men exact weet (tot op de milliseconde nauwkeurig) wanneer een bepaalde gebeurtenis in een datastream zich heeft voorgedaan, zodat men deze gebeurtenis kan vergelijken met de gebeurtenissen in de andere datastreams. Door de verschillen in samplefrequentie en door de latencies die zich in elke opname kunnen voordoen is dit zeker geen sinecure. \cite{six2015multimodal}
 
-Bij het IPEM maakt men gebruik van een systeem waarbij audio opnames het synchronisatieproces vereenvoudigen. Het principe werkt als volgt: men zorgt ervoor dat elke datastream gekoppeld is aan een perfect gesynchroniseerde audiostream, afkomstig van een opname van het omgevingsgeluid. In het voorgaande experiment is dit eenvoudig te verwezenlijken. Bij de videobeelden kan automatisch een audiospoor mee worden opgenomen. De accelerometer kan geplaatst worden op een microcontroller vergezeld van een kleine microfoon. Aangezien beide componenten zo dicht op de hardware geplaatst zijn is de latency tussen beide datastromen te verwaarlozen.\footnote{De latency van de audioverwerking op een \textit{Axoloti} microcontroller is vastgesteld op $0.333 ms$. Meer informatie: \url{http://www.axoloti.com/more-info/latency/}} De afgespeelde audio is uiteraard al een perfecte weergave van het omgevingsgeluid. Figuur \ref{syncsink-ui} toont een screenshot van het programma waarmee de synchronisatie op dit moment wordt uitgevoerd.
+Bij het IPEM maakt men gebruik van een systeem waarbij audio opnames het synchronisatieproces vereenvoudigen. Het principe werkt als volgt: men zorgt ervoor dat elke datastream gekoppeld is aan een perfect gesynchroniseerde audiostream, afkomstig van een opname van het omgevingsgeluid. In het voorgaande experiment is dit eenvoudig te verwezenlijken. Bij de videobeelden kan automatisch een audiospoor mee worden opgenomen. De accelerometer kan geplaatst worden op een microcontroller vergezeld van een kleine microfoon. Aangezien beide componenten zo dicht op de hardware geplaatst zijn is de latency tussen beide datastreams te verwaarlozen.\footnote{De latency van de audioverwerking op een \textit{Axoloti} microcontroller is vastgesteld op $0.333 ms$. Meer informatie: \url{http://www.axoloti.com/more-info/latency/}} De afgespeelde audio is uiteraard al een perfecte weergave van het omgevingsgeluid. Figuur \ref{syncsink-ui} toont een screenshot van het programma waarmee de synchronisatie op dit moment wordt uitgevoerd.
 
-Na het uitvoeren van het experiment beschikt men dus over de gegevens van drie datastreams, waarbij er aan elke datastream een quasi perfect synchrone opname van het omgevingsgeluid is gekoppeld. Aangezien het experiment in één ruimte is uitgevoerd zijn de verschillende opnames van het omgevingsgeluid zeer gelijkend. Het probleem van de synchronisatie van de verschillende datastromen kan bijgevolg gereduceerd worden tot het synchroniseren van de verschillende audiostromen.
+Na het uitvoeren van het experiment beschikt men dus over de gegevens van drie data-streams, waarbij er aan elke datastream een quasi perfect synchrone opname van het omgevingsgeluid is gekoppeld. Aangezien het experiment in één ruimte is uitgevoerd, zijn de verschillende opnames van het omgevingsgeluid zeer gelijkend. Het probleem van de synchronisatie van de verschillende datastreams kan bijgevolg gereduceerd worden tot het synchroniseren van de verschillende audiostreams.
 
-Door de typisch eigenschappen van geluid is het niet zo moeilijk om verschillende audiostreams te synchroniseren. Bij het IPEM heeft men een systeem ontwikkeld dat hiertoe in staat is.
+Door de typisch eigenschappen van geluid is het niet zo moeilijk om verschillende audio-streams te synchroniseren. Bij het IPEM heeft men een systeem ontwikkeld dat hiertoe in staat is.
 
 Dit systeem heeft in de praktijk echter heel wat beperkingen. De grootste beperking is dat het synchronisatieproces pas kan worden uitgevoerd wanneer het experiment is afgelopen. Deze verwerking kan ook enkel handmatig uitgevoerd worden. De opgenomen audio- en databestanden moeten worden verzameld op een computer waarna vervolgens de latency tussen de audiostreams bepaald kan worden. Met behulp van deze latency kunnen de datastreams worden gesynchroniseerd. 
 
@@ -94,12 +94,12 @@ De beperkte resources van een microcontroller kan voor problemen zorgen bij het 
 
 Elke stream heeft een eigen samplefrequentie. Het is belangrijk dat de samplefrequentie gekend is om de gegevens correct en precies te kunnen verwerken. Het kan echter voorvallen dat de samplefrequentie bij de verwerking op microcontrollers toch niet zo nauwkeurig bepaald is. Een stream waarbij de samplefrequentie $ 1Hz $ afwijkt van de theoretische waarde zal na 60 seconden een latency hebben opgebouwd van 60 samples. Bij een samplefrequentie van $8000 Hz$ komt dit overeen met $7.5 ms$.\footnote{Berekening: $ 60 / 8000 Hz = 0.0075 s = 7.5 ms $} Dit probleem mag zeker niet worden verwaarloosd. 
 
-\section{Bestaande methoden}
-\label{bestaande-methoden}
+\section{Bestaande methodes}
+\label{bestaande-methodes}
 
-Er bestaan verschillende methoden om datastreams te synchroniseren. Welke methode te verkiezen is hangt volledig af van de toepassing.
+Er bestaan verschillende methodes om datastreams te synchroniseren. Welke methode te verkiezen is hangt volledig af van de toepassing.
 
-In deze sectie komen de belangrijkste methoden aan bod en zullen ze worden getoetst aan de probleemstelling en de evaluatiecriteria.
+In deze sectie komen de belangrijkste methodes aan bod en zullen ze worden getoetst aan de probleemstelling en de evaluatiecriteria.
 
 \subsection{Event-gebaseerde synchronisatie}
 

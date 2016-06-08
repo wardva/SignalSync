@@ -1,8 +1,8 @@
 \chapter{Methode}
 
-\section{Algoritmen}
+\section{Algoritmes}
 
-In sectie \ref{bestaande-methoden} van deze scriptie zijn de voornaamste methoden waarmee datastreams gesynchroniseerd kunnen worden beknopt besproken. Hoewel de meeste algoritmen niet voldeden aan de vereisten bleken er twee toch zeer geschikt voor snelle en nauwkeurige synchronisatie van realtime streams. In dit gedeelte zullen deze methoden in detail worden behandeld. Ook wordt er onderzocht in welke mate het mogelijk is om deze algoritmes te combineren tot één systeem.
+In sectie \ref{bestaande-methodes} van deze scriptie zijn de voornaamste methodes waarmee datastreams gesynchroniseerd kunnen worden beknopt besproken. Hoewel de meeste algoritmes niet voldeden aan de vereisten bleken er twee toch zeer geschikt voor snelle en nauwkeurige synchronisatie van realtime streams. In dit gedeelte zullen deze methodes in detail worden behandeld. Ook wordt er onderzocht in welke mate het mogelijk is om deze algoritmes te combineren tot één systeem.
 
 \subsection{Acoustic fingerprinting}
 \label{acoustic-fingerprinting}
@@ -142,7 +142,7 @@ Het acoustic fingerprinting algoritme is zeer snel en robuust en kan gebruikt wo
 
 Het kruiscovariantie algoritme kan eveneens gebruikt worden om (gebufferde) audiostreams te synchroniseren. De grootste troef van dit algoritme is haar nauwkeurigheid: in de beste omstandigheden kan het algoritme resultaten bekomen tot op één sample nauwkeurig. Het bereiken van een dergelijke nauwkeurigheid is onmogelijk met eender welk ander besproken algoritme. De keerzijde is de performantie van het algoritme. Bij het synchroniseren van grote audioblokken kan dit problematisch zijn.
 
-De kenmerken van deze algoritmen zijn complementair. De gemakkelijkste manier om een robuust, snel én nauwkeurig systeem op te bouwen is door het beste van de twee werelden te combineren. Het acoustic fingerprinting algoritme kan zorgen voor de synchronisatie tot op enkele tientallen milliseconden nauwkeurig. In een tweede stap kan het kruiscovariantie algoritme worden uitgevoerd op zeer korte stukjes audio (een honderdtal samples volstaan).
+De kenmerken van deze algoritmes zijn complementair. De gemakkelijkste manier om een robuust, snel én nauwkeurig systeem op te bouwen is door het beste van de twee werelden te combineren. Het acoustic fingerprinting algoritme kan zorgen voor de synchronisatie tot op enkele tientallen milliseconden nauwkeurig. In een tweede stap kan het kruiscovariantie algoritme worden uitgevoerd op zeer korte stukjes audio (een honderdtal samples volstaan).
 
 \section{Bufferen van streams}
 \label{streambuffers}

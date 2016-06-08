@@ -9,7 +9,7 @@ Het volledige project is openbaar beschikbaar op \url{https://github.com/wardva/
 
 \subsection*{De softwarebibliotheek importeren in Eclipse}
 
-Vooraleer er van start kan worden gegaan moeten de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC JAR bestanden worden gedownload van het volgende (publieke) GitHub repository: \url{https://github.com/wardva/SignalSync/tree/master/Dist}. Deze bestanden bevinden zich ook in een Zip bestand dat rechtstreeks gedownload van volgende URL: \url{https://github.com/wardva/SignalSync/raw/master/Dist/SignalSync.zip}
+Vooraleer er van start kan worden gegaan moeten de bestanden \texttt{config.properties}, \texttt{signalsync.jar}\footnote{Het JAR bestand bevat ook alle afhankelijkheden: Panako\cite{six2014panako}, TarsosDSP\cite{six2014tarsosdsp} en TeensyDAQ.} en de jSSC JAR bestanden gedownload worden van het volgende (publieke) GitHub repository: \url{https://github.com/wardva/SignalSync/tree/master/Dist}. Deze bestanden bevinden zich ook in een Zip bestand dat rechtstreeks gedownload kan worden van volgende URL: \url{https://github.com/wardva/SignalSync/raw/master/Dist/SignalSync.zip}
 
 Maak vervolgens het Java-project aan in Eclipse dat gebruik zal maken van de softwarebibliotheek. Ga hierna naar de properties van het project, selecteer links \textbf{Java Build Path} en klik op de tab \textbf{Libraries}. Klik vervolgens op de knop \textbf{Add External JARs}. Ga nu op zoek naar \texttt{signalsync.jar}, \texttt{jssc.jar} en \texttt{jssc-2.7.0-src.jar} en voeg ze toe aan het project. Let erop dat het configuratiebestand zich steeds in dezelfde map bevindt als de JAR bestanden.
 
@@ -27,7 +27,7 @@ Selecteer \textbf{Javadoc location} en klik op \textbf{edit}. Selecteer \textbf{
 
 \section*{Aanmaken en synchroniseren van streams}
 
-Hoe de streams aangemaakt en gesynchroniseerd kunnen worden in het gemakkelijkst uit te leggen aan de hand van een voorbeeld. In het volgende voorbeeld worden enkele streams aangemaakt en wordt de latency ertussen bepaald. Meer informatie over de TarsosDSP \texttt{AudioDispatchers} is te vinden in artikel \cite{six2014tarsosdsp}.
+Hoe de streams aangemaakt en gesynchroniseerd kunnen worden is het gemakkelijkst uit te leggen aan de hand van een voorbeeld. In het voorbeeld worden enkele streams aangemaakt en wordt de latency ertussen bepaald. Meer informatie over de TarsosDSP \texttt{AudioDispatchers} is te vinden in artikel \cite{six2014tarsosdsp}.
 
 Om te beginnen moeten er enkele streams worden aangemaakt. In dit voorbeeld zal gebruik gemaakt worden van \texttt{AudioDispatcherStreams}. \\
 
@@ -97,7 +97,7 @@ syncer.addEventListener(new SyncEventListener() {
 allStreams.start();
 \end{lstlisting}
 
-\section*{Wijzigen van de broncode}
+\section{Wijzigen van de broncode}
 
 \subsection*{Project importeren in Eclipse}
 
@@ -107,7 +107,7 @@ Na het binnenhalen van het project kan de map \textbf{SignalSync} geïmporteerd 
 
 Het project is afhankelijk van volgende softwarebibliotheken: TarsosDSP, Panako en TeensyDAQ. De TarsosDSP broncode kan gedownload worden van \url{https://github.com/JorenSix/TarsosDSP}, de Panako broncode van \url{http://panako.be/releases/Panako-latest/readme.html} en de TeensyDAQ broncode van \url{https://github.com/JorenSix/TeensyDAQ}. 
 
-Na het importeren van deze projecten in eclipse en het instellen van de projecten als \textit{reference project} moeten er nog enkele JAR bestanden worden toegevoegd. 
+Na het importeren van deze projecten in Eclipse en het instellen van de projecten als \textit{reference project} moeten er nog enkele JAR bestanden worden toegevoegd. 
 
 \textbf{jssc-2.7.0.jar}, deze bibliotheek is te downloaden van: \url{https://code.google.com/archive/p/java-simple-serial-connector/downloads}.
 

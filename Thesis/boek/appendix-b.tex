@@ -39,7 +39,7 @@ Zoals in de figuur te zien is bevat \texttt{Slicer} een verzameling van geïnter
 
 Een \texttt{StreamSlicer} is een subklasse van \texttt{Slicer} die de data afkomstig van een stream opdeelt in \texttt{float} arrays van een welbepaalde lengte. Om toegang te krijgen tot de data van een \texttt{Stream} implementeert de \texttt{StreamSlicer} de interface \texttt{StreamProcessor}. Via \texttt{process} krijgt deze klasse opeenvolgende \texttt{float} arrays met samples binnen die worden opgeslagen in buffers. Wanneer er een slice gereed is worden de buffers samengevoegd tot één float array en wordt \texttt{emitSliceEvent} van de superklasse \texttt{Slicer} opgeroepen. Wanneer \texttt{processingFinished} wordt opgeroepen en de stream dus geen data meer beschikbaar heeft, dan wordt \texttt{emitDoneEvent} opgeroepen zodat alle \texttt{StreamListeners} hiervan op de hoogte zijn.
 
-Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en interfaces. Sommige low-level methoden en attributen zijn hierbij weggelaten. 
+Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en interfaces. Sommige low-level methodes en attributen zijn hierbij weggelaten. 
 
 \subsubsection{StreamSetSlicer}
 
@@ -53,7 +53,7 @@ Figuur \ref{streamSlicer} toont een UML diagram met de besproken klassen en inte
 	\label{streamSetSlicer}
 \end{figure}
 
-Een \texttt{StreamSetSlicer} is een subtype van de klasse \texttt{Slicer} die verantwoordelijk is voor het slicen van alle \textbf{audiostreams} van een \texttt{StreamSet}. Per \texttt{StreamGroup} wordt er dus maar één stream in stukjes verdeeld. Dit is logisch aangezien de synchronisatiealgoritmen voor het bepalen van de latency enkel worden uitgevoerd op slices van de audiostream.
+Een \texttt{StreamSetSlicer} is een subtype van de klasse \texttt{Slicer} die verantwoordelijk is voor het slicen van alle \textbf{audiostreams} van een \texttt{StreamSet}. Per \texttt{StreamGroup} wordt er dus maar één stream in stukjes verdeeld. Dit is logisch aangezien de synchronisatiealgoritmes voor het bepalen van de latency enkel worden uitgevoerd op slices van de audiostream.
 
 Bij de creatie van een \texttt{StreamSetSlicer} wordt van elke \texttt{StreamGroup} uit de \texttt{StreamSet} de audiostream opgehaald. Op dit \texttt{Stream} object wordt vervolgens de methode \texttt{createSlicer} opgeroepen waarop er een \texttt{StreamSlicer} wordt teruggegeven. De \texttt{StreamSetSlicer} voegt zichzelf als geïnteresseerd object aan de \texttt{StreamSlicer} toe. Ook wordt de \texttt{StreamSlicer}
 gekoppeld aan de \texttt{StreamGroup} door ze als sleutel en waarde toe te voegen aan een \texttt{Map}.
@@ -62,11 +62,11 @@ Na afloop van deze initialisatie wordt er gewacht tot wanneer alle streams waaro
 
 Figuur \ref{streamSetSlicer} toont een vrij abstract klassendiagram van de \texttt{StreamSetSlicer} en haar supertypen. Low-level attributen zoals de buffers, threadpools en locks zijn hierop weggelaten.
 
-\section*{Oproepen van de algoritmen}
+\section*{Oproepen van de algoritmes}
 
 \begin{figure}[h!]
 	\captionsetup{width=0.7\textwidth}
-	\caption{UML diagram van de klassen met synchronisatiealgoritmen.}
+	\caption{UML diagram van de klassen met synchronisatiealgoritmes.}
 	\begin{center}
 		\advance\parskip0.3cm
 		\input{figuren/algorithmsUML}
@@ -74,7 +74,7 @@ Figuur \ref{streamSetSlicer} toont een vrij abstract klassendiagram van de \text
 	\label{SyncStrategyUML}
 \end{figure}
 
-De synchronisatiealgoritmen bevinden zich in subklassen van \texttt{SyncStrategy}. Deze klasse bevat een abstracte methode \texttt{findLatencies}. Deze methode ontvangt als parameter een lijst van \texttt{float} arrays waarbij elke array de samples bevat van één slice bevat. Na het uitvoeren geeft de methode een lijst met \texttt{LatencyResults} terug.
+De synchronisatiealgoritmes bevinden zich in subklassen van \texttt{SyncStrategy}. Deze klasse bevat een abstracte methode \texttt{findLatencies}. Deze methode ontvangt als parameter een lijst van \texttt{float} arrays waarbij elke array de samples bevat van één slice bevat. Na het uitvoeren geeft de methode een lijst met \texttt{LatencyResults} terug.
 
 \texttt{SyncStrategy} bevat ook enkele statische methodes waarmee de verschillende mogelijke strategieën gemakkelijk kunnen worden aangemaakt. De parameters die aan de constructoren moeten worden meegegeven worden uit het configuratiebestand gehaald. 
 
@@ -104,7 +104,7 @@ Wanneer er voor elke \texttt{StreamGroup} een slice beschikbaar is wordt de meth
 
 \subsubsection{Het starten van de synchronisatie}
 
-Het starten van de synchronisatie gebeurt noch in deze klasse noch in een slicer- of \mbox{strategyklasse}. Zowel het slicen als het uitvoeren van de algoritmen is een deterministisch proces en afhankelijk van de samples die door een \texttt{Stream} object naar de \texttt{StreamProcessors} verstuurd worden. Bij een \texttt{AudioDispatcherStream} zal de synchronisatie starten wanneer de \texttt{start} methode opgeroepen wordt. Bij een \texttt{MSPStream} zal de synchronisatie pas starten wanneer de streams in Max/MSP zelf geactiveerd worden.
+Het starten van de synchronisatie gebeurt noch in deze klasse noch in een slicer- of \mbox{strategyklasse}. Zowel het slicen als het uitvoeren van de algoritmes is een deterministisch proces en afhankelijk van de samples die door een \texttt{Stream} object naar de \texttt{StreamProcessors} verstuurd worden. Bij een \texttt{AudioDispatcherStream} zal de synchronisatie starten wanneer de \texttt{start} methode opgeroepen wordt. Bij een \texttt{MSPStream} zal de synchronisatie pas starten wanneer de streams in Max/MSP zelf geactiveerd worden.
 
 \section*{Filteren van de resultaten}
 \label{filterontwerp}

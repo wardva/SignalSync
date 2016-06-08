@@ -12,7 +12,7 @@
 \contentsline {subsubsection}{Realtime synchronisatie}{6}{section*.10}
 \contentsline {subsubsection}{Detecteren van gedropte samples}{6}{section*.11}
 \contentsline {subsubsection}{Detecteren van drift}{6}{section*.12}
-\contentsline {section}{\numberline {1.4}Bestaande methoden}{7}{section.1.4}
+\contentsline {section}{\numberline {1.4}Bestaande methodes}{7}{section.1.4}
 \contentsline {subsection}{\numberline {1.4.1}Event-gebaseerde synchronisatie}{7}{subsection.1.4.1}
 \contentsline {subsection}{\numberline {1.4.2}Synchronisatie met een kloksignaal}{8}{subsection.1.4.2}
 \contentsline {subsection}{\numberline {1.4.3}Dynamic timewarping}{8}{subsection.1.4.3}
@@ -23,7 +23,7 @@
 \contentsline {subsubsection}{Ontwerp en implementatie van een softwarebibliotheek}{11}{section*.14}
 \contentsline {subsubsection}{Ontwerp en implementatie van een gebruiksvriendelijke interface}{11}{section*.15}
 \contentsline {chapter}{\numberline {2}Methode}{12}{chapter.2}
-\contentsline {section}{\numberline {2.1}Algoritmen}{12}{section.2.1}
+\contentsline {section}{\numberline {2.1}Algoritmes}{12}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Acoustic fingerprinting}{12}{subsection.2.1.1}
 \contentsline {subsubsection}{Features}{12}{section*.16}
 \contentsline {subsubsection}{Werking}{13}{section*.18}
@@ -125,4 +125,5 @@
 \contentsline {section}{\numberline {E.1}Gebruiken van de broncode}{86}{section.a.E.1}
 \contentsline {subsubsection}{Koppelen van de broncode}{87}{section*.99}
 \contentsline {subsubsection}{Koppelen van de Javadoc}{87}{section*.100}
-\contentsline {chapter}{Referentielijst}{94}{chapter*.109}
+\contentsline {section}{\numberline {E.2}Wijzigen van de broncode}{90}{section.a.E.2}
+\contentsline {chapter}{Referentielijst}{94}{chapter*.108}

@@ -40,7 +40,7 @@ Signal Synchronization, Audio Alignment, Real-Time, Acoustic Fingerprinting, Cro
 \section{Introduction}
 
 
-\PARstart{E}{xperiments} in various research areas use sensors and video cameras to capture the environment.  Before sensor data and video recordings can be analyzed properly they have to be synchronized accurately in time. This is no easy task because of various reasons. The first problem is that the sensor datastreams can be heterogeneous: the sample rate can vary and the resulted data can be different (video data or numerical samples). Another difficulty is to cope with the fact that some data sources are sampled unreliably. This can lead to dropped samples and drift which cause unexpected latency changes. 
+\PARstart{E}{xperiments} in various research areas use sensors and video cameras to capture the environment.  Before sensor data and video recordings can be analyzed properly they have to be synchronized accurately in time. This is rather difficult because of various reasons. The first problem is that the sensor datastreams can be heterogeneous: the sample rate can vary and the resulted data can be different (video data or numerical samples). Another difficulty is to cope with the fact that some data sources are sampled unreliably. This can lead to dropped samples and drift which cause unexpected latency changes. 
 
 Most techniques require a post-processing step: the data has to be synchronized manually or by software \emph{after} the experiment. This is impractical and time-consuming. A technique which can avoid this is desirable.
 
@@ -48,7 +48,7 @@ The most straightforward way to perform synchronization is by adding markers. Th
 
 In \cite{jaimovich2010synchronization} a method is described which uses a clock signal to synchronize streams in real-time. However this method avoids the post-processing step it does not fit the requirements: each device (sensor, video camera) should accept a clock-signal as input. Because these devices (especially cameras) are very expensive this method is not feasible for the stated problem.
 
-In \cite{six2015multimodal} the stated problem is approached in an entirely different way. The described method does not try to synchronize the streams directly. Instead, the (recorded) environment sound is embedded in each stream. This ploy reduces the initial problem to audio-to-audio alignment. Because the recorded environment sound is almost the same for each stream the problem is much easier to tackle. The audio-to-audio algorithms described in the article perform very well. The latency can be detected with a precision less than 1ms. However the article only describes a post-processing approach, the used algorithms look very interesting.
+In \cite{six2015multimodal} the stated problem is approached in an entirely different way. The described method does not try to synchronize the streams directly. Instead, the (recorded) environment sound is embedded in each stream. This ploy reduces the initial problem to audio-to-audio alignment. Because the recorded environment sound is almost the same for each stream, the problem is much easier to tackle. The audio-to-audio algorithms described in the article perform very well. The latency can be detected with a precision less than 1ms. However the article only describes a post-processing approach, the used algorithms look very interesting.
 
 The next part of this paper will describe a method to synchronize streams in real-time using the algorithms mentioned in the previous article. The word ``real-time'' can be ambiguous in a signal-processing context. Therefore it's important to specify some requirements for a real-time system. Because the latency-detecting algorithms need some amount of audio in order to determine the latency it's impossible to immediately output the synchronized signals. In this paper the real-time restriction refers to the fact that the synchronization algorithms are executed while the sensors are collecting data. The post-processing step should be avoided.
 
@@ -59,14 +59,14 @@ The method described in \cite{six2015multimodal} uses two latency detecting algo
 \subsection{Acoustic fingerprinting}
 Acoustic fingerprinting is a fast and robust technique for comparing audio fragments. A method using acoustic fingerprinting is described in \cite{Wang2003a}. The method uses fingerprints based on spectral peaks. Each fingerprint contains condensed information based on typical audio properties. This technique allows finding similar audio fragments ignoring noise and other disturbing background sounds. 
 
-However the initial application was identifying an audio recording using a huge database containing a myriad of fingerprints it's also possible to compare the fingerprints of recordings mutually. The latency can be detected by calculating the offset between the fingerprints. The precision varies around $16ms$ to $32ms$ depending on the used parameters.
+However the initial application was identifying an audio recording using a huge database containing a myriad of fingerprints, it's also possible to compare the fingerprints of recordings mutually. The latency can be detected by calculating the offset between the fingerprints. The precision varies around $16ms$ to $32ms$ depending on the used parameters.
 
 \subsection{Cross-covariance}
-The cross-covariance (also referred to as cross-correlation) is a calculation which measures the degree of similarity between two time sequences. Because an audio signal is a time sequence this calculation can be used for determining the latency. When the cross-covariance value is calculated for each possible shift between two audio fragments the shift with the highest result determines the latency.
+The cross-covariance (also referred to as cross-correlation) is a calculation which measures the degree of similarity between two time sequences. Because an audio signal is a time sequence, this calculation can be used for determining the latency. When the cross-covariance value is calculated for each possible shift between two audio fragments, the shift with the highest result determines the latency.
 
 This method can determine the latency to the nearest sample. The precision in milliseconds depends on the sample rate: when the sample rate is $8000Hz$ the maximum precision is $ 1/8000 Hz = 0.125ms $.
 
-A disadvantage to this method is its performance. The time complexity of the algorithm is $ O(n^2) $ where $ n $ is the number of samples in each signal. Finding the latency between two audio fragments of $10s$ at a sample rate of $8000Hz$ would asymptotically result in $ 6.4 \cdot 10^9 $ computations, which is impracticable on a regular computer.
+A disadvantage of this method is its performance. The time complexity of the algorithm is $ O(n^2) $ where $ n $ is the number of samples in each signal. Finding the latency between two audio fragments of $10s$ at a sample rate of $8000Hz$ would asymptotically result in $ 6.4 \cdot 10^9 $ computations, which is impracticable on a regular computer.
 
 \subsection{Refining the results}
 
@@ -76,14 +76,14 @@ By determining the raw latency with acoustic fingerprinting, the number of sampl
 
 \subsection{Optimizations}
 
-Many optimization are applied to the latency-detecting algorithms. The most important one is the repeated execution of the cross-covariance algorithm. The cross-covariance algorithm is very sensitive to noise and other undesirable sounds. Since the algorithm calculates the similarity of the waveforms these sounds can be harmful for the final result.
+Many optimization are applied to the latency-detecting algorithms. The most important one is the repeated execution of the cross-covariance algorithm. The cross-covariance algorithm is very sensitive to noise and other undesirable sounds. Since the algorithm calculates similarity of waveforms, these sounds can be harmful to the final result.
 
 Because the cross-covariance algorithm is executed on a very tiny piece of audio it can be executed multiple times on a slightly different location. The most frequent latency is the final result of the algorithm. However the results are much more accurate after this optimization, the influence on the performance is limited. This because the time complexity function remains the same.
 
 \section{Buffering streams}
 
 In order to avoid the post-processing step the real-time streams have to be buffered.
-The algorithms are executed on the consecutive buffers of each stream. The buffer size ($t$) will be expressed in seconds of audio it can contain. It determines the maximum latency which can be detected. A minimum length of $10s$ is desirable to make the algorithms perform well. In order to detect latency changes as fast as possible a step size ($s$) has to be chosen (also expressed in seconds). The step size determines the interval between the moments a new buffer for each stream is created. When the step size is smaller than the buffer size the overlap between two consecutive buffers is equal to $ t - s $.
+The algorithms are executed on the consecutive buffers of each stream. The buffer size ($t$) will be expressed in seconds of audio it can contain. It determines the maximum latency which can be detected. A minimum length of $10s$ is desirable to make the algorithms perform well. In order to detect latency changes as fast as possible, a step size ($s$) has to be chosen (also expressed in seconds). The step size determines the interval between the moments a new buffer for each stream is created. When the step size is smaller than the buffer size, the overlap between two consecutive buffers is equal to $ t - s $.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -96,7 +96,7 @@ Both the buffer size and step size influence the time between a latency change a
 
 \input{../boek/figuren/datafiltergraph}
 \section{Latency filters}
-The avoidance of the post-processing step makes it harder to manually fix potential errors. When using audio recordings of poor quality, it's recommended to use a moving median latency filter. By using this filter the consecutive latencies are pushed in a queue. Each time a new latency is determined the median is of the values in the queue are is returned. Depending on the queue size, some peaks in the consecutive latencies are flattened. 
+The avoidance of the post-processing step makes it harder to manually fix potential errors. When using audio recordings of poor quality, it's recommended to use a moving median latency filter. By using this filter the consecutive latencies are pushed in a queue. Each time a new latency is determined, the median of the values in the queue is returned. Depending on the queue size, some peaks in the consecutive latencies are flattened. 
 
 \begin{figure}[th!]
 	\begin{center}
@@ -115,7 +115,7 @@ The avoidance of the post-processing step makes it harder to manually fix potent
 Figure \ref{latency_nofilter} shows a sequence of latencies without filtering, figure \ref{latency_filter} shows the same sequence after filtering with a moving-median 
  
 \section{Synchronization}
-The actual synchronization is performed by adding silence to each stream. The latencies of each stream are converted to the amount of silence which has to be added to each stream. It's a good practice to synchronize the streams by adding whitespace. However this can also be done by dropping samples the extra loss of data is undesirable.
+The actual synchronization is performed by adding silence to each stream. The latencies of each stream are converted to the amount of silence which has to be added to each stream. It's a good practice to synchronize the streams by adding whitespace. However this can also be done by dropping samples, the extra loss of data is undesirable.
 
 \section{Results}
 This research resulted in two Max/MSP modules\footnote{Max/MSP is software and a visual programming language which allows processing audio and video signals. This can be done by connecting existing modules each having a specific task. Max/MSP allows writing own modules in Java or C++.}. One module is able to read sensor datastreams accompanied by an audiostream from a \emph{Teensy microcontroller} into the Max/MSP environment. The second module is designed to perform the actual synchronization.
@@ -157,8 +157,6 @@ Figure \ref{sync} shows the Sync module created with parameter \texttt{dad,addd}
 		\caption{\label{sync}The Sync module in Max/MSP. The data patch cable is labeled with \texttt{d}, an audio patch cable with \texttt{a}.}
 	\end{center}
 \end{figure}
-
-%Schrijven over de Max/MSP module, de mogelijkheid om de synchronisatie met de Teensy microcontroller uit te voeren. TeensyReader en Sync module omschrijven.
 
 \section{Conclusion}
 Several tests proved that the synchronization works very well without the post-processing step. Even audio recorded from poor quality can be synchronized easily avoiding the post-processing step. 

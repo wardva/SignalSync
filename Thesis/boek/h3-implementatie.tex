@@ -11,7 +11,7 @@ Het is ook de bedoeling is om de gebruikersinterface te ontwikkelen met behulp v
 Hoewel de laatste versie van Max/MSP (7) het toelaat om Java 8 te gebruiken wordt deze versie in dit project om compatibiliteitsredenen vermeden. 
 
 \subsection{JUnit}
-JUnit is een unit testing framework voor Java. JUnit heeft in dit onderzoek een belangrijke rol gespeeld bij het bepalen van de optimale parameters van de verschillende algoritmen. JUnit maakte het mogelijk om de algoritmes herhaald maar met verschillende parameters op een dataset los te laten. JUnit liet toe om in één oogopslag te zien hoe het algoritme heeft gepresteerd.
+JUnit is een unit testing framework voor Java. JUnit heeft in dit onderzoek een belangrijke rol gespeeld bij het bepalen van de optimale parameters van de verschillende algoritmes. JUnit maakte het mogelijk om de algoritmes herhaald maar met verschillende parameters op een dataset los te laten. JUnit liet toe om in één oogopslag te zien hoe het algoritme heeft gepresteerd.
 
 \subsection{TarsosDSP}
 \label{tarsos}
@@ -21,7 +21,7 @@ TarsosDSP is een Java bibliotheek voor realtime audio analyse en verwerking ontw
 %Volgende paragraaf eventueel verplaatsen naar 3.5.1, ben er nog niet helemaal uit.
 TarsosDSP is voornamelijk gebouwd rond het concept \textit{processing pipeline}. Dit is een abstractie van een audiostream die via programmacode verwerkt kan worden. Een processing pipeline wordt voorgesteld als instantie van de klasse \texttt{AudioDispatcher}. Een \texttt{AudioDispatcher} kan aangemaakt worden van een audiobestand, een array van floating-point getallen of een microfoon en kan bewerkt of verwerkt worden met behulp van één of meerdere \texttt{AudioProcessors}. Objecten van klassen die de interface \texttt{AudioProcessor} implementeren kunnen aan de processing pipeline worden toegevoegd. In de implementatie van de \texttt{process} methode kan de audiostream op een bepaalde manier verwerkt, geanalyseerd of gewijzigd worden.
 
-TarsosDSP bevat verder nog een groot aantal klassen met allerhande tools en audioverwerkings algoritmen. Een greep uit de features van TarsosDSP:
+TarsosDSP bevat verder nog een groot aantal klassen met allerhande tools en audioverwerkings algoritmes. Een greep uit de features van TarsosDSP:
 \begin{itemize}[noitemsep]
 	\item Toevoegen van geluidseffecten (delay, flanger,...)
 	\item Toevoegen van filters (low-pass, high-pass, band-pass,...)
@@ -32,7 +32,7 @@ TarsosDSP bevat verder nog een groot aantal klassen met allerhande tools en audi
 
 \subsection{Panako}
 
-Panako is net zoals TarsosDSP een Java bibliotheek (door de zelfde auteur) ontwikkeld aan het IPEM. Panako bevat een arsenaal aan algoritmen voor het matchen of synchroniseren van audiofragmenten of audiostreams.  Deze bibliotheek wordt uitgebreid beschreven in artikel \cite{six2014panako}.
+Panako is net zoals TarsosDSP een Java bibliotheek (door de zelfde auteur) ontwikkeld aan het IPEM. Panako bevat een arsenaal aan algoritmes voor het matchen of synchroniseren van audiofragmenten of audiostreams.  Deze bibliotheek wordt uitgebreid beschreven in artikel \cite{six2014panako}.
 
 Dit onderzoek gebruikt Panako's open-source implementatie van het acoustic fingerprinting algoritme dat beschreven is in artikel \cite{Wang2003a}. Panako bevat ook een uitbreiding van het algoritme dat overweg kan met audio waarbij de toonhoogte verhoogd of verlaagd is, of waarbij de audio sneller of trager is afgespeeld.
 
@@ -423,7 +423,7 @@ De Java bibliotheek voor het synchroniseren van streams bestaat uit verschillend
 	De klassen uit deze package zorgen voor het bufferen van de binnenkomende streams (zie sectie \ref{streambuffers}) zodat het bepalen van de latency in realtime mogelijk wordt. 
 
 	\item\texttt{be.signalsync.syncstrategy} \hfill \\
-	Deze package bevat de implementatie van de synchronisatiealgoritmen. Deze algoritmen worden aangeroepen van uit het \texttt{be.signalsync.sync} package. Welk algoritme precies gebruikt wordt kan worden ingesteld via het configuratiebestand.
+	Deze package bevat de implementatie van de synchronisatiealgoritmes. Deze algoritmes worden aangeroepen van uit het \texttt{be.signalsync.sync} package. Welk algoritme precies gebruikt wordt kan worden ingesteld via het configuratiebestand.
 	
 	\item\texttt{be.signalsync.datafilters} \hfill \\
 	Deze package bevat de implementaties van de verschillende soorten filters besproken in sectie \ref{filtering}.
