@@ -186,13 +186,16 @@ public class CrossCovarianceSyncStrategy extends SyncStrategy {
 	private int bestCrossCovarianceLag(final float[] reference, final float[] other) {
 		double maxCovariance = Double.NEGATIVE_INFINITY;
 		int maxCovarianceIndex = -1;
+		System.out.println("====================================");
 		for (int lag = 0; lag < reference.length; ++lag) {
 			final double covariance = covariance(reference, other, lag);
+			System.out.printf("%.4f\n", covariance);
 			if (covariance > maxCovariance) {
 				maxCovarianceIndex = lag;
 				maxCovariance = covariance;
 			}
 		}
+		System.out.println("Max: " + maxCovariance);
 		return maxCovarianceIndex;
 	}
 
